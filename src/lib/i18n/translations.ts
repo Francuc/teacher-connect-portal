@@ -21,7 +21,10 @@ export const translations = {
     search: "Rechercher",
     searchPlaceholder: "Rechercher par nom ou lieu",
     allSubjects: "Toutes les matières",
-    allLevels: "Tous les niveaux"
+    allLevels: "Tous les niveaux",
+    mathematics: "Mathématiques",
+    physics: "Physique",
+    languages: "Langues"
   },
   lb: {
     personalInfo: "Perséinlech Informatiounen",
@@ -45,7 +48,10 @@ export const translations = {
     search: "Sichen",
     searchPlaceholder: "No Numm oder Uert sichen",
     allSubjects: "All Fächer",
-    allLevels: "All Niveauen"
+    allLevels: "All Niveauen",
+    mathematics: "Mathematik",
+    physics: "Physik",
+    languages: "Sproochen"
   },
 };
 

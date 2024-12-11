@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SUBJECTS } from "@/lib/constants";
 import { UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -34,7 +35,7 @@ export const Navigation = () => {
                         key={subject}
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                       >
-                        {subject}
+                        {t(subject.toLowerCase())}
                       </NavigationMenuLink>
                     ))}
                   </div>
@@ -42,6 +43,8 @@ export const Navigation = () => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+
+          <LanguageSwitcher />
 
           <Link to="/profile/create">
             <Button className="gap-2">
