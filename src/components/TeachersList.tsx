@@ -27,13 +27,13 @@ const MOCK_TEACHERS = [
 
 export const TeachersList = () => {
   const { t } = useLanguage();
-  const [selectedSubject, setSelectedSubject] = useState<string>("");
-  const [selectedLevel, setSelectedLevel] = useState<string>("");
+  const [selectedSubject, setSelectedSubject] = useState<string>("all");
+  const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredTeachers = MOCK_TEACHERS.filter(teacher => {
-    const matchesSubject = !selectedSubject || teacher.subjects.includes(selectedSubject);
-    const matchesLevel = !selectedLevel || teacher.schoolLevels.includes(selectedLevel);
+    const matchesSubject = selectedSubject === "all" || teacher.subjects.includes(selectedSubject);
+    const matchesLevel = selectedLevel === "all" || teacher.schoolLevels.includes(selectedLevel);
     const matchesSearch = !searchQuery || 
       teacher.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       teacher.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -61,7 +61,7 @@ export const TeachersList = () => {
               <SelectValue placeholder={t("allSubjects")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">{t("allSubjects")}</SelectItem>
+              <SelectItem value="all">{t("allSubjects")}</SelectItem>
               {SUBJECTS.map((subject) => (
                 <SelectItem key={subject} value={subject}>
                   {subject}
@@ -78,7 +78,7 @@ export const TeachersList = () => {
               <SelectValue placeholder={t("allLevels")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">{t("allLevels")}</SelectItem>
+              <SelectItem value="all">{t("allLevels")}</SelectItem>
               {SCHOOL_LEVELS.map((level) => (
                 <SelectItem key={level} value={level}>
                   {level}
