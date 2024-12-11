@@ -12,6 +12,9 @@ export const translations = {
     saveProfile: "Enregistrer le profil",
     profileSaved: "Profil enregistré !",
     profileSavedDesc: "Votre profil d'enseignant a été enregistré avec succès.",
+    createProfile: "Créer un profil",
+    findTeacher: "Trouvez le professeur parfait",
+    landingDescription: "Des milliers de professeurs qualifiés pour des cours particuliers dans tout le Luxembourg",
   },
   lb: {
     personalInfo: "Perséinlech Informatiounen",
@@ -26,6 +29,9 @@ export const translations = {
     saveProfile: "Profil späicheren",
     profileSaved: "Profil gespäichert!",
     profileSavedDesc: "Äre Profil gouf erfollegräich gespäichert.",
+    createProfile: "Profil erstellen",
+    findTeacher: "Fannt den perfekte Professer",
+    landingDescription: "Dausende vu qualifizéierte Professere fir Privatstonne an ganz Lëtzebuerg",
   },
 };
 
