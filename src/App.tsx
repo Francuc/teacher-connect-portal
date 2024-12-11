@@ -6,22 +6,25 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import TeacherProfileForm from "./components/TeacherProfileForm";
 import { Layout } from "./components/Layout";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/profile/create" element={<TeacherProfileForm />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <LanguageProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/profile/create" element={<TeacherProfileForm />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

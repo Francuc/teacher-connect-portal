@@ -16,7 +16,8 @@ export const translations = {
     findTeacher: "Trouvez le professeur parfait",
     landingDescription: "Des milliers de professeurs qualifiés pour des cours particuliers dans tout le Luxembourg",
     landingTitle: "Trouvez votre professeur idéal",
-    getStarted: "Commencer"
+    getStarted: "Commencer",
+    allRights: "Tous droits réservés"
   },
   lb: {
     personalInfo: "Perséinlech Informatiounen",
@@ -35,7 +36,8 @@ export const translations = {
     findTeacher: "Fannt den perfekte Professer",
     landingDescription: "Dausende vu qualifizéierte Professere fir Privatstonne an ganz Lëtzebuerg",
     landingTitle: "Fannt Äre perfekte Professer",
-    getStarted: "Ufänken"
+    getStarted: "Ufänken",
+    allRights: "All Rechter virbehalen"
   },
 };
 
