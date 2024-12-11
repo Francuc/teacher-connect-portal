@@ -19,7 +19,7 @@ export const Navigation = () => {
     <header className="sticky top-0 z-50">
       <div className="flex items-center justify-between p-4 bg-white shadow-sm">
         <Link to="/" className="text-2xl font-bold text-primary">
-          TeacherConnect
+          Nohëllef.lu
         </Link>
 
         <div className="flex items-center gap-4">

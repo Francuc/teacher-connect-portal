@@ -14,10 +14,14 @@ export const translations = {
     profileSavedDesc: "Votre profil d'enseignant a été enregistré avec succès.",
     createProfile: "Créer un profil",
     findTeacher: "Trouvez le professeur parfait",
-    landingDescription: "Des milliers de professeurs qualifiés pour des cours particuliers dans tout le Luxembourg",
+    landingDescription: "Une plateforme dédiée aux cours particuliers au Luxembourg, connectant élèves et enseignants qualifiés",
     landingTitle: "Trouvez votre professeur idéal",
     getStarted: "Commencer",
-    allRights: "Tous droits réservés"
+    allRights: "Tous droits réservés",
+    search: "Rechercher",
+    searchPlaceholder: "Rechercher par nom ou lieu",
+    allSubjects: "Toutes les matières",
+    allLevels: "Tous les niveaux"
   },
   lb: {
     personalInfo: "Perséinlech Informatiounen",
@@ -34,10 +38,14 @@ export const translations = {
     profileSavedDesc: "Äre Profil gouf erfollegräich gespäichert.",
     createProfile: "Profil erstellen",
     findTeacher: "Fannt den perfekte Professer",
-    landingDescription: "Dausende vu qualifizéierte Professere fir Privatstonne an ganz Lëtzebuerg",
+    landingDescription: "Eng Plattform fir Privatstonne zu Lëtzebuerg, déi Schüler a qualifizéiert Enseignante verbënnt",
     landingTitle: "Fannt Äre perfekte Professer",
     getStarted: "Ufänken",
-    allRights: "All Rechter virbehalen"
+    allRights: "All Rechter virbehalen",
+    search: "Sichen",
+    searchPlaceholder: "No Numm oder Uert sichen",
+    allSubjects: "All Fächer",
+    allLevels: "All Niveauen"
   },
 };
 
