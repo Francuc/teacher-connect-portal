@@ -94,7 +94,7 @@ export const TeachersFilters = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30">
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-purple.soft/30">
         <div className="p-6 space-y-2">
           <Label className="flex items-center gap-2 text-purple.dark">
@@ -112,8 +112,8 @@ export const TeachersFilters = ({
             {showSuggestions && suggestions.length > 0 && (
               <div 
                 ref={suggestionsRef}
-                className="absolute z-50 w-full mt-1 bg-white border border-purple.soft/30 rounded-md shadow-lg"
-                style={{ position: 'absolute', top: '100%' }}
+                className="absolute z-50 w-full bg-white border border-purple.soft/30 rounded-md shadow-lg"
+                style={{ position: 'absolute', top: 'calc(100% + 4px)' }}
               >
                 {suggestions.map((suggestion, index) => (
                   <div
