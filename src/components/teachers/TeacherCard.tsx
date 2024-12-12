@@ -36,14 +36,18 @@ export const TeacherCard = ({
         />
 
         <div className="flex-grow space-y-4">
-          <TeacherSubjects 
-            subjects={teacher.teacher_subjects}
-            getLocalizedName={getLocalizedName}
-          />
+          {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
+            <TeacherSubjects 
+              subjects={teacher.teacher_subjects}
+              getLocalizedName={getLocalizedName}
+            />
+          )}
 
-          <TeacherLevels 
-            levels={teacher.teacher_school_levels}
-          />
+          {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
+            <TeacherLevels 
+              levels={teacher.teacher_school_levels}
+            />
+          )}
 
           <TeacherLocations 
             teacher={teacher}
