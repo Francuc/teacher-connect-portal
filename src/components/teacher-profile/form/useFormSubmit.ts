@@ -14,6 +14,36 @@ export const useFormSubmit = (
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    const errors: string[] = [];
+
+    if (!formData.firstName) errors.push(t("firstName"));
+    if (!formData.lastName) errors.push(t("lastName"));
+    if (!formData.email) errors.push(t("email"));
+    if (!formData.bio) errors.push(t("bio"));
+    if (formData.subjects.length === 0) errors.push(t("subjects"));
+    if (formData.schoolLevels.length === 0) errors.push(t("schoolLevels"));
+    if (formData.teachingLocations.length === 0) errors.push(t("teachingLocations"));
+    
+    if (formData.teachingLocations.includes("Teacher's Place") && !formData.cityId) {
+      errors.push(t("teacherCity"));
+    }
+
+    // Check if at least one teaching location has a price
+    const hasValidPrice = formData.teachingLocations.some(location => {
+      const price = formData.pricePerHour[
+        location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
+      ];
+      return price && parseFloat(price) > 0;
+    });
+
+    if (!hasValidPrice) {
+      errors.push(t("pricePerHour"));
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -27,29 +57,11 @@ export const useFormSubmit = (
     }
 
     // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.bio || 
-        !formData.subjects.length || !formData.schoolLevels.length || !formData.teachingLocations.length ||
-        !formData.cityId) {
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
       toast({
         title: t("error"),
-        description: t("pleaseCompleteAllRequiredFields"),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Filter out locations without prices and validate at least one teaching location with price
-    const locationsWithPrices = formData.teachingLocations.filter(location => {
-      const price = formData.pricePerHour[
-        location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-      ];
-      return price && parseFloat(price) > 0;
-    });
-
-    if (locationsWithPrices.length === 0) {
-      toast({
-        title: t("error"),
-        description: t("pleaseAddAtLeastOneLocationWithPrice"),
+        description: t("pleaseCompleteAllRequiredFields") + ": " + validationErrors.join(", "),
         variant: "destructive",
       });
       return;
@@ -136,10 +148,10 @@ export const useFormSubmit = (
               school_level: level
             }))
           ),
-        locationsWithPrices.length > 0 && supabase
+        formData.teachingLocations.length > 0 && supabase
           .from('teacher_locations')
           .insert(
-            locationsWithPrices.map(location => ({
+            formData.teachingLocations.map(location => ({
               teacher_id: userId,
               location_type: location,
               price_per_hour: parseFloat(formData.pricePerHour[

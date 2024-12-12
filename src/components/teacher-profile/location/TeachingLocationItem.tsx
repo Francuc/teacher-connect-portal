@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
@@ -91,6 +92,7 @@ export const TeachingLocationItem = ({
   };
 
   const selectedRegion = regions.find(region => region.id === selectedRegionId);
+  const selectedCity = cities.find(city => city.id === formData.cityId);
 
   return (
     <div className="space-y-2">
@@ -120,7 +122,6 @@ export const TeachingLocationItem = ({
                   value={selectedRegionId}
                   onValueChange={(value) => {
                     setSelectedRegionId(value);
-                    // Reset cityId when changing region
                     setFormData({
                       ...formData,
                       cityId: "",
@@ -163,6 +164,17 @@ export const TeachingLocationItem = ({
                   </RadioGroup>
                 </div>
               )}
+
+              {selectedCity && (
+                <div className="mt-4">
+                  <Label>{t("selectedLocation")}</Label>
+                  <Textarea 
+                    value={`${getLocalizedName(selectedCity)}, ${getLocalizedName(selectedCity.region)}`}
+                    readOnly
+                    className="mt-2 bg-muted"
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -190,6 +202,7 @@ export const TeachingLocationItem = ({
                 })
               }
               className="w-32"
+              required
             />
           </div>
         </div>
