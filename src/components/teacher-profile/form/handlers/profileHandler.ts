@@ -10,6 +10,13 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
+    // Check if profile exists
+    const { data: existingProfile } = await supabase
+      .from('teachers')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
+
     let profilePictureUrl = null;
     if (formData.profilePicture) {
       try {
@@ -33,31 +40,29 @@ export const handleProfileUpdate = async (
       show_facebook: formData.showFacebook,
       bio: formData.bio,
       city_id: formData.cityId || null,
-      profile_picture_url: profilePictureUrl,
       updated_at: new Date().toISOString(),
     };
 
-    if (isUpdate) {
+    // Add profile picture URL only if a new one was uploaded
+    if (profilePictureUrl) {
+      profileData.profile_picture_url = profilePictureUrl;
+    }
+
+    let result;
+    if (existingProfile) {
       // Update existing profile
-      const { error: updateError } = await supabase
+      result = await supabase
         .from('teachers')
         .update(profileData)
         .eq('user_id', userId);
-
-      if (updateError) throw updateError;
     } else {
       // Create new profile
-      console.log('Creating new profile for user:', userId);
-      const { error: insertError } = await supabase
+      result = await supabase
         .from('teachers')
         .insert([profileData]);
-
-      if (insertError) {
-        console.error('Error in profile creation:', insertError);
-        throw insertError;
-      }
     }
-    
+
+    if (result.error) throw result.error;
     return { error: null };
 
   } catch (error) {
