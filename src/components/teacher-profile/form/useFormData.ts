@@ -4,6 +4,16 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+interface TeacherSubject {
+  subject_id: string;
+  subjects: {
+    id: string;
+    name_en: string;
+    name_fr: string;
+    name_lb: string;
+  };
+}
+
 export const useFormData = (userId?: string) => {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -88,7 +98,7 @@ export const useFormData = (userId?: string) => {
                     name_lb
                   )
                 `)
-                .eq('teacher_id', userId),
+                .eq('teacher_id', userId) as Promise<{ data: TeacherSubject[] | null }>,
               supabase
                 .from('teacher_school_levels')
                 .select('school_level')
