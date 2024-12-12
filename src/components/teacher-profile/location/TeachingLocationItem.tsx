@@ -101,7 +101,16 @@ export const TeachingLocationItem = ({
   };
 
   const getLocationKey = (location: TeachingLocation): keyof typeof formData.pricePerHour => {
-    return location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour;
+    switch (location) {
+      case "Teacher's Place":
+        return "teacherPlace";
+      case "Student's Place":
+        return "studentPlace";
+      case "Online":
+        return "online";
+      default:
+        return "online";
+    }
   };
 
   const handlePriceChange = (value: string) => {
