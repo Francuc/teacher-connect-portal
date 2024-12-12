@@ -161,13 +161,14 @@ export const useFormSubmit = (
           )
       ]);
 
+      // Show success message
       toast({
         title: existingProfile ? t("profileUpdated") : t("profileCreated"),
         description: existingProfile ? t("profileUpdatedDesc") : t("profileCreatedDesc"),
       });
       
       // Navigate to profile view
-      navigate("/profile");
+      navigate(`/profile/${userId}`);
     } catch (error) {
       console.error('Error saving profile:', error);
       toast({
