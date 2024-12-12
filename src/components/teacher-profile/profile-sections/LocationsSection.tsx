@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MapPin } from "lucide-react";
 import { TeachingLocation } from "@/lib/constants";
 
 type LocationsSectionProps = {
@@ -53,32 +54,37 @@ export const LocationsSection = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("teachingLocations")}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="w-5 h-5" />
+          {t("teachingLocations")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {locations.map((location, index) => (
             <div key={index} className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="font-medium">{location.location_type}</span>
-                <span className="font-semibold">{formatPrice(location.price_per_hour)}/h</span>
+                <span className="font-medium text-lg">{location.location_type}</span>
+                <span className="font-semibold bg-primary/10 px-3 py-1.5 rounded-full">
+                  {formatPrice(location.price_per_hour)}/h
+                </span>
               </div>
               {location.location_type === "Teacher's Place" && city && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground">
                   {`${getLocalizedName(city)}, ${getLocalizedName(city.region)}`}
                 </div>
               )}
               {location.location_type === "Student's Place" && (
-                <div className="text-sm text-muted-foreground space-y-1">
+                <div className="space-y-2">
                   {studentRegions.length > 0 && (
-                    <div>
-                      <span className="font-medium">{t("regions")}: </span>
+                    <div className="text-muted-foreground">
+                      <span className="font-medium text-foreground">{t("regions")}: </span>
                       {studentRegions.join(", ")}
                     </div>
                   )}
                   {studentCities.length > 0 && (
-                    <div>
-                      <span className="font-medium">{t("cities")}: </span>
+                    <div className="text-muted-foreground">
+                      <span className="font-medium text-foreground">{t("cities")}: </span>
                       {studentCities.join(", ")}
                     </div>
                   )}

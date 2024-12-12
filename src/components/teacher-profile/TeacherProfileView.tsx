@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { PersonalSection } from "./profile-sections/PersonalSection";
 import { BiographySection } from "./profile-sections/BiographySection";
-import { SubjectsSection } from "./SubjectsSection";
+import { SubjectsSection } from "./profile-sections/SubjectsSection";
 import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
 import { LocationsSection } from "./profile-sections/LocationsSection";
 import { Button } from "@/components/ui/button";
@@ -83,7 +83,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       return {
         profile,
         subjects: subjects?.map(s => ({
-          subject: s.subject[0]
+          subject: s.subject
         })) || [],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
@@ -95,7 +95,9 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   });
 
   if (isLoading || !teacherData) {
-    return null;
+    return <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>;
   }
 
   const handleEditClick = () => {
