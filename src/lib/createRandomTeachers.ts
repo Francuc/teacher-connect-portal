@@ -7,30 +7,39 @@ const serviceRoleClient = createClient(
 );
 
 const getRandomProfilePicture = async (userId: string): Promise<string> => {
-  // Fetch a random image from picsum
-  const response = await fetch('https://picsum.photos/400/400');
-  const blob = await response.blob();
-  
-  const file = new File([blob], `${userId}-profile.jpg`, { type: 'image/jpeg' });
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${userId}-${Math.random()}.${fileExt}`;
-  
-  const { error: uploadError } = await serviceRoleClient.storage
-    .from('profile-pictures')
-    .upload(fileName, file, {
-      upsert: true
-    });
-  
-  if (uploadError) {
-    console.error('Error uploading profile picture:', uploadError);
-    throw uploadError;
+  try {
+    // Fetch a random image from picsum
+    const response = await fetch('https://picsum.photos/400/400');
+    if (!response.ok) {
+      throw new Error('Failed to fetch random image');
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const fileName = `${userId}-${Math.random()}.jpg`;
+
+    // Upload the image buffer directly
+    const { error: uploadError, data } = await serviceRoleClient.storage
+      .from('profile-pictures')
+      .upload(fileName, arrayBuffer, {
+        contentType: 'image/jpeg',
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('Error uploading profile picture:', uploadError);
+      throw uploadError;
+    }
+
+    // Get the public URL
+    const { data: { publicUrl } } = serviceRoleClient.storage
+      .from('profile-pictures')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('Error in getRandomProfilePicture:', error);
+    throw error;
   }
-
-  const { data: { publicUrl } } = serviceRoleClient.storage
-    .from('profile-pictures')
-    .getPublicUrl(fileName);
-
-  return publicUrl;
 };
 
 const subjects = [
