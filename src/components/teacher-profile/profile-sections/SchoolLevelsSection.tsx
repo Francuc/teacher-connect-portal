@@ -10,19 +10,19 @@ export const SchoolLevelsSection = ({ schoolLevels }: SchoolLevelsSectionProps) 
   const { t } = useLanguage();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="w-full">
+      <CardHeader className="px-6 py-4">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <GraduationCap className="w-5 h-5" />
           {t("schoolLevels")}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-6 py-4">
         <div className="flex flex-wrap gap-2">
           {schoolLevels.map((level, index) => (
             <span 
               key={index} 
-              className="bg-primary/10 px-3 py-1.5 rounded-full text-sm font-medium"
+              className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium"
             >
               {level}
             </span>

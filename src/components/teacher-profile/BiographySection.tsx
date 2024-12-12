@@ -17,16 +17,16 @@ export const BiographySection = ({ formData, setFormData, bio }: BiographySectio
   const isViewMode = bio !== undefined;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="w-full">
+      <CardHeader className="px-6 py-4">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <FileText className="w-5 h-5" />
           {t("biography")}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-6 py-4">
         {isViewMode ? (
-          <p className="whitespace-pre-wrap leading-relaxed">{bio}</p>
+          <p className="whitespace-pre-wrap leading-relaxed min-h-[100px]">{bio}</p>
         ) : (
           <div className="space-y-2">
             <Label htmlFor="bio">{t("bio")}</Label>
@@ -34,7 +34,7 @@ export const BiographySection = ({ formData, setFormData, bio }: BiographySectio
               id="bio"
               value={formData?.bio || ""}
               onChange={(e) => setFormData?.({ ...formData, bio: e.target.value })}
-              className="h-32"
+              className="h-32 resize-none"
               required
             />
           </div>
