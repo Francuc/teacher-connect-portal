@@ -22,7 +22,6 @@ export const LocationSummary = ({
   onEdit,
 }: LocationSummaryProps) => {
   const { t } = useLanguage();
-  const hasPrice = price && parseFloat(price) > 0;
 
   return (
     <Card 
@@ -33,7 +32,7 @@ export const LocationSummary = ({
         <div className="flex justify-between items-center">
           <span className="font-medium group-hover:text-white">{location}</span>
           <div className="font-semibold bg-background p-2 rounded-md border group-hover:text-white group-hover:bg-primary">
-            {hasPrice ? `${price}€/h` : t("pricePerHour")}
+            {price || t("pricePerHour")}
           </div>
         </div>
 

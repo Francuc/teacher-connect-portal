@@ -100,7 +100,7 @@ export const TeachingLocationItem = ({
     });
   };
 
-  const getLocationKey = (location: TeachingLocation) => {
+  const getLocationKey = (location: TeachingLocation): keyof typeof formData.pricePerHour => {
     return location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour;
   };
 
@@ -118,10 +118,12 @@ export const TeachingLocationItem = ({
   const currentPrice = formData.pricePerHour[locationKey];
 
   if (!isEditing && formData.teachingLocations.includes(location)) {
+    const priceDisplay = currentPrice ? `${currentPrice}€/h` : '';
+    
     return (
       <LocationSummary
         location={location}
-        price={currentPrice || ''}
+        price={priceDisplay}
         selectedCity={selectedCity}
         studentRegions={formData.studentRegions}
         studentCities={formData.studentCities}
