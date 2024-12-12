@@ -37,6 +37,7 @@ export const useFormData = (userId?: string) => {
   // Fetch and set default city
   useEffect(() => {
     const fetchDefaultCity = async () => {
+      console.log('Fetching default city...');
       const { data: cities, error } = await supabase
         .from('cities')
         .select('id')
@@ -44,21 +45,34 @@ export const useFormData = (userId?: string) => {
 
       if (error) {
         console.error('Error fetching default city:', error);
+        toast({
+          title: t("error"),
+          description: t("errorLoadingCity"),
+          variant: "destructive",
+        });
         return;
       }
 
       if (cities && cities.length > 0) {
+        console.log('Setting default city:', cities[0].id);
         setFormData(prev => ({
           ...prev,
           cityId: cities[0].id
         }));
+      } else {
+        console.error('No cities found in the database');
+        toast({
+          title: t("error"),
+          description: t("noCitiesAvailable"),
+          variant: "destructive",
+        });
       }
     };
 
     if (!userId && !formData.cityId) {
       fetchDefaultCity();
     }
-  }, [userId, formData.cityId]);
+  }, [userId, formData.cityId, t, toast]);
 
   useEffect(() => {
     if (userId) {
