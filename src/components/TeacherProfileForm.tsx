@@ -2,13 +2,18 @@ import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
 import { FormContainer } from "./teacher-profile/form/FormContainer";
 
 const TeacherProfileForm = () => {
-  // If we're viewing the profile, show the TeacherProfileView component
-  if (window.location.pathname.includes('/profile/') && !window.location.pathname.includes('/new')) {
-    const userId = window.location.pathname.split('/profile/')[1];
-    return <TeacherProfileView userId={userId} />;
+  const path = window.location.pathname;
+  const isViewMode = path.includes('/profile/') && !path.includes('/new') && !path.includes('/edit');
+  const isEditMode = path.includes('/edit');
+  
+  if (isViewMode || isEditMode) {
+    const userId = path.split('/profile/')[1].split('/')[0];
+    if (isViewMode) {
+      return <TeacherProfileView userId={userId} />;
+    }
+    return <FormContainer userId={userId} />;
   }
 
-  // Otherwise show the form
   return <FormContainer />;
 };
 
