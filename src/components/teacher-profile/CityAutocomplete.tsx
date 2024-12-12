@@ -33,8 +33,12 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
       const { data, error } = await supabase
         .from('cities')
         .select('*')
-      if (error) throw error
-      return data || []
+      if (error) {
+        console.error('Error fetching cities:', error);
+        throw error;
+      }
+      console.log('Fetched cities for autocomplete:', data);
+      return data || [];
     }
   })
 

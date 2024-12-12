@@ -38,17 +38,31 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
     queryKey: ['cities', formData.studentRegions],
     queryFn: async () => {
       if (formData.studentRegions.length === 0) return [];
-      
-      const regionIds = regions
-        .filter(region => formData.studentRegions.includes(getLocalizedName(region)))
+
+      // Get the region IDs for the selected region names
+      const selectedRegionIds = regions
+        .filter(region => 
+          formData.studentRegions.includes(
+            language === 'fr' ? region.name_fr : 
+            language === 'lb' ? region.name_lb : 
+            region.name_en
+          )
+        )
         .map(region => region.id);
+
+      console.log('Selected region IDs:', selectedRegionIds);
 
       const { data, error } = await supabase
         .from('cities')
         .select('*')
-        .in('region_id', regionIds);
-        
-      if (error) throw error;
+        .in('region_id', selectedRegionIds);
+
+      if (error) {
+        console.error('Error fetching cities:', error);
+        throw error;
+      }
+
+      console.log('Fetched cities:', data);
       return data || [];
     },
     enabled: formData.studentRegions.length > 0 && regions.length > 0
