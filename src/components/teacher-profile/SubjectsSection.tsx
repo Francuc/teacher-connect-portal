@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-type SubjectsSectionProps = {
+export interface SubjectsSectionProps {
   subjects: {
     subject: {
       name_en: string;
@@ -9,7 +9,7 @@ type SubjectsSectionProps = {
       name_lb: string;
     };
   }[];
-};
+}
 
 export const SubjectsSection = ({ subjects }: SubjectsSectionProps) => {
   const { t, language } = useLanguage();

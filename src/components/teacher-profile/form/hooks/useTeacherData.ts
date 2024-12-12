@@ -53,12 +53,10 @@ export const useTeacherData = (userId: string | undefined) => {
           .eq('teacher_id', userId)
       ]);
 
-      console.log('Teacher subjects data:', teacherSubjects);
-
       return {
         profile,
         locations: locations || [],
-        subjects: teacherSubjects as TeacherSubject[],
+        subjects: teacherSubjects as unknown as TeacherSubject[],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
         studentCities: studentCities?.map(c => c.city_name) || []
