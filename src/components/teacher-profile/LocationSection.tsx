@@ -5,16 +5,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, DollarSign } from "lucide-react";
 import { TEACHING_LOCATIONS, type TeachingLocation } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-// Mock data for regions and cities - replace with actual data later
-const REGIONS = ["North", "South", "East", "West", "Center"];
-const CITIES_BY_REGION: Record<string, string[]> = {
-  North: ["City1", "City2", "City3"],
-  South: ["City4", "City5", "City6"],
-  East: ["City7", "City8", "City9"],
-  West: ["City10", "City11", "City12"],
-  Center: ["City13", "City14", "City15"],
-};
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type LocationSectionProps = {
   formData: {
@@ -32,30 +24,59 @@ type LocationSectionProps = {
 };
 
 export const LocationSection = ({ formData, setFormData }: LocationSectionProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  const handleRegionChange = (region: string, checked: boolean) => {
-    const newRegions = checked
-      ? [...formData.studentRegions, region]
-      : formData.studentRegions.filter((r) => r !== region);
-    
-    // When a region is selected, add all its cities by default
-    const newCities = [...formData.studentCities];
-    if (checked) {
-      CITIES_BY_REGION[region].forEach((city) => {
-        if (!newCities.includes(city)) {
-          newCities.push(city);
-        }
-      });
-    } else {
-      // Remove cities from this region when region is unselected
-      CITIES_BY_REGION[region].forEach((city) => {
-        const index = newCities.indexOf(city);
-        if (index > -1) {
-          newCities.splice(index, 1);
-        }
-      });
+  const { data: regions = [] } = useQuery({
+    queryKey: ['regions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('regions')
+        .select('*');
+      if (error) throw error;
+      return data;
     }
+  });
+
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities', formData.studentRegions],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*')
+        .in('region_id', formData.studentRegions.map(region => 
+          regions.find(r => getLocalizedName(r) === region)?.id
+        ));
+      if (error) throw error;
+      return data;
+    },
+    enabled: formData.studentRegions.length > 0
+  });
+
+  const getLocalizedName = (item: any) => {
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
+
+  const handleRegionChange = (region: any, checked: boolean) => {
+    const regionName = getLocalizedName(region);
+    const newRegions = checked
+      ? [...formData.studentRegions, regionName]
+      : formData.studentRegions.filter((r) => r !== regionName);
+    
+    // When a region is unselected, remove its cities
+    const regionCities = cities
+      .filter(city => city.region_id === region.id)
+      .map(city => getLocalizedName(city));
+    
+    const newCities = checked
+      ? [...formData.studentCities, ...regionCities]
+      : formData.studentCities.filter(city => !regionCities.includes(city));
 
     setFormData({
       ...formData,
@@ -117,16 +138,16 @@ export const LocationSection = ({ formData, setFormData }: LocationSectionProps)
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label>{t("regions")}</Label>
-                        {REGIONS.map((region) => (
-                          <div key={region} className="flex items-center space-x-2">
+                        {regions.map((region) => (
+                          <div key={region.id} className="flex items-center space-x-2">
                             <Checkbox
-                              id={`region-${region}`}
-                              checked={formData.studentRegions.includes(region)}
+                              id={`region-${region.id}`}
+                              checked={formData.studentRegions.includes(getLocalizedName(region))}
                               onCheckedChange={(checked) =>
                                 handleRegionChange(region, checked as boolean)
                               }
                             />
-                            <Label htmlFor={`region-${region}`}>{region}</Label>
+                            <Label htmlFor={`region-${region.id}`}>{getLocalizedName(region)}</Label>
                           </div>
                         ))}
                       </div>
@@ -135,27 +156,25 @@ export const LocationSection = ({ formData, setFormData }: LocationSectionProps)
                         <div className="space-y-2">
                           <Label>{t("cities")}</Label>
                           <div className="grid grid-cols-2 gap-2">
-                            {formData.studentRegions.map((region) =>
-                              CITIES_BY_REGION[region].map((city) => (
-                                <div key={city} className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id={`city-${city}`}
-                                    checked={formData.studentCities.includes(city)}
-                                    onCheckedChange={(checked) =>
-                                      setFormData({
-                                        ...formData,
-                                        studentCities: checked
-                                          ? [...formData.studentCities, city]
-                                          : formData.studentCities.filter(
-                                              (c) => c !== city
-                                            ),
-                                      })
-                                    }
-                                  />
-                                  <Label htmlFor={`city-${city}`}>{city}</Label>
-                                </div>
-                              ))
-                            )}
+                            {cities.map((city) => (
+                              <div key={city.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`city-${city.id}`}
+                                  checked={formData.studentCities.includes(getLocalizedName(city))}
+                                  onCheckedChange={(checked) =>
+                                    setFormData({
+                                      ...formData,
+                                      studentCities: checked
+                                        ? [...formData.studentCities, getLocalizedName(city)]
+                                        : formData.studentCities.filter(
+                                            (c) => c !== getLocalizedName(city)
+                                          ),
+                                    })
+                                  }
+                                />
+                                <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}

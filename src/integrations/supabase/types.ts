@@ -9,6 +9,113 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      cities: {
+        Row: {
+          created_at: string
+          id: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+          region_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+          region_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name_en?: string
+          name_fr?: string
+          name_lb?: string
+          region_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      regions: {
+        Row: {
+          created_at: string
+          id: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name_en?: string
+          name_fr?: string
+          name_lb?: string
+        }
+        Relationships: []
+      }
+      school_levels: {
+        Row: {
+          created_at: string
+          id: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name_en?: string
+          name_fr?: string
+          name_lb?: string
+        }
+        Relationships: []
+      }
+      subjects: {
+        Row: {
+          created_at: string
+          id: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name_en: string
+          name_fr: string
+          name_lb: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name_en?: string
+          name_fr?: string
+          name_lb?: string
+        }
+        Relationships: []
+      }
       teacher_cities: {
         Row: {
           city: string

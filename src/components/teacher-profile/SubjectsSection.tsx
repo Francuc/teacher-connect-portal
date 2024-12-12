@@ -2,8 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Book } from "lucide-react";
-import { SUBJECTS, SCHOOL_LEVELS, type Subject, type SchoolLevel } from "@/lib/constants";
+import { type Subject, type SchoolLevel } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type SubjectsSectionProps = {
   formData: {
@@ -14,7 +16,40 @@ type SubjectsSectionProps = {
 };
 
 export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  const { data: subjects = [] } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: schoolLevels = [] } = useQuery({
+    queryKey: ['schoolLevels'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('school_levels')
+        .select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getLocalizedName = (item: any) => {
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
 
   return (
     <Card>
@@ -28,21 +63,22 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
         <div className="space-y-2">
           <Label>{t("subjects")}</Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {SUBJECTS.map((subject) => (
-              <div key={subject} className="flex items-center space-x-2">
+            {subjects.map((subject) => (
+              <div key={subject.id} className="flex items-center space-x-2">
                 <Checkbox
-                  id={subject}
-                  checked={formData.subjects.includes(subject)}
+                  id={subject.id}
+                  checked={formData.subjects.includes(getLocalizedName(subject))}
                   onCheckedChange={(checked) => {
+                    const subjectName = getLocalizedName(subject);
                     setFormData({
                       ...formData,
                       subjects: checked
-                        ? [...formData.subjects, subject]
-                        : formData.subjects.filter((s) => s !== subject),
+                        ? [...formData.subjects, subjectName]
+                        : formData.subjects.filter((s) => s !== subjectName),
                     });
                   }}
                 />
-                <Label htmlFor={subject}>{subject}</Label>
+                <Label htmlFor={subject.id}>{getLocalizedName(subject)}</Label>
               </div>
             ))}
           </div>
@@ -51,21 +87,22 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
         <div className="space-y-2">
           <Label>{t("schoolLevels")}</Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {SCHOOL_LEVELS.map((level) => (
-              <div key={level} className="flex items-center space-x-2">
+            {schoolLevels.map((level) => (
+              <div key={level.id} className="flex items-center space-x-2">
                 <Checkbox
-                  id={level}
-                  checked={formData.schoolLevels.includes(level)}
+                  id={level.id}
+                  checked={formData.schoolLevels.includes(getLocalizedName(level))}
                   onCheckedChange={(checked) => {
+                    const levelName = getLocalizedName(level);
                     setFormData({
                       ...formData,
                       schoolLevels: checked
-                        ? [...formData.schoolLevels, level]
-                        : formData.schoolLevels.filter((l) => l !== level),
+                        ? [...formData.schoolLevels, levelName]
+                        : formData.schoolLevels.filter((l) => l !== levelName),
                     });
                   }}
                 />
-                <Label htmlFor={level}>{level}</Label>
+                <Label htmlFor={level.id}>{getLocalizedName(level)}</Label>
               </div>
             ))}
           </div>
