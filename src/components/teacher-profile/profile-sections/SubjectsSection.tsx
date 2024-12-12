@@ -6,7 +6,7 @@ type SubjectsSectionProps = {
 };
 
 export const SubjectsSection = ({ subjects }: SubjectsSectionProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <Card>
