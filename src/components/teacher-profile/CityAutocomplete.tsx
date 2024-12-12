@@ -77,6 +77,31 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     return cities.find((city) => city.id === value);
   }, [value, cities]);
 
+  const commandItems = React.useMemo(() => {
+    if (isLoading) return [<CommandItem key="loading" disabled>{t("loading")}</CommandItem>];
+    if (isError) return [<CommandItem key="error" disabled>{t("errorLoadingCities")}</CommandItem>];
+    if (!cities || cities.length === 0) return [<CommandItem key="empty" disabled>{t("noCitiesAvailable")}</CommandItem>];
+    
+    return cities.map((city) => (
+      <CommandItem
+        key={city.id}
+        value={getCityWithRegion(city)}
+        onSelect={() => {
+          onChange(city.id);
+          setOpen(false);
+        }}
+      >
+        <Check
+          className={cn(
+            "mr-2 h-4 w-4",
+            value === city.id ? "opacity-100" : "opacity-0"
+          )}
+        />
+        {getCityWithRegion(city)}
+      </CommandItem>
+    ));
+  }, [cities, isLoading, isError, t, value, onChange]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -102,32 +127,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           <CommandInput placeholder={t("searchCity")} />
           <CommandEmpty>{t("noCityFound")}</CommandEmpty>
           <CommandGroup>
-            {isLoading ? (
-              <CommandItem disabled>{t("loading")}</CommandItem>
-            ) : isError ? (
-              <CommandItem disabled>{t("errorLoadingCities")}</CommandItem>
-            ) : cities && cities.length > 0 ? (
-              cities.map((city) => (
-                <CommandItem
-                  key={city.id}
-                  value={getCityWithRegion(city)}
-                  onSelect={() => {
-                    onChange(city.id);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === city.id ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {getCityWithRegion(city)}
-                </CommandItem>
-              ))
-            ) : (
-              <CommandItem disabled>{t("noCitiesAvailable")}</CommandItem>
-            )}
+            {commandItems}
           </CommandGroup>
         </Command>
       </PopoverContent>
