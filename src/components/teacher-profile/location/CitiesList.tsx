@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/lib/supabase"
 import { type TeachingLocation } from "@/lib/constants"
+import { useEffect } from "react"
 
 type CitiesListProps = {
   formData: {
@@ -91,6 +92,17 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
         return item.name_en
     }
   }
+
+  // Effect to automatically select all cities when cities data changes
+  useEffect(() => {
+    if (cities && cities.length > 0) {
+      const cityNames = cities.map(city => getLocalizedName(city))
+      setFormData({
+        ...formData,
+        studentCities: cityNames
+      })
+    }
+  }, [cities])
 
   if (isLoadingRegions || isLoadingCities) {
     return <div className="text-sm text-muted-foreground">{t("loading")}</div>
