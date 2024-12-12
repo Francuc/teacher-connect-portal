@@ -8,7 +8,7 @@ type FormContainerProps = {
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
   const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
-  const { handleSubmit } = useFormSubmit(formData, isLoading, setIsLoading, userId);
+  const { handleSubmit } = useFormSubmit(formData, isLoading, setIsLoading, userId || currentUserId);
 
   if (!userId && !currentUserId) {
     return null;

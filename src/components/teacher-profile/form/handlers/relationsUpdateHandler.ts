@@ -56,13 +56,16 @@ export const handleRelationsUpdate = async (
         supabase
           .from('teacher_locations')
           .insert(
-            formData.teachingLocations.map(location => ({
-              teacher_id: userId,
-              location_type: location,
-              price_per_hour: parseFloat(formData.pricePerHour[
-                location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-              ] || '0')
-            }))
+            formData.teachingLocations.map(location => {
+              const priceKey = location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour;
+              const price = parseFloat(formData.pricePerHour[priceKey]) || 0;
+              
+              return {
+                teacher_id: userId,
+                location_type: location,
+                price_per_hour: price
+              };
+            })
           )
       );
     }

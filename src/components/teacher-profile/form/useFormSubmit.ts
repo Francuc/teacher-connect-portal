@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { validateForm } from "./validation";
 import { uploadProfilePicture } from "../profilePictureUpload";
+import { handleRelationsUpdate } from "./handlers/relationsUpdateHandler";
 
 export const useFormSubmit = (
   formData: FormData,
@@ -108,89 +109,12 @@ export const useFormSubmit = (
         throw profileError;
       }
 
-      console.log('Profile updated successfully, now handling relations');
-
-      // Delete existing relations
-      const deletePromises = [
-        supabase.from('teacher_subjects').delete().eq('teacher_id', userId),
-        supabase.from('teacher_school_levels').delete().eq('teacher_id', userId),
-        supabase.from('teacher_locations').delete().eq('teacher_id', userId),
-        supabase.from('teacher_student_regions').delete().eq('teacher_id', userId),
-        supabase.from('teacher_student_cities').delete().eq('teacher_id', userId),
-      ];
-
-      const deleteResults = await Promise.all(deletePromises);
-      console.log('Delete results:', deleteResults);
-
-      // Insert new relations
-      const insertPromises = [];
-
-      if (formData.subjects.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_subjects')
-            .insert(formData.subjects.map(subject => ({
-              teacher_id: userId,
-              subject: subject
-            })))
-        );
+      // Handle relations update (subjects, locations, etc.)
+      const { error: relationsError } = await handleRelationsUpdate(formData, userId);
+      
+      if (relationsError) {
+        throw relationsError;
       }
-
-      if (formData.schoolLevels.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_school_levels')
-            .insert(formData.schoolLevels.map(level => ({
-              teacher_id: userId,
-              school_level: level
-            })))
-        );
-      }
-
-      if (formData.teachingLocations.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_locations')
-            .insert(formData.teachingLocations.map(location => {
-              const priceKey = location === "Teacher's Place" 
-                ? "teacherPlace" 
-                : location === "Student's Place" 
-                  ? "studentPlace" 
-                  : "online";
-              
-              return {
-                teacher_id: userId,
-                location_type: location,
-                price_per_hour: parseFloat(formData.pricePerHour[priceKey]) || 0
-              };
-            }))
-        );
-      }
-
-      if (formData.studentRegions.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_student_regions')
-            .insert(formData.studentRegions.map(region => ({
-              teacher_id: userId,
-              region_name: region
-            })))
-        );
-      }
-
-      if (formData.studentCities.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_student_cities')
-            .insert(formData.studentCities.map(city => ({
-              teacher_id: userId,
-              city_name: city
-            })))
-        );
-      }
-
-      const insertResults = await Promise.all(insertPromises);
-      console.log('Insert results:', insertResults);
 
       // Show success message
       toast({
