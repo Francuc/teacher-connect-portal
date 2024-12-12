@@ -30,11 +30,15 @@ export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocations
     return cityName;
   };
 
+  // Add null check for teacher_locations
   const studentPlaceLocation = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
 
-  if (!studentPlaceLocation) return null;
+  // Add null check for teacher_student_cities
+  const studentCities = teacher.teacher_student_cities || [];
+
+  if (!studentPlaceLocation || studentCities.length === 0) return null;
 
   return (
     <div className="space-y-2">
@@ -43,7 +47,7 @@ export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocations
         <span>{t("availableIn")}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {teacher.teacher_student_cities?.map((cityData: any) => (
+        {studentCities.map((cityData: any) => (
           <span
             key={cityData.id}
             className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"

@@ -25,7 +25,11 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const lowestPrice = getLowestPrice(teacher.teacher_locations);
+  const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
+
+  // Add null checks for teacher_subjects and teacher_school_levels
+  const hasSubjects = teacher.teacher_subjects && teacher.teacher_subjects.length > 0;
+  const hasLevels = teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0;
 
   return (
     <Card className="flex flex-col h-full">
@@ -36,14 +40,14 @@ export const TeacherCard = ({
         />
 
         <div className="flex-grow space-y-4">
-          {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
+          {hasSubjects && (
             <TeacherSubjects 
               subjects={teacher.teacher_subjects}
               getLocalizedName={getLocalizedName}
             />
           )}
 
-          {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
+          {hasLevels && (
             <TeacherLevels 
               levels={teacher.teacher_school_levels}
             />
