@@ -21,6 +21,7 @@ export const useFormSubmit = (
     e.preventDefault();
     
     if (!userId) {
+      console.error('No userId provided');
       toast({
         title: t("error"),
         description: t("pleaseLoginFirst"),
@@ -32,6 +33,7 @@ export const useFormSubmit = (
     // Validate required fields
     const validationErrors = validateForm(formData, t);
     if (validationErrors.length > 0) {
+      console.error('Validation errors:', validationErrors);
       toast({
         title: t("error"),
         description: t("pleaseCompleteAllRequiredFields") + ": " + validationErrors.join(", "),
@@ -42,6 +44,7 @@ export const useFormSubmit = (
 
     setIsLoading(true);
     console.log('Starting form submission for user:', userId);
+    console.log('Form data:', formData);
 
     try {
       // Upload profile picture if exists
@@ -110,9 +113,19 @@ export const useFormSubmit = (
       }
 
       // Handle relations update (subjects, locations, etc.)
+      console.log('Updating relations with data:', {
+        subjects: formData.subjects,
+        schoolLevels: formData.schoolLevels,
+        teachingLocations: formData.teachingLocations,
+        pricePerHour: formData.pricePerHour,
+        studentRegions: formData.studentRegions,
+        studentCities: formData.studentCities
+      });
+
       const { error: relationsError } = await handleRelationsUpdate(formData, userId);
       
       if (relationsError) {
+        console.error('Error updating relations:', relationsError);
         throw relationsError;
       }
 
