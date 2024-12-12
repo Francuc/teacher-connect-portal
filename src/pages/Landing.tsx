@@ -1,7 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const Landing = () => {
   const { t } = useLanguage();
@@ -17,13 +15,6 @@ const Landing = () => {
           <p className="text-lg text-gray-600">
             {t("landingDescription")}
           </p>
-
-          <Link to="/profile">
-            <Button size="lg" className="gap-2">
-              <BookOpen className="h-4 w-4" />
-              {t("getStarted")}
-            </Button>
-          </Link>
         </div>
       </main>
     </div>

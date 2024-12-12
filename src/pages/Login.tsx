@@ -50,6 +50,7 @@ export default function Login() {
           }}
           providers={["google", "facebook"]}
           redirectTo={`${window.location.origin}/`}
+          onlyThirdPartyProviders
         />
       </div>
     </div>
