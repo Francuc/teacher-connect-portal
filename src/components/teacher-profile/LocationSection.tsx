@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, DollarSign } from "lucide-react";
@@ -7,6 +6,8 @@ import { TEACHING_LOCATIONS, type TeachingLocation } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { CityAutocomplete } from "./CityAutocomplete";
 
 type LocationSectionProps = {
   formData: {
@@ -69,13 +70,14 @@ export const LocationSection = ({ formData, setFormData }: LocationSectionProps)
       ? [...formData.studentRegions, regionName]
       : formData.studentRegions.filter((r) => r !== regionName);
     
-    // When a region is unselected, remove its cities
+    // Get all cities for the selected region
     const regionCities = cities
       .filter(city => city.region_id === region.id)
       .map(city => getLocalizedName(city));
     
+    // When a region is selected, automatically select all its cities
     const newCities = checked
-      ? [...formData.studentCities, ...regionCities]
+      ? [...new Set([...formData.studentCities, ...regionCities])]
       : formData.studentCities.filter(city => !regionCities.includes(city));
 
     setFormData({
@@ -120,16 +122,14 @@ export const LocationSection = ({ formData, setFormData }: LocationSectionProps)
                   {location === "Teacher's Place" && (
                     <div className="space-y-2">
                       <Label htmlFor="teacherCity">{t("city")}</Label>
-                      <Input
-                        id="teacherCity"
+                      <CityAutocomplete
                         value={formData.teacherCity}
-                        onChange={(e) =>
+                        onChange={(value) =>
                           setFormData({
                             ...formData,
-                            teacherCity: e.target.value,
+                            teacherCity: value,
                           })
                         }
-                        placeholder={t("enterCity")}
                       />
                     </div>
                   )}
