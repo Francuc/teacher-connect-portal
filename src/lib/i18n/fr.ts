@@ -1,7 +1,7 @@
 import type { Translation } from "./translations";
 
 export const fr: Translation = {
-  search: "Recherche",
+  search: "Villes",
   loading: "Chargement...",
   required: "Champ requis",
   signIn: "Se connecter",
@@ -46,7 +46,7 @@ export const fr: Translation = {
   selectCity: "Sélectionner une ville",
   selectRegion: "Sélectionner une région",
   noResults: "Aucun résultat",
-  searchPlaceholder: "Rechercher...",
+  searchPlaceholder: "Rechercher une ville...",
   addLocation: "Ajouter un emplacement",
   removeLocation: "Supprimer un emplacement",
   teacherProfile: "Profil de l'enseignant",

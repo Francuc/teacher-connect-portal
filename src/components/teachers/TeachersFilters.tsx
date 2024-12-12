@@ -112,7 +112,8 @@ export const TeachersFilters = ({
             {showSuggestions && suggestions.length > 0 && (
               <div 
                 ref={suggestionsRef}
-                className="absolute z-10 w-full mt-1 bg-white border border-purple.soft/30 rounded-md shadow-lg"
+                className="absolute z-50 w-full mt-1 bg-white border border-purple.soft/30 rounded-md shadow-lg"
+                style={{ position: 'absolute', top: '100%' }}
               >
                 {suggestions.map((suggestion, index) => (
                   <div
