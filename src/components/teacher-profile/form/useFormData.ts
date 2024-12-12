@@ -14,6 +14,11 @@ interface TeacherSubject {
   };
 }
 
+interface TeacherSubjectResponse {
+  data: TeacherSubject[] | null;
+  error: Error | null;
+}
+
 export const useFormData = (userId?: string) => {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -78,7 +83,7 @@ export const useFormData = (userId?: string) => {
             // Fetch related data in parallel
             const [
               { data: locations },
-              { data: teacherSubjects },
+              teacherSubjectsResponse,
               { data: schoolLevels },
               { data: studentRegions },
               { data: studentCities }
@@ -98,7 +103,7 @@ export const useFormData = (userId?: string) => {
                     name_lb
                   )
                 `)
-                .eq('teacher_id', userId),
+                .eq('teacher_id', userId) as Promise<TeacherSubjectResponse>,
               supabase
                 .from('teacher_school_levels')
                 .select('school_level')
@@ -113,12 +118,12 @@ export const useFormData = (userId?: string) => {
                 .eq('teacher_id', userId)
             ]);
 
-            console.log('Fetched teacher subjects:', teacherSubjects);
+            console.log('Fetched teacher subjects:', teacherSubjectsResponse.data);
 
             // Update form data with fetched related data
             setFormData(prev => ({
               ...prev,
-              subjects: (teacherSubjects as TeacherSubject[])?.map(s => s.subjects.name_en) || [],
+              subjects: teacherSubjectsResponse.data?.map(s => s.subjects.name_en) || [],
               schoolLevels: schoolLevels?.map(l => l.school_level) || [],
               teachingLocations: locations?.map(l => l.location_type) || [],
               studentRegions: studentRegions?.map(r => r.region_name) || [],
