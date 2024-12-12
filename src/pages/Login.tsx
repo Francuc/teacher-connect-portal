@@ -14,7 +14,7 @@ const Login = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      if (event === "SIGNED_UP") {
+      if (event === AuthChangeEvent.SIGNED_UP) {
         if (session) {
           toast({
             title: "Welcome!",
@@ -22,7 +22,7 @@ const Login = () => {
           });
           navigate("/profile");
         }
-      } else if (event === "SIGNED_IN") {
+      } else if (event === AuthChangeEvent.SIGNED_IN) {
         navigate("/profile");
       }
     });
