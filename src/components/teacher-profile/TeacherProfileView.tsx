@@ -153,7 +153,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       {isCurrentUser && (
-        <div className="flex justify-end">
+        <div className="flex justify-end mb-4">
           <Button
             onClick={handleEditClick}
             className="flex items-center gap-2"
