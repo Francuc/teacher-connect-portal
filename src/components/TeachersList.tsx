@@ -122,12 +122,8 @@ export const TeachersList = () => {
     return matchesSubject && matchesLevel && matchesSearch;
   });
 
-  if (isLoadingTeachers) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container mx-auto py-8 space-y-8">
       <TeachersFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -140,18 +136,26 @@ export const TeachersList = () => {
         getLocalizedName={getLocalizedName}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTeachers.map((teacher) => (
-          <TeacherCard
-            key={teacher.id}
-            teacher={teacher}
-            getLocalizedName={getLocalizedName}
-            getTeacherLocation={getTeacherLocation}
-            getLowestPrice={getLowestPrice}
-            formatPrice={formatPrice}
-          />
-        ))}
-      </div>
+      {isLoadingTeachers ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-64 bg-gray-100 rounded-lg animate-pulse" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredTeachers.map((teacher) => (
+            <TeacherCard
+              key={teacher.id}
+              teacher={teacher}
+              getLocalizedName={getLocalizedName}
+              getTeacherLocation={getTeacherLocation}
+              getLowestPrice={getLowestPrice}
+              formatPrice={formatPrice}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
