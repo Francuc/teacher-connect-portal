@@ -239,22 +239,29 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          subject: string
+          subject_id: string
           teacher_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          subject: string
+          subject_id: string
           teacher_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          subject?: string
+          subject_id?: string
           teacher_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "teacher_subjects_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "teacher_subjects_teacher_id_fkey"
             columns: ["teacher_id"]

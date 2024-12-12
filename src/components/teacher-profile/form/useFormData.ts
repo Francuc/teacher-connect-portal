@@ -68,7 +68,7 @@ export const useFormData = (userId?: string) => {
             // Fetch related data in parallel
             const [
               { data: locations },
-              { data: subjects },
+              { data: teacherSubjects },
               { data: schoolLevels },
               { data: studentRegions },
               { data: studentCities }
@@ -103,12 +103,12 @@ export const useFormData = (userId?: string) => {
                 .eq('teacher_id', userId)
             ]);
 
-            console.log('Fetched subjects:', subjects);
+            console.log('Fetched teacher subjects:', teacherSubjects);
 
             // Update form data with fetched related data
             setFormData(prev => ({
               ...prev,
-              subjects: subjects?.map(s => s.subjects.name_en) || [],
+              subjects: teacherSubjects?.map(s => s.subjects.name_en) || [],
               schoolLevels: schoolLevels?.map(l => l.school_level) || [],
               teachingLocations: locations?.map(l => l.location_type) || [],
               studentRegions: studentRegions?.map(r => r.region_name) || [],

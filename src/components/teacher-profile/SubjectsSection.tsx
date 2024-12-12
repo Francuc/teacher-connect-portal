@@ -29,7 +29,7 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
         throw error;
       }
       console.log('Fetched subjects:', data);
-      return data;
+      return data || [];
     }
   });
 
