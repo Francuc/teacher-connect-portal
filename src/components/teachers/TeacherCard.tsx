@@ -20,13 +20,22 @@ export const TeacherCard = ({
   getLowestPrice,
   formatPrice,
 }: TeacherCardProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
   const studentPlaceLocation = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
+
+  const getTranslatedCityName = (cityName: string) => {
+    // Try to find the city in the teacher's city data
+    if (teacher.city && teacher.city.name_en === cityName) {
+      return getLocalizedName(teacher.city);
+    }
+    // If we can't find a translation, return the original name
+    return cityName;
+  };
 
   return (
     <Card className="flex flex-col h-full">
@@ -151,7 +160,7 @@ export const TeacherCard = ({
                     key={cityData.id}
                     className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"
                   >
-                    {cityData.city_name}
+                    {getTranslatedCityName(cityData.city_name)}
                   </span>
                 ))}
                 {teacher.teacher_student_cities?.length > 3 && (
