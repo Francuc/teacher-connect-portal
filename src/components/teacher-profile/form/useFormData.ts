@@ -3,6 +3,7 @@ import { FormData } from "./types";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PostgrestResponse } from "@supabase/supabase-js";
 
 interface TeacherSubject {
   subject_id: string;
@@ -12,11 +13,6 @@ interface TeacherSubject {
     name_fr: string;
     name_lb: string;
   };
-}
-
-interface TeacherSubjectResponse {
-  data: TeacherSubject[] | null;
-  error: Error | null;
 }
 
 export const useFormData = (userId?: string) => {
@@ -103,7 +99,7 @@ export const useFormData = (userId?: string) => {
                     name_lb
                   )
                 `)
-                .eq('teacher_id', userId) as Promise<TeacherSubjectResponse>,
+                .eq('teacher_id', userId) as Promise<PostgrestResponse<TeacherSubject>>,
               supabase
                 .from('teacher_school_levels')
                 .select('school_level')
