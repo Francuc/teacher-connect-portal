@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { PersonalSection } from "./profile-sections/PersonalSection";
-import { BiographySection } from "./profile-sections/BiographySection";
+import { BiographySection } from "./BiographySection";
 import { SubjectsSection } from "./SubjectsSection";
 import { SchoolLevelsSection } from "./SchoolLevelsSection";
 import { LocationsSection } from "./profile-sections/LocationsSection";
@@ -30,7 +30,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       if (profileError) throw profileError;
 
       const [
-        { data: subjects },
+        { data: subjectsData },
         { data: schoolLevels },
         { data: locations },
         { data: studentRegions },
@@ -80,12 +80,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .single() : { data: null }
       ]);
 
+      // Transform subjects data to match expected format
+      const subjects = subjectsData?.map(item => ({
+        subject_id: item.subject_id,
+        subject: item.subject
+      })) || [];
+
       return {
         profile,
-        subjects: subjects?.map(s => ({
-          subject_id: s.subject_id,
-          subject: s.subject[0]
-        })) || [],
+        subjects,
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
