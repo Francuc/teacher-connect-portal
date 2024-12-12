@@ -48,6 +48,7 @@ export const useFormSubmit = (
         try {
           profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
         } catch (error) {
+          console.error('Error uploading profile picture:', error);
           toast({
             title: t("error"),
             description: t("errorUploadingProfilePicture"),
@@ -65,7 +66,8 @@ export const useFormSubmit = (
         .eq('user_id', userId)
         .single();
 
-      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows returned
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking existing profile:', checkError);
         throw new Error('Error checking existing profile');
       }
 
@@ -81,80 +83,129 @@ export const useFormSubmit = (
         show_phone: formData.showPhone,
         show_facebook: formData.showFacebook,
         bio: formData.bio,
-        profile_picture_url: profilePictureUrl,
         city_id: formData.cityId,
+        updated_at: new Date().toISOString(),
       };
 
+      // Only update profile_picture_url if a new picture was uploaded
+      if (profilePictureUrl) {
+        profileData.profile_picture_url = profilePictureUrl;
+      }
+
+      let updateError;
       if (existingProfile) {
         // Update existing profile
-        const { error: updateError } = await supabase
+        const { error } = await supabase
           .from('teachers')
           .update(profileData)
           .eq('user_id', userId);
-        if (updateError) throw updateError;
-
-        // Delete existing relations
-        await Promise.all([
-          supabase.from('teacher_subjects').delete().eq('teacher_id', userId),
-          supabase.from('teacher_school_levels').delete().eq('teacher_id', userId),
-          supabase.from('teacher_locations').delete().eq('teacher_id', userId),
-          supabase.from('teacher_student_regions').delete().eq('teacher_id', userId),
-          supabase.from('teacher_student_cities').delete().eq('teacher_id', userId)
-        ]);
+        updateError = error;
       } else {
         // Insert new profile
-        const { error: profileError } = await supabase
+        const { error } = await supabase
           .from('teachers')
           .insert([profileData]);
-        if (profileError) throw profileError;
+        updateError = error;
+      }
+
+      if (updateError) {
+        console.error('Error updating/inserting profile:', updateError);
+        throw updateError;
+      }
+
+      // Delete existing relations
+      const deletePromises = [
+        supabase.from('teacher_subjects').delete().eq('teacher_id', userId),
+        supabase.from('teacher_school_levels').delete().eq('teacher_id', userId),
+        supabase.from('teacher_locations').delete().eq('teacher_id', userId),
+        supabase.from('teacher_student_regions').delete().eq('teacher_id', userId),
+        supabase.from('teacher_student_cities').delete().eq('teacher_id', userId)
+      ];
+
+      const deleteResults = await Promise.all(deletePromises);
+      const deleteErrors = deleteResults.filter(result => result.error);
+      if (deleteErrors.length > 0) {
+        console.error('Error deleting existing relations:', deleteErrors);
+        throw new Error('Error deleting existing relations');
       }
 
       // Insert new relations
-      await Promise.all([
-        formData.subjects.length > 0 && supabase
-          .from('teacher_subjects')
-          .insert(
-            formData.subjects.map(subject => ({
-              teacher_id: userId,
-              subject: subject
-            }))
-          ),
-        formData.schoolLevels.length > 0 && supabase
-          .from('teacher_school_levels')
-          .insert(
-            formData.schoolLevels.map(level => ({
-              teacher_id: userId,
-              school_level: level
-            }))
-          ),
-        formData.teachingLocations.length > 0 && supabase
-          .from('teacher_locations')
-          .insert(
-            formData.teachingLocations.map(location => ({
-              teacher_id: userId,
-              location_type: location,
-              price_per_hour: parseFloat(formData.pricePerHour[
-                location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-              ] || '0')
-            }))
-          ),
-        formData.studentRegions.length > 0 && supabase
-          .from('teacher_student_regions')
-          .insert(
-            formData.studentRegions.map(region => ({
-              teacher_id: userId,
-              region_name: region
-            }))
-          ),
-        formData.studentCities.length > 0 && supabase
-          .from('teacher_student_cities')
-          .insert(
-            formData.studentCities.map(city => ({
-              teacher_id: userId,
-              city_name: city
-            }))
-          )
-      ]);
+      const insertPromises = [];
+
+      if (formData.subjects.length > 0) {
+        insertPromises.push(
+          supabase
+            .from('teacher_subjects')
+            .insert(
+              formData.subjects.map(subject => ({
+                teacher_id: userId,
+                subject: subject
+              }))
+            )
+        );
+      }
+
+      if (formData.schoolLevels.length > 0) {
+        insertPromises.push(
+          supabase
+            .from('teacher_school_levels')
+            .insert(
+              formData.schoolLevels.map(level => ({
+                teacher_id: userId,
+                school_level: level
+              }))
+            )
+        );
+      }
+
+      if (formData.teachingLocations.length > 0) {
+        insertPromises.push(
+          supabase
+            .from('teacher_locations')
+            .insert(
+              formData.teachingLocations.map(location => ({
+                teacher_id: userId,
+                location_type: location,
+                price_per_hour: parseFloat(formData.pricePerHour[
+                  location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
+                ] || '0')
+              }))
+            )
+        );
+      }
+
+      if (formData.studentRegions.length > 0) {
+        insertPromises.push(
+          supabase
+            .from('teacher_student_regions')
+            .insert(
+              formData.studentRegions.map(region => ({
+                teacher_id: userId,
+                region_name: region
+              }))
+            )
+        );
+      }
+
+      if (formData.studentCities.length > 0) {
+        insertPromises.push(
+          supabase
+            .from('teacher_student_cities')
+            .insert(
+              formData.studentCities.map(city => ({
+                teacher_id: userId,
+                city_name: city
+              }))
+            )
+        );
+      }
+
+      const insertResults = await Promise.all(insertPromises);
+      const insertErrors = insertResults.filter(result => result.error);
+      if (insertErrors.length > 0) {
+        console.error('Error inserting new relations:', insertErrors);
+        throw new Error('Error inserting new relations');
+      }
 
       // Show success message
       toast({
