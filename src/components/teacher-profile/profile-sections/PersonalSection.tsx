@@ -30,7 +30,11 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
           <div className="flex justify-center">
             <Avatar className="w-32 h-32">
               {profile.profile_picture_url ? (
-                <AvatarImage src={profile.profile_picture_url} />
+                <AvatarImage 
+                  src={profile.profile_picture_url} 
+                  alt={`${profile.first_name} ${profile.last_name}`}
+                  className="object-cover"
+                />
               ) : (
                 <AvatarFallback>
                   <User className="w-16 h-16" />
@@ -46,7 +50,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
             <div>
               <h3 className="font-semibold">{t("contactInformation")}</h3>
               <div className="space-y-2 mt-2">
-                {profile.email && (
+                {profile.show_email && profile.email && (
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
                     <a 
@@ -57,7 +61,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
                     </a>
                   </div>
                 )}
-                {profile.phone && (
+                {profile.show_phone && profile.phone && (
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4" />
                     <a 
@@ -68,7 +72,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
                     </a>
                   </div>
                 )}
-                {profile.facebook_profile && (
+                {profile.show_facebook && profile.facebook_profile && (
                   <div className="flex items-center gap-2">
                     <Facebook className="w-4 h-4" />
                     <a 

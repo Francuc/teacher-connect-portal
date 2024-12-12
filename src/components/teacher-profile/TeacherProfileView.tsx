@@ -21,21 +21,40 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
+      console.log('Fetching teacher data for userId:', userId);
       const { data: profile, error: profileError } = await supabase
         .from('teachers')
-        .select('*')
+        .select(`
+          *,
+          city:cities (
+            id,
+            name_en,
+            name_fr,
+            name_lb,
+            region:regions (
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          )
+        `)
         .eq('user_id', userId)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        throw profileError;
+      }
+
+      console.log('Profile data:', profile);
 
       const [
         { data: subjectsData },
         { data: schoolLevels },
         { data: locations },
         { data: studentRegions },
-        { data: studentCities },
-        { data: city }
+        { data: studentCities }
       ] = await Promise.all([
         supabase
           .from('teacher_subjects')
@@ -64,20 +83,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         supabase
           .from('teacher_student_cities')
           .select('city_name')
-          .eq('teacher_id', userId),
-        profile?.city_id ? supabase
-          .from('cities')
-          .select(`
-            *,
-            region:regions (
-              id,
-              name_en,
-              name_fr,
-              name_lb
-            )
-          `)
-          .eq('id', profile.city_id)
-          .single() : { data: null }
+          .eq('teacher_id', userId)
       ]);
 
       // Transform subjects data to match expected format
@@ -93,7 +99,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
         studentCities: studentCities?.map(c => c.city_name) || [],
-        city
       };
     },
   });
@@ -125,7 +130,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />
       <LocationsSection 
         locations={teacherData.locations}
-        city={teacherData.city}
+        city={teacherData.profile.city}
         studentRegions={teacherData.studentRegions}
         studentCities={teacherData.studentCities}
       />
