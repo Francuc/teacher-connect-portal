@@ -29,10 +29,10 @@ export const TeacherCard = ({
   );
 
   return (
-    <Card className="h-full flex flex-col">
-      <div className="p-6 flex flex-col flex-grow">
-        {/* Header Section */}
-        <div className="flex items-start gap-4 mb-6">
+    <Card className="flex flex-col h-full">
+      <div className="p-6 flex flex-col h-full">
+        {/* Header with Avatar and Basic Info */}
+        <div className="flex items-start gap-4 mb-4">
           <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
             {teacher.profile_picture_url ? (
               <AvatarImage 
@@ -46,8 +46,8 @@ export const TeacherCard = ({
               </AvatarFallback>
             )}
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-semibold text-purple-dark truncate hover:text-primary transition-colors">
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-purple-dark truncate">
               {teacher.first_name} {teacher.last_name}
             </h3>
             <p className="text-sm text-muted-foreground flex items-center gap-2 mt-2">
@@ -56,7 +56,7 @@ export const TeacherCard = ({
             </p>
             
             {/* Contact Information */}
-            <div className="mt-3 space-y-1">
+            <div className="mt-2 space-y-1">
               {teacher.show_email && teacher.email && (
                 <a 
                   href={`mailto:${teacher.email}`}
@@ -90,21 +90,21 @@ export const TeacherCard = ({
           </div>
         </div>
 
-        {/* Content Section */}
+        {/* Main Content */}
         <div className="flex-grow space-y-4">
-          {/* Subjects Section */}
+          {/* Subjects */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BookOpen className="w-4 h-4" />
               <span>{t("subjects")}</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {teacher.teacher_subjects?.slice(0, 3).map((subject: any) => (
+              {teacher.teacher_subjects?.slice(0, 3).map((subjectData: any) => (
                 <span
-                  key={subject.subject_id}
+                  key={subjectData.subject_id}
                   className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium"
                 >
-                  {getLocalizedName(subject.subject)}
+                  {getLocalizedName(subjectData.subject)}
                 </span>
               ))}
               {teacher.teacher_subjects?.length > 3 && (
@@ -115,7 +115,7 @@ export const TeacherCard = ({
             </div>
           </div>
 
-          {/* School Levels Section */}
+          {/* School Levels */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <GraduationCap className="w-4 h-4" />
@@ -138,7 +138,7 @@ export const TeacherCard = ({
             </div>
           </div>
 
-          {/* Student Cities Section */}
+          {/* Student Cities */}
           {studentPlaceLocation && teacher.teacher_student_cities?.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -146,7 +146,7 @@ export const TeacherCard = ({
                 <span>{t("availableIn")}</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {teacher.teacher_student_cities.slice(0, 3).map((cityData: any) => (
+                {teacher.teacher_student_cities?.slice(0, 3).map((cityData: any) => (
                   <span
                     key={cityData.id}
                     className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"
@@ -154,7 +154,7 @@ export const TeacherCard = ({
                     {cityData.city_name}
                   </span>
                 ))}
-                {teacher.teacher_student_cities.length > 3 && (
+                {teacher.teacher_student_cities?.length > 3 && (
                   <span className="text-xs px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium">
                     +{teacher.teacher_student_cities.length - 3}
                   </span>
@@ -164,7 +164,7 @@ export const TeacherCard = ({
           )}
         </div>
 
-        {/* Footer Section */}
+        {/* Footer */}
         <div className="flex items-center justify-between pt-4 mt-4 border-t">
           {lowestPrice && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
