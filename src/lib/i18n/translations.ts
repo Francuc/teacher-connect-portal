@@ -49,6 +49,8 @@ export const translations = {
     cities: "Cities",
     selectRegions: "Select Regions",
     selectCities: "Select Cities",
+    error: "Error",
+    errorSavingProfile: "Error saving profile",
   },
   fr: {
     search: "Recherche",
@@ -98,6 +100,8 @@ export const translations = {
     cities: "Villes",
     selectRegions: "Sélectionner les régions",
     selectCities: "Sélectionner les villes",
+    error: "Erreur",
+    errorSavingProfile: "Erreur lors de l'enregistrement du profil",
   },
   lb: {
     search: "Sichen",
@@ -147,6 +151,8 @@ export const translations = {
     cities: "Stied",
     selectRegions: "Regiounen auswielen",
     selectCities: "Stied auswielen",
+    error: "Feeler",
+    errorSavingProfile: "Feeler beim Späichere vum Profil",
   }
 } as const;
 
