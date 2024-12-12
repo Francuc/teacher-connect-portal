@@ -104,24 +104,26 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
     <div className="space-y-2">
       <Label>{t("cities")}</Label>
       <div className="grid grid-cols-2 gap-2">
-        {cities.map((city) => (
-          <div key={city.id} className="flex items-center space-x-2">
-            <Checkbox
-              id={`city-${city.id}`}
-              checked={formData.studentCities.includes(getLocalizedName(city))}
-              onCheckedChange={(checked) => {
-                const cityName = getLocalizedName(city);
-                setFormData({
-                  ...formData,
-                  studentCities: checked
-                    ? [...formData.studentCities, cityName]
-                    : formData.studentCities.filter(c => c !== cityName),
-                });
-              }}
-            />
-            <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
-          </div>
-        ))}
+        {cities.map((city) => {
+          const cityName = getLocalizedName(city);
+          return (
+            <div key={city.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={`city-${city.id}`}
+                checked={formData.studentCities.includes(cityName)}
+                onCheckedChange={(checked) => {
+                  setFormData({
+                    ...formData,
+                    studentCities: checked
+                      ? [...formData.studentCities, cityName]
+                      : formData.studentCities.filter(c => c !== cityName),
+                  });
+                }}
+              />
+              <Label htmlFor={`city-${city.id}`}>{cityName}</Label>
+            </div>
+          );
+        })}
       </div>
     </div>
   )
