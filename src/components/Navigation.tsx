@@ -4,13 +4,20 @@ import { SUBJECTS } from "@/lib/constants";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { translations } from "@/lib/i18n/translations";
 
 export const Navigation = () => {
   const { t } = useLanguage();
 
   // Type-safe translation keys for subjects
   const getSubjectTranslationKey = (subject: string) => {
-    return subject.toLowerCase() as keyof typeof translations.en;
+    const key = subject.toLowerCase();
+    // Ensure the key exists in our translations
+    if (key === "math" || key === "physics" || key === "chemistry" || 
+        key === "biology" || key === "languages" || key === "mathematics") {
+      return key as keyof typeof translations.en;
+    }
+    return "mathematics" as keyof typeof translations.en; // fallback
   };
 
   return (
