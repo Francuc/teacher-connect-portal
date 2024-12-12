@@ -10,7 +10,6 @@ export default function Login() {
   const { t } = useLanguage();
 
   useEffect(() => {
-    // Check if user is already logged in
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (session) {
@@ -25,9 +24,9 @@ export default function Login() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-purple-soft flex items-center justify-center p-4">
+    <div className="min-h-screen bg-purple.soft/30 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-center mb-6 text-purple-vivid">
+        <h1 className="text-2xl font-bold text-center mb-6 text-purple.dark">
           {t("welcome")}
         </h1>
         <Auth
@@ -45,7 +44,7 @@ export default function Login() {
             className: {
               container: 'w-full',
               button: 'w-full px-4 py-2 rounded-md',
-              input: 'rounded-md px-4 py-2 border focus:ring-2 focus:ring-purple-vivid focus:border-transparent',
+              input: 'rounded-md px-4 py-2 border focus:ring-2 focus:ring-purple.dark focus:border-transparent',
               label: 'block text-sm font-medium text-gray-700 mb-1',
               message: 'text-sm text-red-600 mt-1',
             }
