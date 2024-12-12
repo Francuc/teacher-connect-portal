@@ -68,13 +68,29 @@ export type Translation = {
   errorLoadingProfile: string;
   profilePictureSizeError: string;
   profilePictureTypeError: string;
+  // Adding missing translation keys
+  findTeacher: string;
+  landingDescription: string;
+  selectProfile: string;
+  createAd: string;
+  errorLoadingCities: string;
+  noCitiesAvailable: string;
+  searchCity: string;
+  noCityFound: string;
+  cities: string;
+  regions: string;
+  personalInformation: string;
+  name: string;
+  startingFrom: string;
+  viewProfile: string;
+  allSubjects: string;
+  allLevels: string;
 };
 
-// Define the translation keys based on the English translations
 export type TranslationKey = keyof Translation;
 
-export const translations = {
+export const translations: Record<Language, Translation> = {
   en,
   fr,
   lb,
-} as const;
+};
