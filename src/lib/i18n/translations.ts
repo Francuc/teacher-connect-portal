@@ -63,6 +63,7 @@ export const translations = {
     password: "Password",
     signIn: "Sign In",
     signUp: "Sign Up",
+    userAlreadyExists: "User already exists",
   },
   fr: {
     welcome: "Bienvenue",
@@ -126,6 +127,7 @@ export const translations = {
     password: "Mot de passe",
     signIn: "Se connecter",
     signUp: "S'inscrire",
+    userAlreadyExists: "L'utilisateur existe déjà",
   },
   lb: {
     welcome: "Wëllkomm",
@@ -189,6 +191,7 @@ export const translations = {
     password: "Passwuert",
     signIn: "Aloggen",
     signUp: "Registréieren",
+    userAlreadyExists: "De Benotzer existéiert schon",
   }
 } as const;
 

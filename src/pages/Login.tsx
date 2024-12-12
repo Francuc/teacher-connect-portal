@@ -4,7 +4,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,8 +20,8 @@ export default function Login() {
         if (event === 'USER_UPDATED' && session) {
           navigate("/");
         }
-        // Handle signup error
-        if (event === 'USER_SIGNUP_ERROR') {
+        // Handle errors through the error property instead of event type
+        if (session?.error?.message === "User already registered") {
           toast({
             variant: "destructive",
             title: t("error"),
