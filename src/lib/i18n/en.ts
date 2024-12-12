@@ -1,4 +1,5 @@
 export const en = {
+  // Auth
   error: "Error",
   success: "Success",
   save: "Save",
@@ -9,6 +10,8 @@ export const en = {
   required: "Required",
   optional: "Optional",
   submit: "Submit",
+
+  // Profile
   firstName: "First Name",
   lastName: "Last Name",
   email: "Email",
@@ -38,5 +41,47 @@ export const en = {
   errorSavingProfile: "Error saving profile",
   errorLoadingProfile: "Error loading profile",
   pleaseLoginFirst: "Please login first",
-  errorUploadingProfilePicture: "Error uploading profile picture"
+  errorUploadingProfilePicture: "Error uploading profile picture",
+
+  // Navigation
+  createAd: "Create Ad",
+  selectProfile: "Select Profile",
+  editProfile: "Edit Profile",
+  viewProfile: "View Profile",
+
+  // Landing
+  findTeacher: "Find a Teacher",
+  landingDescription: "Find the perfect teacher for your needs",
+  mathematics: "Mathematics",
+  physics: "Physics",
+  languages: "Languages",
+  getStarted: "Get Started",
+  createProfile: "Create Profile",
+  allRights: "All Rights Reserved",
+
+  // Location
+  regions: "Regions",
+  cities: "Cities",
+  selectedLocation: "Selected Location",
+  searchCity: "Search City",
+  selectCity: "Select City",
+  noCityFound: "No city found",
+  noCitiesAvailable: "No cities available",
+  errorLoadingCities: "Error loading cities",
+
+  // Personal Info
+  personalInfo: "Personal Information",
+  personalInformation: "Personal Information",
+  contactInformation: "Contact Information",
+  name: "Name",
+  facebookProfile: "Facebook Profile",
+  showInProfile: "Show in Profile",
+  biography: "Biography",
+
+  // Search and Filters
+  search: "Search",
+  searchPlaceholder: "Search teachers...",
+  allSubjects: "All Subjects",
+  allLevels: "All Levels",
+  startingFrom: "Starting from"
 };
