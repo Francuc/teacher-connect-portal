@@ -30,5 +30,26 @@ export default {
   profileCreated: "Profil erstallt",
   profileUpdatedDesc: "Äre Profil gouf erfollegräich aktualiséiert",
   profileCreatedDesc: "Äre Profil gouf erfollegräich erstallt",
-  error: "Fehler"
-};
+  error: "Fehler",
+  landingDescription: "Fannt de perfekte Professer fir Är Bedierfnesser",
+  mathematics: "Mathematik",
+  physics: "Physik",
+  languages: "Sproochen",
+  getStarted: "Ufänken",
+  createProfile: "Profil erstellen",
+  allRights: "All Rechter virbehalen",
+  findTeacher: "E Professer fannen",
+  createAd: "Annonce erstellen",
+  errorLoadingProfile: "Fehler beim Luede vum Profil",
+  editProfile: "Profil änneren",
+  selectedLocation: "Ausgewielten Uert",
+  biography: "Biographie",
+  personalInformation: "Perséinlech Informatiounen",
+  name: "Numm",
+  startingFrom: "Vu(n)",
+  viewProfile: "Profil ukucken",
+  search: "Sichen",
+  searchPlaceholder: "No Professere sichen...",
+  allSubjects: "All Fächer",
+  allLevels: "All Niveauen"
+} as const;

@@ -1,7 +1,7 @@
 import { FormSections } from "./FormSections";
 import { useFormData } from "./useFormData";
 import { useFormSubmit } from "./useFormSubmit";
-import { FormData } from "./types/teacherTypes";
+import { FormData } from "./types";
 
 type FormContainerProps = {
   userId?: string;

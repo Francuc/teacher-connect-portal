@@ -30,5 +30,26 @@ export default {
   profileCreated: "Profil créé",
   profileUpdatedDesc: "Votre profil a été mis à jour avec succès",
   profileCreatedDesc: "Votre profil a été créé avec succès",
-  error: "Erreur"
-};
+  error: "Erreur",
+  landingDescription: "Trouvez le professeur parfait pour vos besoins",
+  mathematics: "Mathématiques",
+  physics: "Physique",
+  languages: "Langues",
+  getStarted: "Commencer",
+  createProfile: "Créer un profil",
+  allRights: "Tous droits réservés",
+  findTeacher: "Trouver un professeur",
+  createAd: "Créer une annonce",
+  errorLoadingProfile: "Erreur lors du chargement du profil",
+  editProfile: "Modifier le profil",
+  selectedLocation: "Emplacement sélectionné",
+  biography: "Biographie",
+  personalInformation: "Informations personnelles",
+  name: "Nom",
+  startingFrom: "À partir de",
+  viewProfile: "Voir le profil",
+  search: "Rechercher",
+  searchPlaceholder: "Rechercher des professeurs...",
+  allSubjects: "Toutes les matières",
+  allLevels: "Tous les niveaux"
+} as const;

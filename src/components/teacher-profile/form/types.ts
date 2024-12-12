@@ -1,4 +1,4 @@
-import { type Subject, type SchoolLevel, type TeachingLocation } from "@/lib/constants";
+import { TeachingLocation } from "@/lib/constants";
 
 export interface FormData {
   firstName: string;
@@ -11,8 +11,14 @@ export interface FormData {
   showFacebook: boolean;
   bio: string;
   profilePicture: File | null;
-  subjects: Subject[];
-  schoolLevels: SchoolLevel[];
+  subjects: {
+    subject: {
+      name_en: string;
+      name_fr: string;
+      name_lb: string;
+    };
+  }[];
+  schoolLevels: string[];
   teachingLocations: TeachingLocation[];
   cityId: string;
   studentRegions: string[];

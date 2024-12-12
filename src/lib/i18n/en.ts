@@ -30,5 +30,26 @@ export default {
   profileCreated: "Profile Created",
   profileUpdatedDesc: "Your profile has been updated successfully",
   profileCreatedDesc: "Your profile has been created successfully",
-  error: "Error"
-};
+  error: "Error",
+  landingDescription: "Find the perfect teacher for your needs",
+  mathematics: "Mathematics",
+  physics: "Physics",
+  languages: "Languages",
+  getStarted: "Get Started",
+  createProfile: "Create Profile",
+  allRights: "All Rights Reserved",
+  findTeacher: "Find a Teacher",
+  createAd: "Create Ad",
+  errorLoadingProfile: "Error loading profile",
+  editProfile: "Edit Profile",
+  selectedLocation: "Selected Location",
+  biography: "Biography",
+  personalInformation: "Personal Information",
+  name: "Name",
+  startingFrom: "Starting from",
+  viewProfile: "View Profile",
+  search: "Search",
+  searchPlaceholder: "Search for teachers...",
+  allSubjects: "All Subjects",
+  allLevels: "All Levels"
+} as const;
