@@ -1,6 +1,4 @@
-import { TranslationKey } from './translations';
-
-export const en: Record<TranslationKey, string> = {
+export const en = {
   welcome: "Welcome",
   goodbye: "Goodbye",
   personalInfo: "Personal Information",
@@ -23,4 +21,4 @@ export const en: Record<TranslationKey, string> = {
   saveProfile: "Save Profile",
   emailAlreadyExists: "A profile with this email already exists",
   profileAlreadyExists: "You already have a teacher profile",
-};
+} as const;

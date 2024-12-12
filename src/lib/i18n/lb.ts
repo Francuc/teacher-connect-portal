@@ -1,16 +1,3 @@
-import { en } from './en';
-import { fr } from './fr';
-import { lb } from './lb';
-
-export type Language = 'en' | 'fr' | 'lb';
-export type TranslationKey = keyof typeof en;
-
-export const translations = {
-  en,
-  fr,
-  lb,
-} as const;
-
 export const lb = {
   firstName: "Virst Numm",
   lastName: "Familljenumm",
@@ -33,4 +20,4 @@ export const lb = {
   saveProfile: "Profil späicheren",
   emailAlreadyExists: "E Profil mat dëser E-Mail existéiert schon",
   profileAlreadyExists: "Dir hutt schon e Léierprofil",
-};
+} as const;
