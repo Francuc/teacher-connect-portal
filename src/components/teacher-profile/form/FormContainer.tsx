@@ -24,11 +24,13 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
     userId: actualUserId,
     currentUserId,
     formData,
-    isLoading
+    isLoading,
+    isNewProfile: !actualUserId
   });
 
+  // For new profile creation, we only need currentUserId
   if (!actualUserId && !currentUserId) {
-    console.log('No userId or currentUserId available');
+    console.log('No currentUserId available for new profile creation');
     return null;
   }
 
