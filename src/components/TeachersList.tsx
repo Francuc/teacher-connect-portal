@@ -34,13 +34,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects(
-            subject:subjects(
-              id,
-              name_en,
-              name_fr,
-              name_lb
-            )
+          teacher_subjects!inner(
+            subject:subjects(*)
           ),
           teacher_school_levels(
             school_level
@@ -51,7 +46,10 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
           )
         `);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching teachers:', error);
+        throw error;
+      }
 
       // Transform profile picture URLs
       const teachersWithUrls = await Promise.all((data || []).map(async (teacher) => {
@@ -65,7 +63,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         return teacher;
       }));
       
-      console.log('Profiles with URLs:', teachersWithUrls);
+      console.log('Teachers with subjects:', teachersWithUrls);
       return teachersWithUrls || [];
     }
   });
