@@ -35,26 +35,19 @@ export const TeachersFilters = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  const { data: cities = [], isLoading: isLoadingCities } = useQuery({
+  const { data: cities = [] } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      console.log('Fetching cities...');
       const { data, error } = await supabase
         .from('cities')
         .select('*')
         .order('name_en');
-      
-      if (error) {
-        console.error('Error fetching cities:', error);
-        throw error;
-      }
-      console.log('Cities fetched:', data);
-      return data || [];
+      if (error) throw error;
+      return data;
     },
   });
 
   const getCityName = (city: any) => {
-    if (!city) return '';
     return language === 'fr' ? city.name_fr : 
            language === 'lb' ? city.name_lb : 
            city.name_en;
@@ -73,7 +66,7 @@ export const TeachersFilters = ({
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    if (value.length > 0 && cities && cities.length > 0) {
+    if (value.length > 0) {
       const filteredSuggestions = cities
         .map(getCityName)
         .filter(city => 
@@ -137,7 +130,7 @@ export const TeachersFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allSubjects")}</SelectItem>
-              {subjects?.map((subject) => (
+              {subjects.map((subject) => (
                 <SelectItem key={subject.id} value={getLocalizedName(subject)}>
                   {getLocalizedName(subject)}
                 </SelectItem>
@@ -157,7 +150,7 @@ export const TeachersFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allLevels")}</SelectItem>
-              {schoolLevels?.map((level) => (
+              {schoolLevels.map((level) => (
                 <SelectItem key={level.id} value={getLocalizedName(level)}>
                   {getLocalizedName(level)}
                 </SelectItem>
