@@ -83,7 +83,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       // Transform subjects data to match expected format
       const subjects = subjectsData?.map(item => ({
         subject_id: item.subject_id,
-        subject: item.subject[0] // Access the first (and only) subject from the array
+        subject: item.subject
       })) || [];
 
       return {
