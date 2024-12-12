@@ -70,6 +70,10 @@ export const translations = {
     profileUpdatedDesc: "Your teacher profile has been updated successfully",
     pleaseCompleteAllRequiredFields: "Please complete all required fields",
     pleaseAddAtLeastOneLocationWithPrice: "Please add at least one teaching location with a price",
+    personalInformation: "Personal Information",
+    name: "Name",
+    teacherLocation: "Teacher Location",
+    biography: "Biography",
   },
   fr: {
     welcome: "Bienvenue",
@@ -140,6 +144,10 @@ export const translations = {
     profileUpdatedDesc: "Votre profil d'enseignant a été mis à jour avec succès",
     pleaseCompleteAllRequiredFields: "Veuillez remplir tous les champs obligatoires",
     pleaseAddAtLeastOneLocationWithPrice: "Veuillez ajouter au moins un lieu d'enseignement avec un prix",
+    personalInformation: "Informations personnelles",
+    name: "Nom",
+    teacherLocation: "Localisation du professeur",
+    biography: "Biographie",
   },
   lb: {
     welcome: "Wëllkomm",
@@ -210,6 +218,10 @@ export const translations = {
     profileUpdatedDesc: "Äre Profil gouf erfollegräich aktualiséiert",
     pleaseCompleteAllRequiredFields: "Fëllt w.e.g. all obligatoresch Felder aus",
     pleaseAddAtLeastOneLocationWithPrice: "Füügt w.e.g. mindestens een Unterrechtsuert mat engem Präis dobäi",
+    personalInformation: "Perséinlech Informatiounen",
+    name: "Numm",
+    teacherLocation: "Lokalisatioun vum Professer",
+    biography: "Biografie",
   }
 } as const;
 
