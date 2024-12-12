@@ -34,8 +34,13 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects!inner(
-            subject:subjects(*)
+          teacher_subjects(
+            subject:subjects(
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
           ),
           teacher_school_levels(
             school_level
@@ -63,7 +68,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         return teacher;
       }));
       
-      console.log('Teachers with subjects:', teachersWithUrls);
+      console.log('Teachers data:', teachersWithUrls);
       return teachersWithUrls || [];
     }
   });
