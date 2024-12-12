@@ -1,12 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-const getRandomProfilePicture = async (userId: string): Promise<string> => {
-  // Create a service role client for admin operations
-  const serviceRoleClient = createClient(
-    'https://qhqtflpajutstecqajbl.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
-  );
+// Create a single service role client instance
+const serviceRoleClient = createClient(
+  'https://qhqtflpajutstecqajbl.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
+);
 
+const getRandomProfilePicture = async (userId: string): Promise<string> => {
   // Fetch a random image from picsum
   const response = await fetch('https://picsum.photos/400/400');
   const blob = await response.blob();
@@ -53,12 +53,6 @@ const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'James'
 const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore'];
 
 export const createRandomTeachers = async () => {
-  // Create a service role client for admin operations
-  const serviceRoleClient = createClient(
-    'https://qhqtflpajutstecqajbl.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
-  );
-
   try {
     console.log('Starting to create random teachers...');
 
