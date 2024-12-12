@@ -116,35 +116,6 @@ export type Database = {
         }
         Relationships: []
       }
-      teacher_cities: {
-        Row: {
-          city: string
-          created_at: string
-          id: string
-          teacher_id: string
-        }
-        Insert: {
-          city: string
-          created_at?: string
-          id?: string
-          teacher_id: string
-        }
-        Update: {
-          city?: string
-          created_at?: string
-          id?: string
-          teacher_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "teacher_cities_teacher_id_fkey"
-            columns: ["teacher_id"]
-            isOneToOne: false
-            referencedRelation: "teachers"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       teacher_locations: {
         Row: {
           created_at: string
@@ -170,35 +141,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "teacher_locations_teacher_id_fkey"
-            columns: ["teacher_id"]
-            isOneToOne: false
-            referencedRelation: "teachers"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-      teacher_regions: {
-        Row: {
-          created_at: string
-          id: string
-          region: string
-          teacher_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          region: string
-          teacher_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          region?: string
-          teacher_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "teacher_regions_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
             referencedRelation: "teachers"
@@ -267,6 +209,7 @@ export type Database = {
       teachers: {
         Row: {
           bio: string
+          city_id: string | null
           created_at: string
           email: string
           facebook_profile: string | null
@@ -278,12 +221,12 @@ export type Database = {
           show_email: boolean | null
           show_facebook: boolean | null
           show_phone: boolean | null
-          teacher_city: string
           updated_at: string
           user_id: string
         }
         Insert: {
           bio: string
+          city_id?: string | null
           created_at?: string
           email: string
           facebook_profile?: string | null
@@ -295,12 +238,12 @@ export type Database = {
           show_email?: boolean | null
           show_facebook?: boolean | null
           show_phone?: boolean | null
-          teacher_city: string
           updated_at?: string
           user_id: string
         }
         Update: {
           bio?: string
+          city_id?: string | null
           created_at?: string
           email?: string
           facebook_profile?: string | null
@@ -312,11 +255,18 @@ export type Database = {
           show_email?: boolean | null
           show_facebook?: boolean | null
           show_phone?: boolean | null
-          teacher_city?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "teachers_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

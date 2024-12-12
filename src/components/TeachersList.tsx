@@ -3,35 +3,43 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { type Subject, type SchoolLevel } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-// Mock data for demonstration
-const MOCK_TEACHERS = [
-  {
-    id: 1,
-    name: "Sarah Miller",
-    subjects: ["Mathematics", "Physics"],
-    schoolLevels: ["Secondary"],
-    location: "Luxembourg City",
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    subjects: ["English", "French"],
-    schoolLevels: ["Primary", "Secondary"],
-    location: "Esch-sur-Alzette",
-  },
-  // Add more mock teachers as needed
-];
 
 export const TeachersList = () => {
   const { t, language } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: teachers = [], isLoading: isLoadingTeachers } = useQuery({
+    queryKey: ['teachers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('teachers')
+        .select(`
+          *,
+          city:cities(
+            id,
+            name_en,
+            name_fr,
+            name_lb,
+            region:regions(
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          ),
+          teacher_subjects(subject),
+          teacher_school_levels(school_level)
+        `);
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
@@ -56,6 +64,7 @@ export const TeachersList = () => {
   });
 
   const getLocalizedName = (item: any) => {
+    if (!item) return '';
     switch(language) {
       case 'fr':
         return item.name_fr;
@@ -66,12 +75,23 @@ export const TeachersList = () => {
     }
   };
 
-  const filteredTeachers = MOCK_TEACHERS.filter(teacher => {
-    const matchesSubject = selectedSubject === "all" || teacher.subjects.includes(selectedSubject);
-    const matchesLevel = selectedLevel === "all" || teacher.schoolLevels.includes(selectedLevel);
+  const getTeacherLocation = (teacher: any) => {
+    if (!teacher.city) return '';
+    const cityName = getLocalizedName(teacher.city);
+    const regionName = getLocalizedName(teacher.city.region);
+    return `${cityName}, ${regionName}`;
+  };
+
+  const filteredTeachers = teachers.filter(teacher => {
+    const teacherSubjects = teacher.teacher_subjects?.map(s => s.subject) || [];
+    const teacherLevels = teacher.teacher_school_levels?.map(l => l.school_level) || [];
+    
+    const matchesSubject = selectedSubject === "all" || teacherSubjects.includes(selectedSubject);
+    const matchesLevel = selectedLevel === "all" || teacherLevels.includes(selectedLevel);
+    const location = getTeacherLocation(teacher);
     const matchesSearch = !searchQuery || 
-      teacher.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      teacher.location.toLowerCase().includes(searchQuery.toLowerCase());
+      `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      location.toLowerCase().includes(searchQuery.toLowerCase());
     
     return matchesSubject && matchesLevel && matchesSearch;
   });
@@ -125,18 +145,22 @@ export const TeachersList = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTeachers.map((teacher) => (
+        {isLoadingTeachers ? (
+          <div>Loading...</div>
+        ) : filteredTeachers.map((teacher) => (
           <Card key={teacher.id}>
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold mb-2">{teacher.name}</h3>
-              <p className="text-sm text-gray-600 mb-2">{teacher.location}</p>
+              <h3 className="text-lg font-semibold mb-2">
+                {teacher.first_name} {teacher.last_name}
+              </h3>
+              <p className="text-sm text-gray-600 mb-2">{getTeacherLocation(teacher)}</p>
               <div className="flex flex-wrap gap-2">
-                {teacher.subjects.map((subject) => (
+                {teacher.teacher_subjects?.map((subject: any) => (
                   <span
-                    key={subject}
+                    key={subject.subject}
                     className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full"
                   >
-                    {subject}
+                    {subject.subject}
                   </span>
                 ))}
               </div>
