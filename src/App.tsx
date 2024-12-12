@@ -18,6 +18,7 @@ function App() {
               <Route index element={<Landing />} />
               <Route path="profile/new" element={<TeacherProfileForm />} />
               <Route path="profile/:userId" element={<TeacherProfileForm />} />
+              <Route path="profile/edit/:userId" element={<TeacherProfileForm />} />
               <Route path="teachers" element={<TeachersList />} />
             </Route>
           </Routes>
