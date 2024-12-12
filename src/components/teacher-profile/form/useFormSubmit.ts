@@ -27,7 +27,17 @@ export const useFormSubmit = (
 
       // Step 1: Create/Update teacher profile
       const { error: profileError } = await handleProfileUpdate(formData, userId, isNewProfile);
-      if (profileError) throw profileError;
+      if (profileError) {
+        if (profileError.message === 'Profile already exists') {
+          toast({
+            title: t("error"),
+            description: t("profileAlreadyExists"),
+            variant: "destructive",
+          });
+          return;
+        }
+        throw profileError;
+      }
 
       // Step 2: Update relations (subjects, school levels, locations, etc.)
       const { error: relationsError } = await handleRelationsUpdate(formData, userId);
@@ -36,7 +46,7 @@ export const useFormSubmit = (
       // Success notification and redirect
       toast({
         title: t("success"),
-        description: isNewProfile ? t("success") : t("success"),
+        description: t("success"),
       });
 
       // Redirect to profile view
