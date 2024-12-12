@@ -2,6 +2,7 @@ export type Language = "en" | "fr" | "lb";
 
 export const translations = {
   en: {
+    welcome: "Welcome",
     search: "Search",
     searchPlaceholder: "Search by name or location",
     personalInfo: "Personal Information",
@@ -61,6 +62,7 @@ export const translations = {
     yourCity: "Your City",
   },
   fr: {
+    welcome: "Bienvenue",
     search: "Recherche",
     searchPlaceholder: "Rechercher par nom ou lieu",
     personalInfo: "Informations personnelles",
@@ -120,6 +122,7 @@ export const translations = {
     yourCity: "Votre ville",
   },
   lb: {
+    welcome: "Wëllkomm",
     search: "Sichen",
     searchPlaceholder: "No Numm oder Uert sichen",
     personalInfo: "Perséinlech Informatiounen",
