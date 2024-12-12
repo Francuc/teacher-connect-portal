@@ -24,15 +24,14 @@ export const useFormSubmit = (
     try {
       setIsLoading(true);
       
-      // For testing: Generate a random UUID for new profiles
-      const testUserId = isNewProfile ? 
-        crypto.randomUUID() : 
-        userId;
+      // For testing: Generate a random UUID for the user_id
+      const testUserId = crypto.randomUUID();
       
       console.log('Starting form submission for user:', testUserId);
 
       // Step 1: Create/Update teacher profile
-      const { error: profileError } = await handleProfileUpdate(formData, testUserId!, isNewProfile);
+      const { data: profile, error: profileError } = await handleProfileUpdate(formData, testUserId, true);
+      
       if (profileError) {
         console.error('Profile creation error:', profileError);
         toast({
@@ -43,8 +42,12 @@ export const useFormSubmit = (
         return;
       }
 
-      // Step 2: Update relations (subjects, school levels, locations, etc.)
-      const { error: relationsError } = await handleRelationsUpdate(formData, testUserId!);
+      if (!profile?.id) {
+        throw new Error('No profile ID returned from creation');
+      }
+
+      // Step 2: Update relations using the profile's ID
+      const { error: relationsError } = await handleRelationsUpdate(formData, profile.id);
       if (relationsError) throw relationsError;
 
       // Success notification and redirect
@@ -53,8 +56,8 @@ export const useFormSubmit = (
         description: t("success"),
       });
 
-      // Redirect to profile view
-      navigate(`/profile/${testUserId}`);
+      // Redirect to profile view using the profile's ID
+      navigate(`/profile/${profile.id}`);
     } catch (error) {
       console.error('Form submission error:', error);
       toast({

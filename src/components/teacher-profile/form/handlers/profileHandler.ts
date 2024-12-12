@@ -7,7 +7,7 @@ export const handleProfileUpdate = async (
   formData: FormData,
   userId: string,
   isNewProfile: boolean
-): Promise<{ error?: Error }> => {
+): Promise<{ data?: { id: string }, error?: Error }> => {
   try {
     console.log('Starting profile update for user:', userId);
 
@@ -43,28 +43,34 @@ export const handleProfileUpdate = async (
       profileData.profile_picture_url = profilePictureUrl;
     }
 
-    let updateError;
     if (isNewProfile) {
       console.log('Creating new profile:', profileData);
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('teachers')
-        .insert([profileData]);
-      updateError = error;
+        .insert([profileData])
+        .select('id')
+        .single();
+        
+      if (error) {
+        console.error('Error creating profile:', error);
+        throw error;
+      }
+      
+      return { data };
     } else {
       console.log('Updating existing profile:', profileData);
       const { error } = await supabase
         .from('teachers')
         .update(profileData)
-        .eq('user_id', userId);
-      updateError = error;
+        .eq('id', userId);
+        
+      if (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+      }
+      
+      return { data: { id: userId } };
     }
-
-    if (updateError) {
-      console.error('Error updating/inserting profile:', updateError);
-      throw updateError;
-    }
-
-    return {};
   } catch (error) {
     console.error('Error in handleProfileUpdate:', error);
     return { error: error as Error };
