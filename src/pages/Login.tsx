@@ -13,15 +13,15 @@ export default function Login() {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event, session, error) => {
         if (event === 'SIGNED_IN' && session) {
           navigate("/");
         }
         if (event === 'USER_UPDATED' && session) {
           navigate("/");
         }
-        // Handle errors through the error property instead of event type
-        if (session?.error?.message === "User already registered") {
+        // Handle errors through the error parameter
+        if (error?.message === "User already registered") {
           toast({
             variant: "destructive",
             title: t("error"),
