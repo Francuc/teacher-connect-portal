@@ -72,4 +72,6 @@ export const en = {
   teacherLocation: "Teacher Location",
   biography: "Biography",
   updateProfile: "Update Profile",
+  errorLoadingProfile: "Error loading profile",
+  editProfile: "Edit Profile",
 } as const;

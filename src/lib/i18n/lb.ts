@@ -72,4 +72,6 @@ export const lb = {
     teacherLocation: "Lokalisatioun vum Professer",
     biography: "Biografie",
   updateProfile: "Profil aktualiséieren",
+  errorLoadingProfile: "Feeler beim Lueden vum Profil",
+  editProfile: "Profil änneren",
 } as const;

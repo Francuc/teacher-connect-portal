@@ -72,4 +72,6 @@ export const fr = {
   teacherLocation: "Localisation du professeur",
   biography: "Biographie",
   updateProfile: "Mettre à jour le profil",
+  errorLoadingProfile: "Erreur lors du chargement du profil",
+  editProfile: "Modifier le profil",
 } as const;
