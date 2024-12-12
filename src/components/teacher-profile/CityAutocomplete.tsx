@@ -45,7 +45,10 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
         console.error('Error in cities query:', error)
         return []
       }
-    }
+    },
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 300000, // 5 minutes
   })
 
   const getLocalizedName = (city: any) => {
@@ -63,7 +66,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   if (error) {
     console.error('Error in CityAutocomplete:', error)
     return (
-      <Button variant="outline" className="w-full justify-between">
+      <Button variant="outline" className="w-full justify-between text-destructive">
         {t("errorLoadingCities")}
       </Button>
     )
@@ -77,12 +80,17 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          disabled={isLoading}
         >
-          {value
-            ? cities.find((city) => getLocalizedName(city) === value)
+          {isLoading ? (
+            t("loading")
+          ) : value ? (
+            cities.find((city) => getLocalizedName(city) === value)
               ? value
               : value
-            : t("selectCity")}
+          ) : (
+            t("selectCity")
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

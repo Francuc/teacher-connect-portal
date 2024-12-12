@@ -23,7 +23,7 @@ type CitiesListProps = {
 export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
   const { t, language } = useLanguage()
 
-  const { data: regions = [] } = useQuery({
+  const { data: regions = [], isLoading: isLoadingRegions } = useQuery({
     queryKey: ['regions'],
     queryFn: async () => {
       try {
@@ -31,21 +31,23 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
           .from('regions')
           .select('*')
         if (error) throw error
-        return data
+        return data || []
       } catch (error) {
         console.error('Error fetching regions:', error)
         return []
       }
-    }
+    },
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 300000, // 5 minutes
   })
 
-  const { data: cities = [], isLoading } = useQuery({
+  const { data: cities = [], isLoading: isLoadingCities } = useQuery({
     queryKey: ['cities', formData.studentRegions],
     queryFn: async () => {
       if (formData.studentRegions.length === 0) return []
 
       try {
-        // Get the region IDs for the selected region names
         const selectedRegionIds = regions
           .filter(region => 
             formData.studentRegions.includes(
@@ -57,30 +59,25 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
           .map(region => region.id)
 
         if (selectedRegionIds.length === 0) {
-          console.log('No matching region IDs found')
           return []
         }
-
-        console.log('Selected region IDs:', selectedRegionIds)
 
         const { data, error } = await supabase
           .from('cities')
           .select('*')
           .in('region_id', selectedRegionIds)
 
-        if (error) {
-          console.error('Error fetching cities:', error)
-          throw error
-        }
-
-        console.log('Fetched cities:', data)
+        if (error) throw error
         return data || []
       } catch (error) {
         console.error('Error in cities query:', error)
         return []
       }
     },
-    enabled: formData.studentRegions.length > 0 && regions.length > 0
+    enabled: formData.studentRegions.length > 0 && regions.length > 0,
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 300000, // 5 minutes
   })
 
   const getLocalizedName = (item: any) => {
@@ -95,7 +92,7 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
     }
   }
 
-  if (isLoading) {
+  if (isLoadingRegions || isLoadingCities) {
     return <div className="text-sm text-muted-foreground">{t("loading")}</div>
   }
 
