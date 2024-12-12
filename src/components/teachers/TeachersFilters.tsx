@@ -35,19 +35,30 @@ export const TeachersFilters = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  const { data: cities = [] } = useQuery({
+  const { data: cities = [], isLoading: isLoadingCities, error: citiesError } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
+      console.log('Fetching cities data...');
       const { data, error } = await supabase
         .from('cities')
         .select('*')
         .order('name_en');
-      if (error) throw error;
-      return data;
+      
+      if (error) {
+        console.error('Error fetching cities:', error);
+        throw error;
+      }
+
+      console.log('Cities data fetched successfully:', data);
+      return data || [];
     },
   });
 
   const getCityName = (city: any) => {
+    if (!city) {
+      console.warn('Received undefined city in getCityName');
+      return '';
+    }
     return language === 'fr' ? city.name_fr : 
            language === 'lb' ? city.name_lb : 
            city.name_en;
@@ -65,14 +76,17 @@ export const TeachersFilters = ({
   }, []);
 
   const handleSearchChange = (value: string) => {
+    console.log('Search value changed:', value);
     setSearchQuery(value);
-    if (value.length > 0) {
+    if (value.length > 0 && cities && cities.length > 0) {
+      console.log('Filtering cities for suggestions...');
       const filteredSuggestions = cities
         .map(getCityName)
         .filter(city => 
           city.toLowerCase().includes(value.toLowerCase())
         )
         .slice(0, 5);
+      console.log('Filtered suggestions:', filteredSuggestions);
       setSuggestions(filteredSuggestions);
       setShowSuggestions(true);
     } else {
@@ -80,6 +94,10 @@ export const TeachersFilters = ({
       setShowSuggestions(false);
     }
   };
+
+  if (citiesError) {
+    console.error('Error loading cities:', citiesError);
+  }
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-purple.soft/30 backdrop-blur-sm">
@@ -130,7 +148,7 @@ export const TeachersFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allSubjects")}</SelectItem>
-              {subjects.map((subject) => (
+              {subjects?.map((subject) => (
                 <SelectItem key={subject.id} value={getLocalizedName(subject)}>
                   {getLocalizedName(subject)}
                 </SelectItem>
@@ -150,7 +168,7 @@ export const TeachersFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allLevels")}</SelectItem>
-              {schoolLevels.map((level) => (
+              {schoolLevels?.map((level) => (
                 <SelectItem key={level.id} value={getLocalizedName(level)}>
                   {getLocalizedName(level)}
                 </SelectItem>
