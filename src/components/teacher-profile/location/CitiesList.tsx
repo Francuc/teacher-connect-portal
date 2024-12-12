@@ -109,16 +109,15 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
             <Checkbox
               id={`city-${city.id}`}
               checked={formData.studentCities.includes(getLocalizedName(city))}
-              onCheckedChange={(checked) =>
+              onCheckedChange={(checked) => {
+                const cityName = getLocalizedName(city);
                 setFormData({
                   ...formData,
                   studentCities: checked
-                    ? [...formData.studentCities, getLocalizedName(city)]
-                    : formData.studentCities.filter(
-                        (c) => c !== getLocalizedName(city)
-                      ),
-                })
-              }
+                    ? [...formData.studentCities, cityName]
+                    : formData.studentCities.filter(c => c !== cityName),
+                });
+              }}
             />
             <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
           </div>
