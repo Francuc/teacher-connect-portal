@@ -4,11 +4,13 @@ import { uploadProfilePicture } from "../profilePictureUpload";
 import { FormData } from "../types";
 
 export const handleProfileUpdate = async (
-  formData: FormData,
   userId: string,
+  formData: FormData,
   existingProfile: boolean
 ): Promise<{ error?: Error }> => {
   try {
+    console.log('Starting profile update for user:', userId);
+    
     // Upload profile picture if exists
     let profilePictureUrl = null;
     if (formData.profilePicture) {
@@ -32,7 +34,7 @@ export const handleProfileUpdate = async (
       show_phone: formData.showPhone,
       show_facebook: formData.showFacebook,
       bio: formData.bio,
-      city_id: formData.cityId,
+      city_id: formData.cityId || null,
       updated_at: new Date().toISOString(),
     };
 

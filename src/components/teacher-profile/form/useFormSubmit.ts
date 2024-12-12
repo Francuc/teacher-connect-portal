@@ -40,7 +40,7 @@ export const useFormSubmit = (
         const result = await handleProfileCreate(userId, formData);
         if (result.error) throw result.error;
       } else {
-        const result = await handleProfileUpdate(userId, formData);
+        const result = await handleProfileUpdate(userId, formData, !isNewProfile);
         if (result.error) throw result.error;
       }
 
