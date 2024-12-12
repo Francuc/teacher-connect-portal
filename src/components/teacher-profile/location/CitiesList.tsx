@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { type TeachingLocation } from "@/lib/constants";
 
 type CitiesListProps = {
@@ -34,19 +34,24 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
     }
   });
 
-  const { data: cities = [] } = useQuery({
+  const { data: cities = [], isLoading } = useQuery({
     queryKey: ['cities', formData.studentRegions],
     queryFn: async () => {
+      if (formData.studentRegions.length === 0) return [];
+      
+      const regionIds = regions
+        .filter(region => formData.studentRegions.includes(getLocalizedName(region)))
+        .map(region => region.id);
+
       const { data, error } = await supabase
         .from('cities')
         .select('*')
-        .in('region_id', formData.studentRegions.map(region => 
-          regions.find(r => getLocalizedName(r) === region)?.id
-        ));
+        .in('region_id', regionIds);
+        
       if (error) throw error;
-      return data;
+      return data || [];
     },
-    enabled: formData.studentRegions.length > 0
+    enabled: formData.studentRegions.length > 0 && regions.length > 0
   });
 
   const getLocalizedName = (item: any) => {
@@ -59,6 +64,10 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
         return item.name_en;
     }
   };
+
+  if (isLoading) {
+    return <div>{t("loading")}</div>;
+  }
 
   return (
     <div className="space-y-2">

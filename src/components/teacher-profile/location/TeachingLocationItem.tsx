@@ -53,17 +53,14 @@ export const TeachingLocationItem = ({
           {location === "Teacher's Place" && (
             <div className="space-y-2">
               <Label htmlFor="teacherCity">{t("city")}</Label>
-              <Input
-                id="teacherCity"
+              <CityAutocomplete
                 value={formData.teacherCity}
-                onChange={(e) =>
+                onChange={(value) =>
                   setFormData({
                     ...formData,
-                    teacherCity: e.target.value,
+                    teacherCity: value,
                   })
                 }
-                placeholder={t("enterCity")}
-                className="w-full"
               />
             </div>
           )}
