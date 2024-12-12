@@ -17,9 +17,16 @@ type LocationsSectionProps = {
       name_lb: string;
     };
   } | null;
+  studentRegions: string[];
+  studentCities: string[];
 };
 
-export const LocationsSection = ({ locations, city }: LocationsSectionProps) => {
+export const LocationsSection = ({ 
+  locations, 
+  city, 
+  studentRegions,
+  studentCities 
+}: LocationsSectionProps) => {
   const { t, language } = useLanguage();
 
   const getLocalizedName = (item: any) => {
@@ -59,6 +66,22 @@ export const LocationsSection = ({ locations, city }: LocationsSectionProps) => 
               {location.location_type === "Teacher's Place" && city && (
                 <div className="text-sm text-muted-foreground">
                   {`${getLocalizedName(city)}, ${getLocalizedName(city.region)}`}
+                </div>
+              )}
+              {location.location_type === "Student's Place" && (
+                <div className="text-sm text-muted-foreground space-y-1">
+                  {studentRegions.length > 0 && (
+                    <div>
+                      <span className="font-medium">{t("regions")}: </span>
+                      {studentRegions.join(", ")}
+                    </div>
+                  )}
+                  {studentCities.length > 0 && (
+                    <div>
+                      <span className="font-medium">{t("cities")}: </span>
+                      {studentCities.join(", ")}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

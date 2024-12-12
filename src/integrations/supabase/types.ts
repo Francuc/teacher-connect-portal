@@ -177,6 +177,64 @@ export type Database = {
           },
         ]
       }
+      teacher_student_cities: {
+        Row: {
+          city_name: string
+          created_at: string
+          id: string
+          teacher_id: string
+        }
+        Insert: {
+          city_name: string
+          created_at?: string
+          id?: string
+          teacher_id: string
+        }
+        Update: {
+          city_name?: string
+          created_at?: string
+          id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_student_cities_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_student_regions: {
+        Row: {
+          created_at: string
+          id: string
+          region_name: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          region_name: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          region_name?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_student_regions_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       teacher_subjects: {
         Row: {
           created_at: string

@@ -120,7 +120,9 @@ export const useFormSubmit = (
         await Promise.all([
           supabase.from('teacher_subjects').delete().eq('teacher_id', userId),
           supabase.from('teacher_school_levels').delete().eq('teacher_id', userId),
-          supabase.from('teacher_locations').delete().eq('teacher_id', userId)
+          supabase.from('teacher_locations').delete().eq('teacher_id', userId),
+          supabase.from('teacher_student_regions').delete().eq('teacher_id', userId),
+          supabase.from('teacher_student_cities').delete().eq('teacher_id', userId)
         ]);
       } else {
         // Insert new profile
@@ -156,7 +158,23 @@ export const useFormSubmit = (
               location_type: location,
               price_per_hour: parseFloat(formData.pricePerHour[
                 location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-              ])
+              ] || '0')
+            }))
+          ),
+        formData.studentRegions.length > 0 && supabase
+          .from('teacher_student_regions')
+          .insert(
+            formData.studentRegions.map(region => ({
+              teacher_id: userId,
+              region_name: region
+            }))
+          ),
+        formData.studentCities.length > 0 && supabase
+          .from('teacher_student_cities')
+          .insert(
+            formData.studentCities.map(city => ({
+              teacher_id: userId,
+              city_name: city
             }))
           )
       ]);

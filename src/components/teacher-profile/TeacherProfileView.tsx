@@ -39,6 +39,8 @@ type TeacherProfile = {
       name_lb: string;
     };
   } | null;
+  student_regions: string[];
+  student_cities: string[];
 };
 
 export const TeacherProfileView = ({ userId }: { userId: string }) => {
@@ -105,11 +107,23 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
           .select('school_level')
           .eq('teacher_id', userId);
 
+        const { data: studentRegions } = await supabase
+          .from('teacher_student_regions')
+          .select('region_name')
+          .eq('teacher_id', userId);
+
+        const { data: studentCities } = await supabase
+          .from('teacher_student_cities')
+          .select('city_name')
+          .eq('teacher_id', userId);
+
         setProfile({
           ...teacherData,
           locations: locations || [],
           subjects: subjects?.map(s => s.subject) || [],
-          school_levels: schoolLevels?.map(l => l.school_level) || []
+          school_levels: schoolLevels?.map(l => l.school_level) || [],
+          student_regions: studentRegions?.map(r => r.region_name) || [],
+          student_cities: studentCities?.map(c => c.city_name) || []
         });
       } catch (error) {
         console.error('Error:', error);
@@ -155,7 +169,12 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
           <BiographySection bio={profile.bio} />
         </div>
         <div className="space-y-6">
-          <LocationsSection locations={profile.locations} city={profile.city} />
+          <LocationsSection 
+            locations={profile.locations} 
+            city={profile.city}
+            studentRegions={profile.student_regions}
+            studentCities={profile.student_cities}
+          />
           <SubjectsSection subjects={profile.subjects} />
           <SchoolLevelsSection schoolLevels={profile.school_levels} />
         </div>
