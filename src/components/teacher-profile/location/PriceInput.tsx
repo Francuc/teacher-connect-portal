@@ -15,10 +15,9 @@ export const PriceInput = ({ value, onChange }: PriceInputProps) => {
       <Input
         type="number"
         placeholder={t("pricePerHour")}
-        value={value}
+        value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         className="w-32"
-        required
       />
     </div>
   );

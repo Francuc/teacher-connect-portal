@@ -114,11 +114,14 @@ export const TeachingLocationItem = ({
     });
   };
 
+  const locationKey = getLocationKey(location);
+  const currentPrice = formData.pricePerHour[locationKey];
+
   if (!isEditing && formData.teachingLocations.includes(location)) {
     return (
       <LocationSummary
         location={location}
-        price={formData.pricePerHour[getLocationKey(location)]}
+        price={currentPrice}
         selectedCity={selectedCity}
         studentRegions={formData.studentRegions}
         studentCities={formData.studentCities}
@@ -141,6 +144,9 @@ export const TeachingLocationItem = ({
                 ? [...formData.teachingLocations, location]
                 : formData.teachingLocations.filter((l) => l !== location),
             });
+            if (checked) {
+              setIsEditing(true);
+            }
           }}
         />
         <Label htmlFor={location}>{location}</Label>
@@ -179,7 +185,7 @@ export const TeachingLocationItem = ({
           )}
 
           <PriceInput
-            value={formData.pricePerHour[getLocationKey(location)]}
+            value={currentPrice}
             onChange={handlePriceChange}
           />
         </div>
