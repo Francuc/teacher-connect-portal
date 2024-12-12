@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { TeachersFilters } from "./teachers/TeachersFilters";
 import { TeachersGrid } from "./teachers/TeachersGrid";
+import { RandomTeachersButton } from "./teachers/RandomTeachersButton";
 
 interface TeachersListProps {
   initialSearchQuery?: string;
@@ -187,6 +188,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
 
   return (
     <div className="container mx-auto px-4 space-y-8">
+      <RandomTeachersButton />
       <TeachersFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
