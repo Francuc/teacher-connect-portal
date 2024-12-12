@@ -119,7 +119,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       <div className="flex justify-end mb-6">
         <Button 
           onClick={handleEditClick}
-          className="bg-primary hover:bg-primary/90 w-[140px] h-10"
+          className="bg-primary hover:bg-primary/90 w-10 h-10"
         >
           <Pencil className="w-4 h-4" />
         </Button>
