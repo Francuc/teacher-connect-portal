@@ -91,12 +91,5 @@ export const fr = {
   contactInformation: "Informations de contact",
   name: "Nom",
   selectedLocation: "Lieu sélectionné",
-  errorLoadingProfile: "Erreur lors du chargement du profil",
-
-  // Profile actions and messages
-  profileCreated: "Profil créé avec succès",
-  profileUpdated: "Profil mis à jour avec succès",
-  errorSavingProfile: "Erreur lors de l'enregistrement du profil",
-  updateProfile: "Mettre à jour le profil",
-  saveProfile: "Enregistrer le profil",
+  errorLoadingProfile: "Erreur lors du chargement du profil"
 };
