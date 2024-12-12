@@ -3,6 +3,8 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { validateForm } from "./validation";
+import { uploadProfilePicture } from "./profilePictureUpload";
 
 export const useFormSubmit = (
   formData: FormData,
@@ -13,36 +15,6 @@ export const useFormSubmit = (
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const validateForm = () => {
-    const errors: string[] = [];
-
-    if (!formData.firstName) errors.push(t("firstName"));
-    if (!formData.lastName) errors.push(t("lastName"));
-    if (!formData.email) errors.push(t("email"));
-    if (!formData.bio) errors.push(t("bio"));
-    if (formData.subjects.length === 0) errors.push(t("subjects"));
-    if (formData.schoolLevels.length === 0) errors.push(t("schoolLevels"));
-    if (formData.teachingLocations.length === 0) errors.push(t("teachingLocations"));
-    
-    if (formData.teachingLocations.includes("Teacher's Place") && !formData.cityId) {
-      errors.push(t("teacherCity"));
-    }
-
-    // Check if at least one teaching location has a price
-    const hasValidPrice = formData.teachingLocations.some(location => {
-      const price = formData.pricePerHour[
-        location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-      ];
-      return price && parseFloat(price) > 0;
-    });
-
-    if (!hasValidPrice) {
-      errors.push(t("pricePerHour"));
-    }
-
-    return errors;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +29,7 @@ export const useFormSubmit = (
     }
 
     // Validate required fields
-    const validationErrors = validateForm();
+    const validationErrors = validateForm(formData, t);
     if (validationErrors.length > 0) {
       toast({
         title: t("error"),
@@ -68,31 +40,36 @@ export const useFormSubmit = (
     }
 
     setIsLoading(true);
-    console.log("Starting form submission...");
 
     try {
+      // Upload profile picture if exists
+      let profilePictureUrl = null;
+      if (formData.profilePicture) {
+        try {
+          profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
+        } catch (error) {
+          toast({
+            title: t("error"),
+            description: t("errorUploadingProfilePicture"),
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       // Check if profile exists
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: checkError } = await supabase
         .from('teachers')
         .select('id')
         .eq('user_id', userId)
         .single();
 
-      // Upload profile picture if exists
-      let profilePictureUrl = null;
-      if (formData.profilePicture) {
-        const fileExt = formData.profilePicture.name.split('.').pop();
-        const fileName = `${userId}-${Math.random()}.${fileExt}`;
-        
-        const { error: uploadError, data } = await supabase.storage
-          .from('profile-pictures')
-          .upload(fileName, formData.profilePicture);
-        
-        if (uploadError) throw uploadError;
-        profilePictureUrl = data.path;
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 means no rows returned
+        throw new Error('Error checking existing profile');
       }
 
-      console.log("Inserting/updating teacher profile...");
+      // Prepare profile data
       const profileData = {
         user_id: userId,
         first_name: formData.firstName,
@@ -189,9 +166,20 @@ export const useFormSubmit = (
       navigate(`/profile/${userId}`);
     } catch (error) {
       console.error('Error saving profile:', error);
+      let errorMessage = t("errorSavingProfile");
+      
+      if (error instanceof Error) {
+        // Add more specific error messages based on the error type
+        if (error.message.includes('foreign key constraint')) {
+          errorMessage = t("errorInvalidReference");
+        } else if (error.message.includes('duplicate key')) {
+          errorMessage = t("errorDuplicateEntry");
+        }
+      }
+      
       toast({
         title: t("error"),
-        description: t("errorSavingProfile"),
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
