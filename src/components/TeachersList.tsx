@@ -3,8 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SUBJECTS, SCHOOL_LEVELS } from "@/lib/constants";
+import { type Subject, type SchoolLevel } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock data for demonstration
 const MOCK_TEACHERS = [
@@ -26,10 +28,43 @@ const MOCK_TEACHERS = [
 ];
 
 export const TeachersList = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: schoolLevels = [] } = useQuery({
+    queryKey: ['schoolLevels'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('school_levels')
+        .select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getLocalizedName = (item: any) => {
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
 
   const filteredTeachers = MOCK_TEACHERS.filter(teacher => {
     const matchesSubject = selectedSubject === "all" || teacher.subjects.includes(selectedSubject);
@@ -62,9 +97,9 @@ export const TeachersList = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allSubjects")}</SelectItem>
-              {SUBJECTS.map((subject) => (
-                <SelectItem key={subject} value={subject}>
-                  {subject}
+              {subjects.map((subject) => (
+                <SelectItem key={subject.id} value={getLocalizedName(subject)}>
+                  {getLocalizedName(subject)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -79,9 +114,9 @@ export const TeachersList = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("allLevels")}</SelectItem>
-              {SCHOOL_LEVELS.map((level) => (
-                <SelectItem key={level} value={level}>
-                  {level}
+              {schoolLevels.map((level) => (
+                <SelectItem key={level.id} value={getLocalizedName(level)}>
+                  {getLocalizedName(level)}
                 </SelectItem>
               ))}
             </SelectContent>
