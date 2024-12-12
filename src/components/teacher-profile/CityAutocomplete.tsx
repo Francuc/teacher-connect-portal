@@ -27,55 +27,23 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const [open, setOpen] = React.useState(false)
   const { language, t } = useLanguage()
 
-  // First, get the Capellen region ID
-  const { data: capellenRegion, isError: isRegionError } = useQuery({
-    queryKey: ['capellen-region'],
+  const { data: cities = [], isLoading, isError } = useQuery({
+    queryKey: ['cities'],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('regions')
-          .select('*')
-          .eq('name_en', 'Capellen')
-          .single()
-        
-        if (error) throw error
-        console.log('Capellen region data:', data)
-        return data
-      } catch (error) {
-        console.error('Error fetching Capellen region:', error)
-        throw error
-      }
-    },
-    retry: 3,
-    retryDelay: 1000,
-    staleTime: 300000, // 5 minutes
-  })
-
-  // Then get cities in Capellen
-  const { data: cities = [], isLoading, isError: isCitiesError } = useQuery({
-    queryKey: ['capellen-cities', capellenRegion?.id],
-    queryFn: async () => {
-      if (!capellenRegion?.id) return []
-
       try {
         const { data, error } = await supabase
           .from('cities')
           .select('*')
-          .eq('region_id', capellenRegion.id)
         
         if (error) throw error
-        console.log('Cities in Capellen:', {
-          regionId: capellenRegion.id,
-          citiesCount: data?.length || 0,
-          cities: data
-        })
+        
+        console.log('Cities data:', data)
         return data || []
       } catch (error) {
         console.error('Error fetching cities:', error)
         throw error
       }
     },
-    enabled: !!capellenRegion?.id,
     retry: 3,
     retryDelay: 1000,
     staleTime: 300000, // 5 minutes
@@ -93,8 +61,8 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     }
   }
 
-  // Show error state if either query fails
-  if (isRegionError || isCitiesError) {
+  // Show error state if query fails
+  if (isError) {
     return (
       <Button variant="outline" className="w-full justify-between text-destructive">
         {t("errorLoadingCities")}
