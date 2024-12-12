@@ -5,6 +5,22 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { uploadProfilePicture } from "../profilePictureUpload";
 
+interface TeacherProfileData {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  facebook_profile: string | null;
+  show_email: boolean;
+  show_phone: boolean;
+  show_facebook: boolean;
+  bio: string;
+  city_id: string | null;
+  profile_picture_url?: string | null;
+  updated_at: string;
+}
+
 export const useFormSubmit = (
   formData: FormData,
   isLoading: boolean,
@@ -51,7 +67,7 @@ export const useFormSubmit = (
       }
 
       // Prepare profile data
-      const profileData = {
+      const profileData: TeacherProfileData = {
         user_id: userId,
         first_name: formData.firstName,
         last_name: formData.lastName,
