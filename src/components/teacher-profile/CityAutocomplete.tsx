@@ -27,25 +27,50 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const [open, setOpen] = React.useState(false)
   const { language, t } = useLanguage()
 
-  const { data: cities = [], isLoading, error } = useQuery({
-    queryKey: ['cities'],
+  // First, get the Capellen region ID
+  const { data: capellenRegion } = useQuery({
+    queryKey: ['capellen-region'],
     queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('regions')
+          .select('*')
+          .eq('name_en', 'Capellen')
+          .single()
+        
+        if (error) throw error
+        return data
+      } catch (error) {
+        console.error('Error fetching Capellen region:', error)
+        return null
+      }
+    },
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 300000, // 5 minutes
+  })
+
+  // Then get cities in Capellen
+  const { data: cities = [], isLoading, error } = useQuery({
+    queryKey: ['capellen-cities', capellenRegion?.id],
+    queryFn: async () => {
+      if (!capellenRegion?.id) return []
+
       try {
         const { data, error } = await supabase
           .from('cities')
           .select('*')
+          .eq('region_id', capellenRegion.id)
         
-        if (error) {
-          console.error('Error fetching cities:', error)
-          throw error
-        }
-        
+        if (error) throw error
+        console.log('Cities in Capellen:', data) // This will show the cities in the console
         return data || []
       } catch (error) {
-        console.error('Error in cities query:', error)
+        console.error('Error fetching cities:', error)
         return []
       }
     },
+    enabled: !!capellenRegion?.id,
     retry: 3,
     retryDelay: 1000,
     staleTime: 300000, // 5 minutes
