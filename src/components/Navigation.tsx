@@ -21,11 +21,10 @@ export const Navigation = () => {
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
 
-  // Fetch existing profiles with names
+  // Fetch all teacher profiles
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
-      console.log('Fetching teacher profiles');
       const { data, error } = await supabase
         .from('teachers')
         .select('user_id, first_name, last_name');
@@ -35,24 +34,11 @@ export const Navigation = () => {
         throw error;
       }
       
-      console.log('Fetched profiles:', data);
       return data || [];
     }
   });
 
   const handleCreateAd = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
-      toast({
-        title: t("error"),
-        description: t("pleaseLoginFirst"),
-        variant: "destructive",
-      });
-      navigate("/login");
-      return;
-    }
-    
     navigate("/profile/new");
   };
 
