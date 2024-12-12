@@ -35,15 +35,15 @@ export const useTeachersData = () => {
           ),
           city:cities (
             id,
-            name_en,
-            name_fr,
-            name_lb,
             region:regions (
               id,
               name_en,
               name_fr,
               name_lb
-            )
+            ),
+            name_en,
+            name_fr,
+            name_lb
           )
         `);
       

@@ -67,7 +67,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     }).format(price);
   };
 
-  const filteredTeachers = teachers.filter(teacher => {
+  const filteredTeachers = teachers?.filter(teacher => {
     const teacherSubjects = teacher.teacher_subjects?.map(s => getLocalizedName(s.subject, language)) || [];
     const teacherLevels = teacher.teacher_school_levels?.map(l => l.school_level) || [];
     
@@ -83,7 +83,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
       allLocations.some(loc => loc?.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesSubject && matchesLevel && matchesSearch;
-  });
+  }) || [];
 
   // Add debug log for filtered results
   console.log('Filtered Teachers:', filteredTeachers);
