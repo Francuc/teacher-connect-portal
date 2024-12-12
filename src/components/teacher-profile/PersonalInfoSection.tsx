@@ -92,19 +92,7 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="email">{t("email")}</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showEmail"
-                checked={formData.showEmail}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, showEmail: checked })
-                }
-              />
-              <Label htmlFor="showEmail">{t("showInProfile")}</Label>
-            </div>
-          </div>
+          <Label htmlFor="email">{t("email")}</Label>
           <Input
             id="email"
             type="email"
@@ -114,22 +102,20 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
             }
             required
           />
+          <div className="flex items-center space-x-2 mt-1">
+            <Checkbox
+              id="showEmail"
+              checked={formData.showEmail}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, showEmail: checked })
+              }
+            />
+            <Label htmlFor="showEmail" className="text-sm text-muted-foreground">{t("showInProfile")}</Label>
+          </div>
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="phone">{t("phone")}</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showPhone"
-                checked={formData.showPhone}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, showPhone: checked })
-                }
-              />
-              <Label htmlFor="showPhone">{t("showInProfile")}</Label>
-            </div>
-          </div>
+          <Label htmlFor="phone">{t("phone")}</Label>
           <Input
             id="phone"
             type="tel"
@@ -138,22 +124,20 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
               setFormData({ ...formData, phone: e.target.value })
             }
           />
+          <div className="flex items-center space-x-2 mt-1">
+            <Checkbox
+              id="showPhone"
+              checked={formData.showPhone}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, showPhone: checked })
+              }
+            />
+            <Label htmlFor="showPhone" className="text-sm text-muted-foreground">{t("showInProfile")}</Label>
+          </div>
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="facebookProfile">{t("facebookProfile")}</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showFacebook"
-                checked={formData.showFacebook}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, showFacebook: checked })
-                }
-              />
-              <Label htmlFor="showFacebook">{t("showInProfile")}</Label>
-            </div>
-          </div>
+          <Label htmlFor="facebookProfile">{t("facebookProfile")}</Label>
           <Input
             id="facebookProfile"
             type="url"
@@ -163,6 +147,16 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
             }
             placeholder="https://facebook.com/profile"
           />
+          <div className="flex items-center space-x-2 mt-1">
+            <Checkbox
+              id="showFacebook"
+              checked={formData.showFacebook}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, showFacebook: checked })
+              }
+            />
+            <Label htmlFor="showFacebook" className="text-sm text-muted-foreground">{t("showInProfile")}</Label>
+          </div>
         </div>
       </CardContent>
     </Card>
