@@ -5,7 +5,8 @@ import { DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RegionsSection } from "./RegionsSection";
 import { type TeachingLocation } from "@/lib/constants";
-import { CityAutocomplete } from "../CityAutocomplete";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
@@ -28,7 +29,45 @@ export const TeachingLocationItem = ({
   formData,
   setFormData,
 }: TeachingLocationItemProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const { data: cities = [], isLoading: isLoadingCities } = useQuery({
+    queryKey: ['cities'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cities')
+          .select(`
+            *,
+            region:regions(
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          `)
+          .order('name_en');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        return [];
+      }
+    },
+  });
+
+  const getLocalizedName = (item: any) => {
+    if (!item) return '';
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -52,11 +91,24 @@ export const TeachingLocationItem = ({
         <div className="space-y-2 pl-6">
           {location === "Teacher's Place" && (
             <div className="space-y-2">
-              <Label>{t("city")}</Label>
-              <CityAutocomplete
-                value={formData.cityId}
-                onChange={(value) => setFormData({ ...formData, cityId: value })}
-              />
+              <Label>{t("cities")}</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {cities.map((city) => (
+                  <div key={city.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`city-${city.id}`}
+                      checked={formData.cityId === city.id}
+                      onCheckedChange={(checked) =>
+                        setFormData({
+                          ...formData,
+                          cityId: checked ? city.id : "",
+                        })
+                      }
+                    />
+                    <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
