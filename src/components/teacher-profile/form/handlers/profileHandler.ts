@@ -1,7 +1,5 @@
 import { FormData } from "../types";
 import { supabase } from "@/lib/supabase";
-import { uploadProfilePicture } from "../../profilePictureUpload";
-import { TeacherProfileData } from "../types/profileTypes";
 
 export const handleProfileUpdate = async (
   formData: FormData,
@@ -23,7 +21,7 @@ export const handleProfileUpdate = async (
     }
 
     // Prepare profile data
-    const profileData: Partial<TeacherProfileData> = {
+    const profileData = {
       user_id: userId,
       first_name: formData.firstName,
       last_name: formData.lastName,
@@ -62,7 +60,7 @@ export const handleProfileUpdate = async (
       const { error } = await supabase
         .from('teachers')
         .update(profileData)
-        .eq('id', userId);
+        .eq('user_id', userId);
         
       if (error) {
         console.error('Error updating profile:', error);
