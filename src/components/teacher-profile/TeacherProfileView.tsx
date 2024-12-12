@@ -21,7 +21,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
-      console.log('Fetching teacher data for userId:', userId);
       const { data: profile, error: profileError } = await supabase
         .from('teachers')
         .select(`
@@ -42,22 +41,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         .eq('user_id', userId)
         .single();
 
-      if (profileError) {
-        console.error('Error fetching profile:', profileError);
-        throw profileError;
-      }
+      if (profileError) throw profileError;
 
-      // Get the public URL for the profile picture if it exists
       if (profile.profile_picture_url) {
         const { data } = supabase
           .storage
           .from('profile-pictures')
           .getPublicUrl(profile.profile_picture_url);
         profile.profile_picture_url = data.publicUrl;
-        console.log('Profile picture URL:', profile.profile_picture_url);
       }
-
-      console.log('Profile data:', profile);
 
       const [
         { data: subjectsData },
@@ -96,7 +88,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .eq('teacher_id', userId)
       ]);
 
-      // Transform subjects data to match expected format
       const subjects = subjectsData?.map(item => ({
         subject_id: item.subject_id,
         subject: item.subject[0]
@@ -124,7 +115,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
+    <div className="max-w-4xl mx-auto p-4">
       <div className="flex justify-end mb-6">
         <Button 
           onClick={handleEditClick}
@@ -136,15 +127,17 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       </div>
       <div className="grid gap-6">
         <PersonalSection profile={teacherData.profile} />
-        <BiographySection bio={teacherData.profile.bio} />
-        <SubjectsSection subjects={teacherData.subjects} />
-        <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />
-        <LocationsSection 
-          locations={teacherData.locations}
-          city={teacherData.profile.city}
-          studentRegions={teacherData.studentRegions}
-          studentCities={teacherData.studentCities}
-        />
+        <div className="grid grid-cols-1 gap-6">
+          <BiographySection bio={teacherData.profile.bio} />
+          <SubjectsSection subjects={teacherData.subjects} />
+          <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />
+          <LocationsSection 
+            locations={teacherData.locations}
+            city={teacherData.profile.city}
+            studentRegions={teacherData.studentRegions}
+            studentCities={teacherData.studentCities}
+          />
+        </div>
       </div>
     </div>
   );

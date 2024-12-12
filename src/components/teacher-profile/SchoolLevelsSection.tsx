@@ -59,14 +59,14 @@ export const SchoolLevelsSection = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="w-full h-full">
+      <CardHeader className="px-6 py-4 border-b">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <GraduationCap className="w-5 h-5" />
           {t("schoolLevels")}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {isEditing ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {availableLevels?.map((level) => (

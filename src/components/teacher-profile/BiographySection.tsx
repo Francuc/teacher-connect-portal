@@ -17,14 +17,14 @@ export const BiographySection = ({ formData, setFormData, bio }: BiographySectio
   const isViewMode = bio !== undefined;
 
   return (
-    <Card className="w-full">
-      <CardHeader className="px-6 py-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
+    <Card className="w-full h-full">
+      <CardHeader className="px-6 py-4 border-b">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <FileText className="w-5 h-5" />
           {t("biography")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-6 py-4">
+      <CardContent className="p-6">
         {isViewMode ? (
           <p className="whitespace-pre-wrap leading-relaxed min-h-[100px]">{bio}</p>
         ) : (

@@ -29,12 +29,9 @@ export const SubjectsSection = ({
         .order('name_en');
       
       if (error) throw error;
-      console.log('Available subjects:', data);
       return data;
     },
   });
-
-  console.log('Current subjects prop:', subjects);
 
   const handleSubjectToggle = (subjectId: string, subject: any) => {
     if (!onSubjectsChange) return;
@@ -47,7 +44,7 @@ export const SubjectsSection = ({
     } else {
       updatedSubjects = [...subjects, {
         subject_id: subjectId,
-        subject: subject // Pass the entire subject object
+        subject: subject
       }];
     }
 
@@ -55,12 +52,7 @@ export const SubjectsSection = ({
   };
 
   const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string } | null | undefined) => {
-    if (!subject) {
-      console.log('Subject is null or undefined');
-      return '';
-    }
-    
-    console.log('Getting localized name for subject:', subject, 'with language:', language);
+    if (!subject) return '';
     
     switch(language) {
       case 'fr':
@@ -72,21 +64,20 @@ export const SubjectsSection = ({
     }
   };
 
-  // Find the full subject data for each selected subject
   const enrichedSubjects = subjects.map(subjectData => ({
     ...subjectData,
     subject: availableSubjects?.find(s => s.id === subjectData.subject_id) || subjectData.subject
   }));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="w-full h-full">
+      <CardHeader className="px-6 py-4 border-b">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <BookOpen className="w-5 h-5" />
           {t("subjects")}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {isEditing ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {availableSubjects?.map((subject) => (
@@ -104,17 +95,14 @@ export const SubjectsSection = ({
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {enrichedSubjects.map((subjectData) => {
-              console.log('Rendering enriched subject:', subjectData);
-              return (
-                <span 
-                  key={subjectData.subject_id} 
-                  className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
-                >
-                  {getLocalizedName(subjectData.subject)}
-                </span>
-              );
-            })}
+            {enrichedSubjects.map((subjectData) => (
+              <span 
+                key={subjectData.subject_id} 
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
+              >
+                {getLocalizedName(subjectData.subject)}
+              </span>
+            ))}
           </div>
         )}
       </CardContent>
