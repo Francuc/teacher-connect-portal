@@ -33,7 +33,7 @@ export const LocationSummary = ({
         <div className="flex justify-between items-center">
           <span className="font-medium group-hover:text-white">{location}</span>
           <div className="font-semibold bg-background p-2 rounded-md border group-hover:text-white group-hover:bg-primary">
-            {hasPrice ? `${price}€/h` : t("setPrice")}
+            {hasPrice ? `${price}€/h` : t("pricePerHour")}
           </div>
         </div>
 
