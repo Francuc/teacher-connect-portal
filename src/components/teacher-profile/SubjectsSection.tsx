@@ -95,9 +95,9 @@ export const SubjectsSection = ({
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {subjects.map((subjectData, index) => (
+            {subjects.map((subjectData) => (
               <span 
-                key={index} 
+                key={subjectData.subject_id} 
                 className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
               >
                 {getLocalizedName(subjectData.subject)}
