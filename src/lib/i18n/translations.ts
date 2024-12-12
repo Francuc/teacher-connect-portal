@@ -1,6 +1,11 @@
+import { en } from './en';
+import { fr } from './fr';
+import { lb } from './lb';
+
+export type Language = 'en' | 'fr' | 'lb';
+
 export type Translation = {
   search: string;
-  name: string;
   loading: string;
   required: string;
   signIn: string;
@@ -58,9 +63,18 @@ export type Translation = {
   hour: string;
   at: string;
   contactInformation: string;
-  name: string;
+  displayName: string;
   selectedLocation: string;
   errorLoadingProfile: string;
   profilePictureSizeError: string;
   profilePictureTypeError: string;
 };
+
+// Define the translation keys based on the English translations
+export type TranslationKey = keyof Translation;
+
+export const translations = {
+  en,
+  fr,
+  lb,
+} as const;
