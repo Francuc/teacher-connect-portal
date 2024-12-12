@@ -39,6 +39,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           .single()
         
         if (error) throw error
+        console.log('Capellen region data:', data)  // Log region data
         return data
       } catch (error) {
         console.error('Error fetching Capellen region:', error)
@@ -63,7 +64,11 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           .eq('region_id', capellenRegion.id)
         
         if (error) throw error
-        console.log('Cities in Capellen:', data) // This will show the cities in the console
+        console.log('Cities in Capellen:', {
+          regionId: capellenRegion.id,
+          citiesCount: data?.length || 0,
+          cities: data
+        }) // Detailed logging of cities data
         return data || []
       } catch (error) {
         console.error('Error fetching cities:', error)
