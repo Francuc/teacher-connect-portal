@@ -34,16 +34,15 @@ export const Navigation = () => {
         throw error;
       }
 
-      const profilesWithUrls = await Promise.all(teachers.map(async (teacher) => {
+      const profilesWithUrls = teachers.map(teacher => {
         if (teacher.profile_picture_url) {
-          const { data } = supabase
-            .storage
-            .from('profile-pictures')
-            .getPublicUrl(teacher.profile_picture_url);
-          return { ...teacher, profile_picture_url: data.publicUrl };
+          return {
+            ...teacher,
+            profile_picture_url: `${supabase.storageUrl}/object/public/profile-pictures/${teacher.profile_picture_url}`
+          };
         }
         return teacher;
-      }));
+      });
       
       return profilesWithUrls || [];
     }

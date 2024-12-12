@@ -64,23 +64,16 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         throw error;
       }
 
-      // Transform profile picture URLs and normalize subject data
-      const teachersWithUrls = await Promise.all((data || []).map(async (teacher) => {
-        // Handle profile picture URL
-        let profileUrl = teacher.profile_picture_url;
-        if (profileUrl) {
-          const { data: urlData } = supabase
-            .storage
-            .from('profile-pictures')
-            .getPublicUrl(profileUrl);
-          profileUrl = urlData.publicUrl;
+      // Transform profile picture URLs
+      const teachersWithUrls = data.map(teacher => {
+        if (teacher.profile_picture_url) {
+          return {
+            ...teacher,
+            profile_picture_url: `${supabase.storageUrl}/object/public/profile-pictures/${teacher.profile_picture_url}`
+          };
         }
-
-        return {
-          ...teacher,
-          profile_picture_url: profileUrl,
-        };
-      }));
+        return teacher;
+      });
       
       console.log('Teachers data with subjects:', teachersWithUrls);
       return teachersWithUrls || [];
