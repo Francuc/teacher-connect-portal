@@ -1,12 +1,7 @@
-import { LanguageProvider } from "@/contexts/LanguageContext";
 import { LandingPage } from "@/components/LandingPage";
 
 const Index = () => {
-  return (
-    <LanguageProvider>
-      <LandingPage />
-    </LanguageProvider>
-  );
+  return <LandingPage />;
 };
 
 export default Index;

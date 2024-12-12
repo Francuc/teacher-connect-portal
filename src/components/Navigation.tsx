@@ -16,6 +16,10 @@ import {
 export const Navigation = () => {
   const { t } = useLanguage();
 
+  const getSubjectTranslationKey = (subject: string) => {
+    return subject.toLowerCase() as "mathematics" | "physics" | "languages";
+  };
+
   return (
     <header className="sticky top-0 z-50">
       <div className="flex items-center justify-between p-4 bg-white shadow-sm">
@@ -35,7 +39,7 @@ export const Navigation = () => {
                         key={subject}
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                       >
-                        {t(subject.toLowerCase())}
+                        {t(getSubjectTranslationKey(subject))}
                       </NavigationMenuLink>
                     ))}
                   </div>
