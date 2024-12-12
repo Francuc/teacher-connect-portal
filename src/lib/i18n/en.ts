@@ -61,4 +61,5 @@ export default {
   profileSaved: "Profile saved successfully",
   errorUploadingProfilePicture: "Error uploading profile picture",
   editProfile: "Edit Profile",
+  contactInformation: "Contact Information"
 } as const;

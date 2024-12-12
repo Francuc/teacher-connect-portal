@@ -56,5 +56,6 @@ export default {
   personalInformation: "Informations personnelles",
   startingFrom: "À partir de",
   viewProfile: "Voir le profil",
-  searchPlaceholder: "Rechercher des professeurs..."
+  searchPlaceholder: "Rechercher des professeurs...",
+  contactInformation: "Informations de contact"
 } as const;

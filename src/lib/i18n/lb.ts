@@ -55,5 +55,6 @@ export default {
   personalInformation: "Perséinlech Informatiounen",
   startingFrom: "Ab",
   viewProfile: "Profil ukucken",
-  searchPlaceholder: "No Proffe sichen..."
+  searchPlaceholder: "No Proffe sichen...",
+  contactInformation: "Kontaktinformatiounen"
 } as const;
