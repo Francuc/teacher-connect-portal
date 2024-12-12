@@ -93,7 +93,10 @@ export const en = {
   selectedLocation: "Selected Location",
   errorLoadingProfile: "Error loading profile",
 
-  // Profile actions
+  // Profile actions and messages
+  profileCreated: "Profile created successfully",
+  profileUpdated: "Profile updated successfully",
+  errorSavingProfile: "Error saving profile",
   updateProfile: "Update Profile",
   saveProfile: "Save Profile",
 };

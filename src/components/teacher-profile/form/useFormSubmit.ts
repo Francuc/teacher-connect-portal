@@ -37,12 +37,14 @@ export const useFormSubmit = (
       console.log("Starting form submission for profile:", userId);
 
       if (isNewProfile) {
-        await handleProfileCreate(userId, formData);
+        const result = await handleProfileCreate(userId, formData);
+        if (result.error) throw result.error;
       } else {
-        await handleProfileUpdate(userId, formData);
+        const result = await handleProfileUpdate(userId, formData);
+        if (result.error) throw result.error;
       }
 
-      await handleRelationsUpdate(userId, formData);
+      await handleRelationsUpdate(formData, userId);
 
       toast({
         title: t("success"),

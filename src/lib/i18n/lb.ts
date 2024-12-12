@@ -96,4 +96,9 @@ export const lb = {
   // Profile actions
   updateProfile: "Profil aktualiséieren",
   saveProfile: "Profil späicheren",
+
+  // Profile actions and messages
+  profileCreated: "Profil erfollegräich erstallt",
+  profileUpdated: "Profil erfollegräich aktualiséiert",
+  errorSavingProfile: "Fehler beim Späichere vum Profil",
 };

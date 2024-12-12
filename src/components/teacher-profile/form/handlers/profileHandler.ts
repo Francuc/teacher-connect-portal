@@ -2,13 +2,12 @@ import { FormData } from "../types";
 import { supabase } from "@/lib/supabase";
 import { uploadProfilePicture } from "../profilePictureUpload";
 
-export const handleProfileUpdate = async (
-  formData: FormData,
+export const handleProfileCreate = async (
   userId: string,
-  isNewProfile: boolean
+  formData: FormData
 ): Promise<{ data?: { id: string }, error?: Error }> => {
   try {
-    console.log('Starting profile update for user:', userId);
+    console.log('Starting profile creation for user:', userId);
 
     // Upload profile picture if exists
     let profilePictureUrl = null;
@@ -34,40 +33,25 @@ export const handleProfileUpdate = async (
       show_facebook: formData.showFacebook,
       bio: formData.bio,
       city_id: formData.cityId || null,
+      profile_picture_url: profilePictureUrl,
       updated_at: new Date().toISOString(),
-      profile_picture_url: profilePictureUrl
     };
 
-    if (isNewProfile) {
-      console.log('Creating new profile:', profileData);
-      const { data, error } = await supabase
-        .from('teachers')
-        .insert([profileData])
-        .select('id')
-        .single();
+    console.log('Creating new profile:', profileData);
+    const { data, error } = await supabase
+      .from('teachers')
+      .insert([profileData])
+      .select('id')
+      .single();
         
-      if (error) {
-        console.error('Error creating profile:', error);
-        throw error;
-      }
-      
-      return { data };
-    } else {
-      console.log('Updating existing profile:', profileData);
-      const { error } = await supabase
-        .from('teachers')
-        .update(profileData)
-        .eq('user_id', userId);
-        
-      if (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-      }
-      
-      return { data: { id: userId } };
+    if (error) {
+      console.error('Error creating profile:', error);
+      throw error;
     }
+      
+    return { data };
   } catch (error) {
-    console.error('Error in handleProfileUpdate:', error);
+    console.error('Error in handleProfileCreate:', error);
     return { error: error as Error };
   }
 };
