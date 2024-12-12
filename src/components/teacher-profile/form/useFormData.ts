@@ -98,7 +98,7 @@ export const useFormData = (userId?: string) => {
                     name_lb
                   )
                 `)
-                .eq('teacher_id', userId) as Promise<{ data: TeacherSubject[] | null }>,
+                .eq('teacher_id', userId),
               supabase
                 .from('teacher_school_levels')
                 .select('school_level')
@@ -118,7 +118,7 @@ export const useFormData = (userId?: string) => {
             // Update form data with fetched related data
             setFormData(prev => ({
               ...prev,
-              subjects: teacherSubjects?.map(s => s.subjects.name_en) || [],
+              subjects: (teacherSubjects as TeacherSubject[])?.map(s => s.subjects.name_en) || [],
               schoolLevels: schoolLevels?.map(l => l.school_level) || [],
               teachingLocations: locations?.map(l => l.location_type) || [],
               studentRegions: studentRegions?.map(r => r.region_name) || [],
