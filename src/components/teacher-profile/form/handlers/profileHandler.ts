@@ -10,16 +10,32 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
-    // Check if a profile already exists with this email
-    const { data: existingProfiles, error: queryError } = await supabase
+    // First check if this user already has a profile
+    const { data: existingProfile, error: profileError } = await supabase
+      .from('teachers')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (profileError) throw profileError;
+
+    // If user already has a profile, return an error
+    if (existingProfile) {
+      console.log('User already has a profile:', existingProfile);
+      return { error: new Error('profileAlreadyExists') };
+    }
+
+    // Check if email is already in use
+    const { data: emailCheck, error: emailError } = await supabase
       .from('teachers')
       .select('email')
-      .eq('email', formData.email);
+      .eq('email', formData.email)
+      .maybeSingle();
 
-    if (queryError) throw queryError;
+    if (emailError) throw emailError;
 
-    // If email already exists, return an error
-    if (existingProfiles && existingProfiles.length > 0) {
+    if (emailCheck) {
+      console.log('Email already in use:', formData.email);
       return { error: new Error('emailAlreadyExists') };
     }
 

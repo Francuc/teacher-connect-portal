@@ -44,6 +44,16 @@ export const useFormSubmit = (
             description: t("emailAlreadyExists"),
             variant: "destructive",
           });
+          setIsLoading(false);
+          return;
+        }
+        if (profileError.message === 'profileAlreadyExists') {
+          toast({
+            title: t("error"),
+            description: t("profileAlreadyExists"),
+            variant: "destructive",
+          });
+          setIsLoading(false);
           return;
         }
         throw profileError;
