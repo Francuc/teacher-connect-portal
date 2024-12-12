@@ -75,4 +75,7 @@ export const fr = {
   errorLoadingProfile: "Erreur lors du chargement du profil",
   editProfile: "Modifier le profil",
   selectedLocation: "Emplacement sélectionné",
+  errorUploadingProfilePicture: "Erreur lors du téléchargement de la photo de profil",
+  errorInvalidReference: "Une erreur de référence invalide s'est produite",
+  errorDuplicateEntry: "Une entrée en double a été trouvée",
 } as const;

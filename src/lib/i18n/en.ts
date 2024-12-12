@@ -75,4 +75,7 @@ export const en = {
   errorLoadingProfile: "Error loading profile",
   editProfile: "Edit Profile",
   selectedLocation: "Selected Location",
+  errorUploadingProfilePicture: "Error uploading profile picture",
+  errorInvalidReference: "Invalid reference error occurred",
+  errorDuplicateEntry: "A duplicate entry was found",
 } as const;
