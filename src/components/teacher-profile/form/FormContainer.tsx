@@ -1,6 +1,7 @@
 import { FormSections } from "./FormSections";
 import { useFormData } from "./useFormData";
 import { useFormSubmit } from "./useFormSubmit";
+import { FormData } from "./types/teacherTypes";
 
 type FormContainerProps = {
   userId?: string;
@@ -8,7 +9,7 @@ type FormContainerProps = {
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
   const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
-  const { handleSubmit } = useFormSubmit(formData, isLoading, setIsLoading, userId || currentUserId);
+  const { handleSubmit } = useFormSubmit(formData as FormData, isLoading, setIsLoading, userId || currentUserId);
 
   console.log('FormContainer rendered with:', {
     userId,
@@ -24,7 +25,7 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
 
   return (
     <FormSections 
-      formData={formData}
+      formData={formData as FormData}
       setFormData={setFormData}
       isLoading={isLoading}
       onSubmit={handleSubmit}

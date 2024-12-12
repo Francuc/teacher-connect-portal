@@ -28,7 +28,13 @@ type TeacherProfile = {
     location_type: TeachingLocation;
     price_per_hour: number;
   }[];
-  subjects: string[];
+  subjects: {
+    subject: {
+      name_en: string;
+      name_fr: string;
+      name_lb: string;
+    };
+  }[];
   school_levels: string[];
   city: {
     name_en: string;
