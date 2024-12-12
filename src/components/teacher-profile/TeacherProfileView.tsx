@@ -84,10 +84,10 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       const subjects = subjectsData?.map(item => ({
         subject_id: item.subject_id,
         subject: {
-          id: item.subject[0].id,
-          name_en: item.subject[0].name_en,
-          name_fr: item.subject[0].name_fr,
-          name_lb: item.subject[0].name_lb
+          id: item.subject?.[0]?.id || '',
+          name_en: item.subject?.[0]?.name_en || '',
+          name_fr: item.subject?.[0]?.name_fr || '',
+          name_lb: item.subject?.[0]?.name_lb || ''
         }
       })) || [];
 
