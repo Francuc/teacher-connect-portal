@@ -25,6 +25,7 @@ const TeacherProfileForm = () => {
     subjects: [] as Subject[],
     schoolLevels: [] as SchoolLevel[],
     teachingLocations: [] as TeachingLocation[],
+    location: "", // Added the missing location property
     teacherCity: "",
     studentRegions: [] as string[],
     studentCities: [] as string[],
