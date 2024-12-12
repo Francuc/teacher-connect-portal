@@ -10,11 +10,26 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
-    // Check if email is already in use
+    // First check if a profile already exists for this user
+    const { data: existingProfile, error: profileCheckError } = await supabase
+      .from('teachers')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (profileCheckError) throw profileCheckError;
+
+    if (existingProfile && !isUpdate) {
+      console.log('Profile already exists for user:', userId);
+      return { error: new Error('profileAlreadyExists') };
+    }
+
+    // Check if email is already in use by another teacher
     const { data: emailCheck, error: emailError } = await supabase
       .from('teachers')
       .select('email')
       .eq('email', formData.email)
+      .neq('user_id', userId) // Exclude current user when checking email
       .maybeSingle();
 
     if (emailError) throw emailError;
@@ -34,7 +49,7 @@ export const handleProfileUpdate = async (
       }
     }
 
-    // Prepare profile data for new user
+    // Prepare profile data
     const profileData = {
       user_id: userId,
       first_name: formData.firstName,
@@ -51,15 +66,25 @@ export const handleProfileUpdate = async (
       updated_at: new Date().toISOString(),
     };
 
-    // Create new profile
-    console.log('Creating new profile for user:', userId);
-    const { error: insertError } = await supabase
-      .from('teachers')
-      .insert([profileData]);
+    if (isUpdate) {
+      // Update existing profile
+      const { error: updateError } = await supabase
+        .from('teachers')
+        .update(profileData)
+        .eq('user_id', userId);
 
-    if (insertError) {
-      console.error('Error in profile creation:', insertError);
-      throw insertError;
+      if (updateError) throw updateError;
+    } else {
+      // Create new profile
+      console.log('Creating new profile for user:', userId);
+      const { error: insertError } = await supabase
+        .from('teachers')
+        .insert([profileData]);
+
+      if (insertError) {
+        console.error('Error in profile creation:', insertError);
+        throw insertError;
+      }
     }
     
     return { error: null };
