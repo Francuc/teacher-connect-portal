@@ -74,4 +74,5 @@ export const en = {
   updateProfile: "Update Profile",
   errorLoadingProfile: "Error loading profile",
   editProfile: "Edit Profile",
+  selectedLocation: "Selected Location",
 } as const;

@@ -74,4 +74,5 @@ export const fr = {
   updateProfile: "Mettre à jour le profil",
   errorLoadingProfile: "Erreur lors du chargement du profil",
   editProfile: "Modifier le profil",
+  selectedLocation: "Emplacement sélectionné",
 } as const;

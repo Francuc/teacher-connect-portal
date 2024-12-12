@@ -74,4 +74,5 @@ export const lb = {
   updateProfile: "Profil aktualiséieren",
   errorLoadingProfile: "Feeler beim Lueden vum Profil",
   editProfile: "Profil änneren",
+  selectedLocation: "Ausgewielten Standuert",
 } as const;
