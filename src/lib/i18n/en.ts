@@ -17,6 +17,10 @@ export const en = {
   settings: "Settings",
   teachers: "Teachers",
   students: "Students",
+  findTeacher: "Find a Teacher",
+  createAd: "Create Ad",
+  selectProfile: "Select Profile",
+  viewProfile: "View Profile",
 
   // Profile
   editProfile: "Edit Profile",
@@ -62,15 +66,30 @@ export const en = {
   showEmail: "Show email to students",
   showPhone: "Show phone to students",
   showFacebook: "Show Facebook profile to students",
+  showInProfile: "Show in profile",
 
-  // Misc
-  or: "or",
-  and: "and",
-  welcome: "Welcome",
-  loading: "Loading...",
-  somethingWentWrong: "Something went wrong",
-  tryAgain: "Please try again",
-  saveChanges: "Save Changes",
-  updateProfile: "Update Profile",
-  saveProfile: "Save Profile"
+  // Landing
+  landingDescription: "Find the perfect teacher for your needs",
+  mathematics: "Mathematics",
+  physics: "Physics",
+  languages: "Languages",
+  getStarted: "Get Started",
+  createProfile: "Create Profile",
+  allRights: "All rights reserved",
+  
+  // Search
+  search: "Search",
+  searchPlaceholder: "Search for teachers...",
+  allSubjects: "All Subjects",
+  allLevels: "All Levels",
+  startingFrom: "Starting from",
+
+  // Profile sections
+  biography: "Biography",
+  personalInfo: "Personal Information",
+  personalInformation: "Personal Information",
+  contactInformation: "Contact Information",
+  name: "Name",
+  selectedLocation: "Selected Location",
+  errorLoadingProfile: "Error loading profile"
 };
