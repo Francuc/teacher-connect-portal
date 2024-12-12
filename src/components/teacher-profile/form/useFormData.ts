@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { useTeacherData } from "./hooks/useTeacherData";
+import { TeachingLocation } from "@/lib/constants";
 
 export const useFormData = (userId?: string) => {
   const { t } = useLanguage();
@@ -64,7 +65,7 @@ export const useFormData = (userId?: string) => {
         cityId: profile.city_id || "",
         subjects: subjects.map(s => s.subject.name_en),
         schoolLevels,
-        teachingLocations: locations.map(l => l.location_type),
+        teachingLocations: locations.map(l => l.location_type) as TeachingLocation[],
         studentRegions,
         studentCities,
         pricePerHour: {

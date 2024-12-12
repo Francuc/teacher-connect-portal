@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { TeacherProfile, TeacherSubject } from "../types/teacherTypes";
+import { TeacherSubject } from "../types/teacherTypes";
 
 export const useTeacherData = (userId: string | undefined) => {
   return useQuery({

@@ -1,3 +1,5 @@
+import { TeachingLocation, Subject, SchoolLevel } from "@/lib/constants";
+
 export interface TeacherSubject {
   subject_id: string;
   subject: {
@@ -6,24 +8,6 @@ export interface TeacherSubject {
     name_fr: string;
     name_lb: string;
   };
-}
-
-export interface TeacherProfile {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string | null;
-  facebook_profile: string | null;
-  show_email: boolean;
-  show_phone: boolean;
-  show_facebook: boolean;
-  bio: string;
-  city_id: string;
-}
-
-export interface TeacherLocation {
-  location_type: string;
-  price_per_hour: number;
 }
 
 export interface FormData {
@@ -37,9 +21,9 @@ export interface FormData {
   showFacebook: boolean;
   bio: string;
   profilePicture: File | null;
-  subjects: string[];
-  schoolLevels: string[];
-  teachingLocations: string[];
+  subjects: Subject[];
+  schoolLevels: SchoolLevel[];
+  teachingLocations: TeachingLocation[];
   cityId: string;
   studentRegions: string[];
   studentCities: string[];
