@@ -26,27 +26,27 @@ export const LocationSummary = ({
 
   return (
     <Card 
-      className="p-4 cursor-pointer hover:bg-accent"
+      className="p-4 cursor-pointer hover:bg-primary transition-colors group"
       onClick={onEdit}
     >
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <span className="font-medium">{location}</span>
+          <span className="font-medium group-hover:text-white">{location}</span>
           {hasPrice && (
-            <div className="font-semibold bg-background p-2 rounded-md border">
+            <div className="font-semibold bg-background p-2 rounded-md border group-hover:text-white group-hover:bg-primary">
               {price}€/h
             </div>
           )}
         </div>
 
         {location === "Teacher's Place" && selectedCity && (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground group-hover:text-white">
             {`${getLocalizedName(selectedCity)}, ${getLocalizedName(selectedCity.region)}`}
           </div>
         )}
 
         {location === "Student's Place" && (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground group-hover:text-white">
             {studentRegions.length > 0 && (
               <div>
                 <span className="font-medium">{t("regions")}: </span>
