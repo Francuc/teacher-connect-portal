@@ -29,7 +29,17 @@ export const translations = {
     allRights: "All rights reserved",
     allSubjects: "All Subjects",
     allLevels: "All Levels",
-    mathematics: "Mathematics"
+    mathematics: "Mathematics",
+    physics: "Physics",
+    chemistry: "Chemistry",
+    biology: "Biology",
+    english: "English",
+    french: "French",
+    history: "History",
+    geography: "Geography",
+    "computer science": "Computer Science",
+    music: "Music",
+    art: "Art"
   },
   fr: {
     search: "Recherche",
@@ -59,7 +69,17 @@ export const translations = {
     allRights: "Tous droits réservés",
     allSubjects: "Toutes les matières",
     allLevels: "Tous les niveaux",
-    mathematics: "Mathématiques"
+    mathematics: "Mathématiques",
+    physics: "Physique",
+    chemistry: "Chimie",
+    biology: "Biologie",
+    english: "Anglais",
+    french: "Français",
+    history: "Histoire",
+    geography: "Géographie",
+    "computer science": "Informatique",
+    music: "Musique",
+    art: "Art"
   },
   lb: {
     search: "Sichen",
@@ -89,8 +109,18 @@ export const translations = {
     allRights: "All Rechter virbehalen",
     allSubjects: "All Fächer",
     allLevels: "All Niveauen",
-    mathematics: "Mathematik"
-  },
+    mathematics: "Mathematik",
+    physics: "Physik",
+    chemistry: "Chemie",
+    biology: "Biologie",
+    english: "Englesch",
+    french: "Franséisch",
+    history: "Geschichte",
+    geography: "Geographie",
+    "computer science": "Informatik",
+    music: "Musik",
+    art: "Konscht"
+  }
 } as const;
 
 export type TranslationKey = keyof typeof translations.en;

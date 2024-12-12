@@ -5,20 +5,10 @@ import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { translations } from "@/lib/i18n/translations";
+import { NavLink } from "./NavLink";
 
 export const Navigation = () => {
   const { t } = useLanguage();
-
-  // Type-safe translation keys for subjects
-  const getSubjectTranslationKey = (subject: string) => {
-    const key = subject.toLowerCase();
-    // Ensure the key exists in our translations
-    if (key === "math" || key === "physics" || key === "chemistry" || 
-        key === "biology" || key === "languages" || key === "mathematics") {
-      return key as keyof typeof translations.en;
-    }
-    return "mathematics" as keyof typeof translations.en; // fallback
-  };
 
   return (
     <nav className="border-b">
@@ -31,15 +21,7 @@ export const Navigation = () => {
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {SUBJECTS.map((subject) => (
-                <Link
-                  key={subject}
-                  to={`/?subject=${subject.toLowerCase()}`}
-                  className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium"
-                >
-                  {t(getSubjectTranslationKey(subject))}
-                </Link>
-              ))}
+              <NavLinks />
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -54,5 +36,39 @@ export const Navigation = () => {
         </div>
       </div>
     </nav>
+  );
+};
+
+// Separate component for navigation links
+const NavLinks = () => {
+  const { t } = useLanguage();
+  
+  // Filter out duplicate subjects and normalize them
+  const uniqueSubjects = Array.from(new Set(
+    SUBJECTS.map(subject => subject.toLowerCase())
+  )).filter(subject => 
+    subject === "mathematics" || 
+    subject === "physics" || 
+    subject === "chemistry" || 
+    subject === "biology" || 
+    subject === "english" || 
+    subject === "french" || 
+    subject === "history" || 
+    subject === "geography" || 
+    subject === "computer science" || 
+    subject === "music" || 
+    subject === "art"
+  );
+
+  return (
+    <>
+      {uniqueSubjects.map((subject) => (
+        <NavLink
+          key={subject}
+          to={`/?subject=${subject}`}
+          label={t(subject as keyof typeof translations.en)}
+        />
+      ))}
+    </>
   );
 };
