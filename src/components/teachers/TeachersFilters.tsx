@@ -40,14 +40,7 @@ export const TeachersFilters = ({
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cities')
-        .select(`
-          *,
-          region:regions(
-            name_en,
-            name_fr,
-            name_lb
-          )
-        `)
+        .select('*')
         .order('name_en');
       
       if (error) throw error;
@@ -56,13 +49,9 @@ export const TeachersFilters = ({
   });
 
   const getCityName = (city: any) => {
-    const cityName = language === 'fr' ? city.name_fr : 
-                    language === 'lb' ? city.name_lb : 
-                    city.name_en;
-    const regionName = language === 'fr' ? city.region.name_fr :
-                      language === 'lb' ? city.region.name_lb :
-                      city.region.name_en;
-    return `${cityName}, ${regionName}`;
+    return language === 'fr' ? city.name_fr : 
+           language === 'lb' ? city.name_lb : 
+           city.name_en;
   };
 
   useEffect(() => {
