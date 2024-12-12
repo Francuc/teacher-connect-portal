@@ -10,21 +10,6 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
-    // First check if this user already has a profile
-    const { data: existingProfile, error: profileError } = await supabase
-      .from('teachers')
-      .select('user_id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (profileError) throw profileError;
-
-    // If user already has a profile, return an error
-    if (existingProfile) {
-      console.log('User already has a profile:', existingProfile);
-      return { error: new Error('profileAlreadyExists') };
-    }
-
     // Check if email is already in use
     const { data: emailCheck, error: emailError } = await supabase
       .from('teachers')
@@ -72,7 +57,11 @@ export const handleProfileUpdate = async (
       .from('teachers')
       .insert([profileData]);
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error('Error in profile creation:', insertError);
+      throw insertError;
+    }
+    
     return { error: null };
 
   } catch (error) {
