@@ -152,10 +152,16 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     
     const matchesSubject = selectedSubject === "all" || teacherSubjects.includes(selectedSubject);
     const matchesLevel = selectedLevel === "all" || teacherLevels.includes(selectedLevel);
+    
+    // Get all locations (teacher's place and student cities)
     const location = getTeacherLocation(teacher);
+    const studentCities = teacher.teacher_student_cities?.map(c => c.city_name) || [];
+    const allLocations = [location, ...studentCities];
+    
+    // Check if search query matches any location
     const matchesSearch = !searchQuery || 
       `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      location.toLowerCase().includes(searchQuery.toLowerCase());
+      allLocations.some(loc => loc.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesSubject && matchesLevel && matchesSearch;
   });
