@@ -1,6 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BookOpen } from "lucide-react";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TeachersList } from "./TeachersList";
 import { useState } from "react";
 
@@ -23,10 +22,6 @@ export const LandingPage = () => {
               <p className="text-xl text-white/90">
                 {t("landingDescription")}
               </p>
-
-              <div className="mt-8">
-                <LanguageSwitcher />
-              </div>
             </div>
           </div>
         </div>
