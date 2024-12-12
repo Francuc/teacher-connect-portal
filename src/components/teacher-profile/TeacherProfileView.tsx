@@ -8,9 +8,10 @@ import { SubjectsSection } from "./profile-sections/SubjectsSection";
 import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
 import { BiographySection } from "./profile-sections/BiographySection";
 import { Button } from "../ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type TeacherProfile = {
   first_name: string;
@@ -48,16 +49,17 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<TeacherProfile | null>(null);
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkCurrentUser = async () => {
+    const getCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setIsCurrentUser(user?.id === userId);
+      if (user) {
+        setCurrentUserEmail(user.email);
+      }
     };
-
-    checkCurrentUser();
-  }, [userId]);
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -150,10 +152,21 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
     navigate(`/profile/edit/${userId}`);
   };
 
+  const showEditButton = currentUserEmail === 'franco@example.com';
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      {isCurrentUser && (
-        <div className="flex justify-end mb-4">
+      <div className="flex flex-col items-center mb-8">
+        <Avatar className="w-32 h-32 mb-4">
+          {profile.profile_picture_url ? (
+            <AvatarImage src={profile.profile_picture_url} alt={`${profile.first_name} ${profile.last_name}`} />
+          ) : (
+            <AvatarFallback>
+              <User className="w-16 h-16" />
+            </AvatarFallback>
+          )}
+        </Avatar>
+        {showEditButton && (
           <Button
             onClick={handleEditClick}
             className="flex items-center gap-2"
@@ -161,8 +174,8 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
             <Pencil className="w-4 h-4" />
             {t("editProfile")}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-6">
           <PersonalSection profile={profile} />
