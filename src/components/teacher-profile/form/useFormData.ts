@@ -82,6 +82,8 @@ export const useFormData = (userId?: string) => {
 
           if (!profile) throw new Error('Profile not found');
 
+          console.log('Fetched subjects:', subjects);
+
           const pricePerHour: { [key: string]: string } = {
             teacherPlace: "",
             studentPlace: "",
@@ -115,7 +117,7 @@ export const useFormData = (userId?: string) => {
             profilePicture: null,
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0]
+              subject: s.subject
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
