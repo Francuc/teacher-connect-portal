@@ -48,7 +48,21 @@ export const useFormData = (userId?: string) => {
           ] = await Promise.all([
             supabase
               .from('teachers')
-              .select('*')
+              .select(`
+                *,
+                city:cities (
+                  id,
+                  name_en,
+                  name_fr,
+                  name_lb,
+                  region:regions (
+                    id,
+                    name_en,
+                    name_fr,
+                    name_lb
+                  )
+                )
+              `)
               .eq('user_id', userId)
               .single(),
             supabase
@@ -117,7 +131,7 @@ export const useFormData = (userId?: string) => {
             profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0]
+              subject: s.subject
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
