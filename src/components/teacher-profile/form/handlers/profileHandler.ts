@@ -1,27 +1,21 @@
-import { supabase } from "@/lib/supabase";
 import { FormData } from "../types";
-import { uploadProfilePicture } from "../../profilePictureUpload";
-import { TeacherProfileData } from "../types/profileTypes";
+import { supabase } from "@/lib/supabase";
+import { uploadProfilePicture } from "../profilePictureUpload";
 
 export const handleProfileUpdate = async (
   formData: FormData,
   userId: string,
-  existingProfile: boolean
-): Promise<{ error?: Error }> => {
+  isUpdate: boolean
+) => {
+  console.log('handleProfileUpdate called with:', { userId, isUpdate });
+
   try {
-    // Upload profile picture if exists
     let profilePictureUrl = null;
     if (formData.profilePicture) {
-      try {
-        profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-        throw new Error('Error uploading profile picture');
-      }
+      profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
     }
 
-    // Prepare profile data
-    const profileData: TeacherProfileData = {
+    const profileData = {
       user_id: userId,
       first_name: formData.firstName,
       last_name: formData.lastName,
@@ -33,28 +27,29 @@ export const handleProfileUpdate = async (
       show_facebook: formData.showFacebook,
       bio: formData.bio,
       city_id: formData.cityId || null,
-      updated_at: new Date().toISOString(),
+      profile_picture_url: profilePictureUrl,
     };
 
-    if (profilePictureUrl) {
-      profileData.profile_picture_url = profilePictureUrl;
+    if (isUpdate) {
+      console.log('Updating existing profile for user:', userId);
+      const { error } = await supabase
+        .from('teachers')
+        .update(profileData)
+        .eq('user_id', userId);
+      
+      if (error) throw error;
+    } else {
+      console.log('Creating new profile for user:', userId);
+      const { error } = await supabase
+        .from('teachers')
+        .insert([profileData]);
+      
+      if (error) throw error;
     }
 
-    // Insert or update profile based on existence
-    const { error: profileError } = existingProfile 
-      ? await supabase
-          .from('teachers')
-          .update(profileData)
-          .eq('user_id', userId)
-      : await supabase
-          .from('teachers')
-          .insert([profileData]);
-
-    if (profileError) throw profileError;
-
-    return {};
+    return { error: null };
   } catch (error) {
     console.error('Error in handleProfileUpdate:', error);
-    return { error: error as Error };
+    return { error };
   }
 };

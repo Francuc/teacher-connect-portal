@@ -10,7 +10,8 @@ export const useFormSubmit = (
   formData: FormData,
   isLoading: boolean,
   setIsLoading: (loading: boolean) => void,
-  userId?: string
+  userId?: string,
+  isNewProfile: boolean = false
 ) => {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -30,18 +31,11 @@ export const useFormSubmit = (
     }
 
     setIsLoading(true);
-    console.log('Starting form submission for user:', userId);
+    console.log('Starting form submission for user:', userId, 'isNewProfile:', isNewProfile);
 
     try {
-      // First, check if a profile already exists
-      const { data: existingProfile } = await supabase
-        .from('teachers')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
-
       // Handle profile update/creation
-      const { error: profileError } = await handleProfileUpdate(formData, userId, !!existingProfile);
+      const { error: profileError } = await handleProfileUpdate(formData, userId, !isNewProfile);
       if (profileError) throw profileError;
 
       // Handle relations update

@@ -9,7 +9,13 @@ type FormContainerProps = {
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
   const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
-  const { handleSubmit } = useFormSubmit(formData as FormData, isLoading, setIsLoading, userId || currentUserId);
+  const { handleSubmit } = useFormSubmit(
+    formData as FormData, 
+    isLoading, 
+    setIsLoading, 
+    userId || currentUserId,
+    !userId // isNewProfile when there's no userId in the URL
+  );
 
   console.log('FormContainer rendered with:', {
     userId,
