@@ -60,6 +60,9 @@ export const translations = {
     errorLoadingCities: "Error loading cities",
     noCitiesAvailable: "No cities available",
     yourCity: "Your City",
+    password: "Password",
+    signIn: "Sign In",
+    signUp: "Sign Up",
   },
   fr: {
     welcome: "Bienvenue",
@@ -120,6 +123,9 @@ export const translations = {
     errorLoadingCities: "Erreur lors du chargement des villes",
     noCitiesAvailable: "Aucune ville disponible",
     yourCity: "Votre ville",
+    password: "Mot de passe",
+    signIn: "Se connecter",
+    signUp: "S'inscrire",
   },
   lb: {
     welcome: "Wëllkomm",
@@ -180,6 +186,9 @@ export const translations = {
     errorLoadingCities: "Feeler beim Lueden vun de Stied",
     noCitiesAvailable: "Keng Stied verfügbar",
     yourCity: "Är Stad",
+    password: "Passwuert",
+    signIn: "Aloggen",
+    signUp: "Registréieren",
   }
 } as const;
 
