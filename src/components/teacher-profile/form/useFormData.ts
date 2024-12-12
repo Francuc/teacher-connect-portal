@@ -37,42 +37,67 @@ export const useFormData = (userId?: string) => {
   // Fetch and set default city
   useEffect(() => {
     const fetchDefaultCity = async () => {
-      console.log('Fetching default city...');
-      const { data: cities, error } = await supabase
-        .from('cities')
-        .select('id')
-        .limit(1);
+      try {
+        console.log('Fetching default city...');
+        // First verify if we already have a city set
+        if (formData.cityId) {
+          const { data: cityExists, error: verifyError } = await supabase
+            .from('cities')
+            .select('id')
+            .eq('id', formData.cityId)
+            .single();
 
-      if (error) {
-        console.error('Error fetching default city:', error);
+          if (!verifyError && cityExists) {
+            console.log('Current city is valid:', cityExists.id);
+            return;
+          }
+        }
+
+        // If no valid city is set, fetch the first available city
+        const { data: cities, error } = await supabase
+          .from('cities')
+          .select('id')
+          .limit(1)
+          .single();
+
+        if (error) {
+          console.error('Error fetching default city:', error);
+          toast({
+            title: t("error"),
+            description: t("error"),
+            variant: "destructive",
+          });
+          return;
+        }
+
+        if (cities) {
+          console.log('Setting default city:', cities.id);
+          setFormData(prev => ({
+            ...prev,
+            cityId: cities.id
+          }));
+        } else {
+          console.error('No cities found in the database');
+          toast({
+            title: t("error"),
+            description: t("noResults"),
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Error in fetchDefaultCity:', error);
         toast({
           title: t("error"),
           description: t("error"),
           variant: "destructive",
         });
-        return;
-      }
-
-      if (cities && cities.length > 0) {
-        console.log('Setting default city:', cities[0].id);
-        setFormData(prev => ({
-          ...prev,
-          cityId: cities[0].id
-        }));
-      } else {
-        console.error('No cities found in the database');
-        toast({
-          title: t("error"),
-          description: t("noResults"),
-          variant: "destructive",
-        });
       }
     };
 
-    if (!userId && !formData.cityId) {
+    if (!userId) {
       fetchDefaultCity();
     }
-  }, [userId, formData.cityId, t, toast]);
+  }, [userId, t, toast]);
 
   useEffect(() => {
     if (userId) {
