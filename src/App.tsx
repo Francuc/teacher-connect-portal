@@ -16,7 +16,8 @@ function App() {
           <Routes>
             <Route element={<Layout />}>
               <Route index element={<Landing />} />
-              <Route path="profile" element={<TeacherProfileForm />} />
+              <Route path="profile/new" element={<TeacherProfileForm />} />
+              <Route path="profile/:userId" element={<TeacherProfileForm />} />
               <Route path="teachers" element={<TeachersList />} />
             </Route>
           </Routes>

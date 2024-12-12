@@ -10,96 +10,15 @@ import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const TeacherProfileForm = () => {
-  const { toast } = useToast();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const navigate = useNavigate();
+  const { userId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: t("error"),
-          description: t("pleaseLoginFirst"),
-          variant: "destructive",
-        });
-        navigate("/");
-        return;
-      }
-      setUserId(user.id);
-
-      // Check if teacher profile exists
-      const { data: existingProfile } = await supabase
-        .from('teachers')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (existingProfile) {
-        // Pre-fill form with existing data
-        setFormData({
-          firstName: existingProfile.first_name,
-          lastName: existingProfile.last_name,
-          email: existingProfile.email,
-          phone: existingProfile.phone || "",
-          facebookProfile: existingProfile.facebook_profile || "",
-          showEmail: existingProfile.show_email,
-          showPhone: existingProfile.show_phone,
-          showFacebook: existingProfile.show_facebook,
-          bio: existingProfile.bio,
-          profilePicture: null,
-          subjects: [],
-          schoolLevels: [],
-          teachingLocations: [],
-          cityId: existingProfile.city_id || "",
-          studentRegions: [],
-          studentCities: [],
-          pricePerHour: {
-            teacherPlace: "",
-            studentPlace: "",
-            online: "",
-          },
-        });
-
-        // Fetch related data
-        const { data: subjects } = await supabase
-          .from('teacher_subjects')
-          .select('subject')
-          .eq('teacher_id', user.id);
-        
-        const { data: schoolLevels } = await supabase
-          .from('teacher_school_levels')
-          .select('school_level')
-          .eq('teacher_id', user.id);
-        
-        const { data: locations } = await supabase
-          .from('teacher_locations')
-          .select('*')
-          .eq('teacher_id', user.id);
-
-        if (subjects) setFormData(prev => ({ ...prev, subjects: subjects.map(s => s.subject) }));
-        if (schoolLevels) setFormData(prev => ({ ...prev, schoolLevels: schoolLevels.map(l => l.school_level) }));
-        if (locations) {
-          setFormData(prev => ({
-            ...prev,
-            teachingLocations: locations.map(l => l.location_type as TeachingLocation),
-            pricePerHour: {
-              teacherPlace: locations.find(l => l.location_type === "Teacher's Place")?.price_per_hour || "",
-              studentPlace: locations.find(l => l.location_type === "Student's Place")?.price_per_hour || "",
-              online: locations.find(l => l.location_type === "Online")?.price_per_hour || "",
-            }
-          }));
-        }
-      }
-    };
-
-    checkAuth();
-  }, [navigate, t, toast]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -124,6 +43,89 @@ const TeacherProfileForm = () => {
       online: "",
     },
   });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user && !userId) {
+        toast({
+          title: t("error"),
+          description: t("pleaseLoginFirst"),
+          variant: "destructive",
+        });
+        navigate("/");
+        return;
+      }
+      setCurrentUserId(user?.id || userId);
+
+      // If we're editing an existing profile
+      if (userId) {
+        const { data: existingProfile } = await supabase
+          .from('teachers')
+          .select('*')
+          .eq('user_id', userId)
+          .single();
+
+        if (existingProfile) {
+          setFormData({
+            firstName: existingProfile.first_name,
+            lastName: existingProfile.last_name,
+            email: existingProfile.email,
+            phone: existingProfile.phone || "",
+            facebookProfile: existingProfile.facebook_profile || "",
+            showEmail: existingProfile.show_email,
+            showPhone: existingProfile.show_phone,
+            showFacebook: existingProfile.show_facebook,
+            bio: existingProfile.bio,
+            profilePicture: null,
+            subjects: [],
+            schoolLevels: [],
+            teachingLocations: [],
+            cityId: existingProfile.city_id || "",
+            studentRegions: [],
+            studentCities: [],
+            pricePerHour: {
+              teacherPlace: "",
+              studentPlace: "",
+              online: "",
+            },
+          });
+
+          // Fetch related data
+          const { data: subjects } = await supabase
+            .from('teacher_subjects')
+            .select('subject')
+            .eq('teacher_id', userId);
+          
+          const { data: schoolLevels } = await supabase
+            .from('teacher_school_levels')
+            .select('school_level')
+            .eq('teacher_id', userId);
+          
+          const { data: locations } = await supabase
+            .from('teacher_locations')
+            .select('*')
+            .eq('teacher_id', userId);
+
+          if (subjects) setFormData(prev => ({ ...prev, subjects: subjects.map(s => s.subject) }));
+          if (schoolLevels) setFormData(prev => ({ ...prev, schoolLevels: schoolLevels.map(l => l.school_level) }));
+          if (locations) {
+            setFormData(prev => ({
+              ...prev,
+              teachingLocations: locations.map(l => l.location_type as TeachingLocation),
+              pricePerHour: {
+                teacherPlace: locations.find(l => l.location_type === "Teacher's Place")?.price_per_hour.toString() || "",
+                studentPlace: locations.find(l => l.location_type === "Student's Place")?.price_per_hour.toString() || "",
+                online: locations.find(l => l.location_type === "Online")?.price_per_hour.toString() || "",
+              }
+            }));
+          }
+        }
+      }
+    };
+
+    checkAuth();
+  }, [navigate, t, toast, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -297,13 +299,13 @@ const TeacherProfileForm = () => {
     }
   };
 
-  if (!userId) {
+  if (!currentUserId) {
     return null;
   }
 
   // If we're viewing the profile, show the TeacherProfileView component
-  if (window.location.pathname === "/profile") {
-    return <TeacherProfileView userId={userId} />;
+  if (window.location.pathname === `/profile/${userId}` && !window.location.pathname.includes('/new')) {
+    return <TeacherProfileView userId={userId || currentUserId} />;
   }
 
   // Otherwise show the form
@@ -321,7 +323,7 @@ const TeacherProfileForm = () => {
           disabled={isLoading}
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {t("saveProfile")}
+          {userId ? t("updateProfile") : t("saveProfile")}
         </Button>
       </div>
     </form>
