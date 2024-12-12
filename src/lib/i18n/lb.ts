@@ -17,7 +17,6 @@ export const lb = {
   cities: "Stied",
   pricePerHour: "De Präis pro Stonn",
   priceRequired: "De Präis pro Stonn ass erfuerderlech",
-  // Add new translations
   findTeacher: "E Léierpersonal fannen",
   landingDescription: "Fannt de perfekte Léierpersonal fir Är Besoinen",
   mathematics: "Mathematik",
@@ -46,5 +45,6 @@ export const lb = {
   searchPlaceholder: "No Léierpersonal sichen...",
   allSubjects: "All Fächer",
   allLevels: "All Niveauen",
-  startingFrom: "Vu(n)"
+  startingFrom: "Vu(n)",
+  emailAlreadyExists: "E Profil mat dëser E-Mail existéiert schon"
 };

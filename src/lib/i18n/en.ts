@@ -83,5 +83,7 @@ export const en = {
   searchPlaceholder: "Search teachers...",
   allSubjects: "All Subjects",
   allLevels: "All Levels",
-  startingFrom: "Starting from"
+  startingFrom: "Starting from",
+  
+  emailAlreadyExists: "A profile with this email already exists",
 };

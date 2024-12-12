@@ -34,9 +34,20 @@ export const useFormSubmit = (
     console.log('Starting form submission for user:', userId, 'isNewProfile:', isNewProfile);
 
     try {
-      // Handle profile update/creation
+      // Handle profile creation
       const { error: profileError } = await handleProfileUpdate(formData, userId, !isNewProfile);
-      if (profileError) throw profileError;
+      
+      if (profileError) {
+        if (profileError.message === 'emailAlreadyExists') {
+          toast({
+            title: t("error"),
+            description: t("emailAlreadyExists"),
+            variant: "destructive",
+          });
+          return;
+        }
+        throw profileError;
+      }
 
       // Handle relations update
       const { error: relationsError } = await handleRelationsUpdate(formData, userId);

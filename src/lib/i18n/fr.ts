@@ -83,6 +83,9 @@ export const fr = {
   errorLoadingProfile: "Erreur lors du chargement du profil",
   pleaseLoginFirst: "Veuillez vous connecter d'abord",
   errorUploadingProfilePicture: "Erreur lors du téléchargement de la photo",
+  
+  // New translation key
+  emailAlreadyExists: "Un profil avec cet email existe déjà",
 
   // Landing
   findTeacher: "Trouver un professeur",
