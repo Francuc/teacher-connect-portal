@@ -47,6 +47,19 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         throw profileError;
       }
 
+      // Get the public URL for the profile picture if it exists
+      let fullProfilePictureUrl = null;
+      if (profile.profile_picture_url) {
+        const { data } = supabase
+          .storage
+          .from('profile-pictures')
+          .getPublicUrl(profile.profile_picture_url);
+        fullProfilePictureUrl = data.publicUrl;
+        console.log('Profile picture URL:', fullProfilePictureUrl);
+      }
+
+      // Update the profile with the full URL
+      profile.profile_picture_url = fullProfilePictureUrl;
       console.log('Profile data:', profile);
 
       const [
