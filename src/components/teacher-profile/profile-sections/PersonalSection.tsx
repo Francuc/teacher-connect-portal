@@ -45,8 +45,8 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
             </div>
             <div>
               <h3 className="font-semibold">{t("contactInformation")}</h3>
-              <div className="space-y-2">
-                {profile.show_email && (
+              <div className="space-y-2 mt-2">
+                {profile.email && (
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4" />
                     <a 
@@ -57,7 +57,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
                     </a>
                   </div>
                 )}
-                {profile.show_phone && profile.phone && (
+                {profile.phone && (
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4" />
                     <a 
@@ -68,7 +68,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
                     </a>
                   </div>
                 )}
-                {profile.show_facebook && profile.facebook_profile && (
+                {profile.facebook_profile && (
                   <div className="flex items-center gap-2">
                     <Facebook className="w-4 h-4" />
                     <a 
