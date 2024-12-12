@@ -29,36 +29,67 @@ const uploadProfilePicture = async (userId: string) => {
   }
 };
 
-const createRandomTeacher = async () => {
-  const userId = faker.string.uuid();
-  const profilePicture = await uploadProfilePicture(userId);
-
-  const { data, error } = await supabase
-    .from('teachers')
-    .insert({
-      user_id: userId,
-      first_name: faker.person.firstName(),
-      last_name: faker.person.lastName(),
-      email: faker.internet.email(),
-      phone: faker.phone.number(),
-      facebook_profile: faker.internet.url(),
-      show_email: faker.datatype.boolean(),
-      show_phone: faker.datatype.boolean(),
-      show_facebook: faker.datatype.boolean(),
-      bio: faker.lorem.paragraph(),
-      city_id: faker.string.uuid(),
-      profile_picture_url: profilePicture,
-    });
-
+const getRandomCityId = async () => {
+  const { data: cities, error } = await supabase
+    .from('cities')
+    .select('id')
+    .limit(100);
+  
   if (error) {
-    console.error('Error creating random teacher:', error);
+    console.error('Error fetching cities:', error);
     throw error;
   }
+  
+  if (!cities || cities.length === 0) {
+    console.error('No cities found in database');
+    throw new Error('No cities available');
+  }
 
-  return data;
+  const randomIndex = Math.floor(Math.random() * cities.length);
+  return cities[randomIndex].id;
+};
+
+const createRandomTeacher = async () => {
+  try {
+    const userId = faker.string.uuid();
+    const profilePicture = await uploadProfilePicture(userId);
+    const cityId = await getRandomCityId();
+
+    const { data, error } = await supabase
+      .from('teachers')
+      .insert({
+        user_id: userId,
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        facebook_profile: faker.internet.url(),
+        show_email: faker.datatype.boolean(),
+        show_phone: faker.datatype.boolean(),
+        show_facebook: faker.datatype.boolean(),
+        bio: faker.lorem.paragraph(),
+        city_id: cityId,
+        profile_picture_url: profilePicture
+      });
+
+    if (error) {
+      console.error('Error creating random teacher:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in createRandomTeacher:', error);
+    throw error;
+  }
 };
 
 export const createRandomTeachers = async (count: number = 5) => {
-  const promises = Array.from({ length: count }, createRandomTeacher);
-  return Promise.all(promises);
+  try {
+    const promises = Array.from({ length: count }, createRandomTeacher);
+    return Promise.all(promises);
+  } catch (error) {
+    console.error('Error creating random teachers:', error);
+    throw error;
+  }
 };
