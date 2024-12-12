@@ -23,6 +23,7 @@ export const fr = {
   teachers: "Enseignants",
   students: "Étudiants",
   search: "Rechercher",
+  searchPlaceholder: "Rechercher des professeurs...",
 
   // Profile
   editProfile: "Modifier le profil",
@@ -44,6 +45,12 @@ export const fr = {
   showPhone: "Afficher le téléphone",
   showFacebook: "Afficher Facebook",
   facebookProfile: "Profil Facebook",
+  personalInfo: "Informations personnelles",
+  personalInformation: "Informations personnelles",
+  contactInformation: "Informations de contact",
+  name: "Nom",
+  showInProfile: "Afficher sur le profil",
+  biography: "Biographie",
 
   // Locations
   regions: "Régions",
@@ -57,6 +64,11 @@ export const fr = {
   teacherPlace: "l'enseignement chez vous",
   studentPlace: "l'enseignement chez l'étudiant",
   online: "l'enseignement en ligne",
+  selectedLocation: "Emplacement sélectionné",
+  searchCity: "Rechercher une ville",
+  noCityFound: "Aucune ville trouvée",
+  noCitiesAvailable: "Aucune ville disponible",
+  errorLoadingCities: "Erreur lors du chargement des villes",
 
   // Messages
   success: "Succès",
@@ -72,7 +84,7 @@ export const fr = {
   pleaseLoginFirst: "Veuillez vous connecter d'abord",
   errorUploadingProfilePicture: "Erreur lors du téléchargement de la photo",
 
-  // New translations
+  // Landing
   findTeacher: "Trouver un professeur",
   landingDescription: "Trouvez le professeur parfait pour vos besoins",
   mathematics: "Mathématiques",
@@ -83,22 +95,11 @@ export const fr = {
   allRights: "Tous droits réservés",
   createAd: "Créer une annonce",
   selectProfile: "Sélectionner un profil",
-  editProfile: "Modifier le profil",
   viewProfile: "Voir le profil",
-  selectedLocation: "Emplacement sélectionné",
-  searchCity: "Rechercher une ville",
-  noCityFound: "Aucune ville trouvée",
-  noCitiesAvailable: "Aucune ville disponible",
-  errorLoadingCities: "Erreur lors du chargement des villes",
-  personalInfo: "Informations personnelles",
-  personalInformation: "Informations personnelles",
-  contactInformation: "Informations de contact",
-  name: "Nom",
-  showInProfile: "Afficher sur le profil",
-  biography: "Biographie",
-  search: "Rechercher",
-  searchPlaceholder: "Rechercher des professeurs...",
   allSubjects: "Toutes les matières",
   allLevels: "Tous les niveaux",
-  startingFrom: "À partir de"
+  startingFrom: "À partir de",
+  save: "Enregistrer",
+  cancel: "Annuler",
+  edit: "Modifier"
 };
