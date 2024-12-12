@@ -20,23 +20,22 @@ export default function Login() {
         if (event === 'USER_UPDATED' && session) {
           navigate("/");
         }
+        if (event === 'SIGNED_UP') {
+          // Handle potential registration errors
+          const { error } = await supabase.auth.getSession();
+          if (error?.message === "User already registered") {
+            toast({
+              variant: "destructive",
+              title: t("error"),
+              description: t("userAlreadyExists"),
+            });
+          }
+        }
       }
     );
 
-    // Set up a separate error handler for authentication errors
-    const handleAuthError = supabase.auth.onError((error) => {
-      if (error.message === "User already registered") {
-        toast({
-          variant: "destructive",
-          title: t("error"),
-          description: t("userAlreadyExists"),
-        });
-      }
-    });
-
     return () => {
       subscription.unsubscribe();
-      handleAuthError.data.subscription.unsubscribe();
     };
   }, [navigate, toast, t]);
 
