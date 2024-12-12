@@ -12,6 +12,7 @@ import { Pencil, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { TeacherSubject } from "./form/types";
 
 type TeacherProfile = {
   first_name: string;
@@ -28,13 +29,7 @@ type TeacherProfile = {
     location_type: TeachingLocation;
     price_per_hour: number;
   }[];
-  subjects: {
-    subject: {
-      name_en: string;
-      name_fr: string;
-      name_lb: string;
-    };
-  }[];
+  subjects: TeacherSubject[];
   school_levels: string[];
   city: {
     name_en: string;
@@ -140,16 +135,10 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
           .select('city_name')
           .eq('teacher_id', userId);
 
-        const subjectNames = teacherSubjects?.map(ts => 
-          language === 'fr' ? ts.subject.name_fr :
-          language === 'lb' ? ts.subject.name_lb :
-          ts.subject.name_en
-        ) || [];
-
         setProfile({
           ...teacherData,
           locations: locations || [],
-          subjects: subjectNames,
+          subjects: teacherSubjects || [],
           school_levels: schoolLevels?.map(l => l.school_level) || [],
           student_regions: studentRegions?.map(r => r.region_name) || [],
           student_cities: studentCities?.map(c => c.city_name) || []
@@ -165,7 +154,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
     };
 
     fetchProfile();
-  }, [userId, t, toast, language]);
+  }, [userId, t, toast]);
 
   if (!profile) {
     return (
@@ -177,6 +166,17 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
 
   const handleEditClick = () => {
     navigate(`/profile/edit/${userId}`);
+  };
+
+  const getLocalizedSubjectName = (subject: TeacherSubject) => {
+    switch(language) {
+      case 'fr':
+        return subject.subject.name_fr;
+      case 'lb':
+        return subject.subject.name_lb;
+      default:
+        return subject.subject.name_en;
+    }
   };
 
   return (
@@ -213,7 +213,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
             studentRegions={profile.student_regions}
             studentCities={profile.student_cities}
           />
-          <SubjectsSection subjects={profile.subjects} />
+          <SubjectsSection subjects={profile.subjects.map(getLocalizedSubjectName)} />
           <SchoolLevelsSection schoolLevels={profile.school_levels} />
         </div>
       </div>

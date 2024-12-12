@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { FormData } from "./types/teacherTypes";
+import { FormData, TeacherSubject } from "./types";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
-import { useTeacherData } from "./hooks/useTeacherData";
-import { TeachingLocation } from "@/lib/constants";
 
 export const useFormData = (userId?: string) => {
   const { t } = useLanguage();
@@ -36,46 +34,74 @@ export const useFormData = (userId?: string) => {
     },
   });
 
-  const { data: teacherData } = useTeacherData(userId);
-
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || userId);
+      setCurrentUserId(user?.id || null);
     };
 
     checkAuth();
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
-    if (teacherData?.profile) {
-      const { profile, locations, subjects, schoolLevels, studentRegions, studentCities } = teacherData;
+    if (userId) {
+      const fetchTeacherData = async () => {
+        try {
+          const { data: teacherData, error } = await supabase
+            .from('teachers')
+            .select(`
+              *,
+              teacher_subjects (
+                subject_id,
+                subject:subjects (
+                  id,
+                  name_en,
+                  name_fr,
+                  name_lb
+                )
+              )
+            `)
+            .eq('user_id', userId)
+            .single();
 
-      setFormData(prev => ({
-        ...prev,
-        firstName: profile.first_name,
-        lastName: profile.last_name,
-        email: profile.email,
-        phone: profile.phone || "",
-        facebookProfile: profile.facebook_profile || "",
-        showEmail: profile.show_email,
-        showPhone: profile.show_phone,
-        showFacebook: profile.show_facebook,
-        bio: profile.bio,
-        cityId: profile.city_id || "",
-        subjects: subjects.map(s => s.subject.name_en),
-        schoolLevels,
-        teachingLocations: locations.map(l => l.location_type) as TeachingLocation[],
-        studentRegions,
-        studentCities,
-        pricePerHour: {
-          teacherPlace: locations.find(l => l.location_type === "Teacher's Place")?.price_per_hour.toString() || "",
-          studentPlace: locations.find(l => l.location_type === "Student's Place")?.price_per_hour.toString() || "",
-          online: locations.find(l => l.location_type === "Online")?.price_per_hour.toString() || "",
-        },
-      }));
+          if (error) throw error;
+
+          setFormData(prev => ({
+            ...prev,
+            firstName: teacherData.first_name,
+            lastName: teacherData.last_name,
+            email: teacherData.email,
+            phone: teacherData.phone || "",
+            facebookProfile: teacherData.facebook_profile || "",
+            showEmail: teacherData.show_email,
+            showPhone: teacherData.show_phone,
+            showFacebook: teacherData.show_facebook,
+            bio: teacherData.bio,
+            cityId: teacherData.city_id || "",
+            subjects: teacherData.teacher_subjects as TeacherSubject[],
+            schoolLevels: teacherData.school_levels || [],
+            teachingLocations: teacherData.locations || [],
+            studentRegions: teacherData.student_regions || [],
+            studentCities: teacherData.student_cities || [],
+            pricePerHour: {
+              teacherPlace: teacherData.price_per_hour_teacher || "",
+              studentPlace: teacherData.price_per_hour_student || "",
+              online: teacherData.price_per_hour_online || "",
+            },
+          }));
+        } catch (error) {
+          console.error('Error fetching teacher data:', error);
+          toast({
+            title: t("error"),
+            description: t("errorLoadingProfile"),
+            variant: "destructive",
+          });
+        }
+      };
+
+      fetchTeacherData();
     }
-  }, [teacherData]);
+  }, [userId, t, toast]);
 
   return { formData, setFormData, isLoading, setIsLoading, currentUserId };
 };

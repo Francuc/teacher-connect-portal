@@ -1,5 +1,15 @@
 import { TeachingLocation } from "@/lib/constants";
 
+export interface TeacherSubject {
+  subject_id: string;
+  subject: {
+    id: string;
+    name_en: string;
+    name_fr: string;
+    name_lb: string;
+  };
+}
+
 export interface FormData {
   firstName: string;
   lastName: string;
@@ -11,13 +21,7 @@ export interface FormData {
   showFacebook: boolean;
   bio: string;
   profilePicture: File | null;
-  subjects: {
-    subject: {
-      name_en: string;
-      name_fr: string;
-      name_lb: string;
-    };
-  }[];
+  subjects: TeacherSubject[];
   schoolLevels: string[];
   teachingLocations: TeachingLocation[];
   cityId: string;
