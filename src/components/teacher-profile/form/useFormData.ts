@@ -123,7 +123,10 @@ export const useFormData = (userId?: string) => {
             showFacebook: profile.show_facebook || false,
             bio: profile.bio,
             profilePicture: null,
-            subjects: subjects || [],
+            subjects: subjects?.map(s => ({
+              subject_id: s.subject_id,
+              subject: s.subject[0]
+            })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
             cityId: profile.city_id || "",

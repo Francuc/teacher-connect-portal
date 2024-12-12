@@ -56,5 +56,8 @@ export default {
   personalInformation: "Personal Information",
   startingFrom: "Starting from",
   viewProfile: "View Profile",
-  searchPlaceholder: "Search teachers..."
+  searchPlaceholder: "Search teachers...",
+  success: "Success",
+  profileSaved: "Profile saved successfully",
+  errorUploadingProfilePicture: "Error uploading profile picture",
 } as const;

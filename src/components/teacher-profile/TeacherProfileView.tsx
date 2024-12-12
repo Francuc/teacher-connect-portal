@@ -14,8 +14,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
+      const { data: profile, error: profileError } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (profileError) throw profileError;
+
       const [
-        { data: profile },
         { data: subjects },
         { data: schoolLevels },
         { data: locations },
@@ -23,11 +30,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         { data: studentCities },
         { data: city }
       ] = await Promise.all([
-        supabase
-          .from('teachers')
-          .select('*')
-          .eq('user_id', userId)
-          .single(),
         supabase
           .from('teacher_subjects')
           .select(`
@@ -56,7 +58,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .from('teacher_student_cities')
           .select('city_name')
           .eq('teacher_id', userId),
-        supabase
+        profile?.city_id ? supabase
           .from('cities')
           .select(`
             *,
@@ -67,13 +69,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
               name_lb
             )
           `)
-          .eq('id', profile?.city_id)
-          .single()
+          .eq('id', profile.city_id)
+          .single() : { data: null }
       ]);
 
       return {
         profile,
-        subjects: subjects || [],
+        subjects: subjects?.map(s => ({
+          subject: s.subject[0] // Fix: Access first element of subject array
+        })) || [],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
