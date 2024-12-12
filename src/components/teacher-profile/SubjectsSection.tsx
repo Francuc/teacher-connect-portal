@@ -29,12 +29,20 @@ export const SubjectsSection = ({
         .order('name_en');
       
       if (error) throw error;
+      console.log('Available subjects:', data);
       return data;
     },
   });
 
+  console.log('Current subjects prop:', subjects);
+
   const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string } | null | undefined) => {
-    if (!subject) return '';
+    if (!subject) {
+      console.log('Subject is null or undefined');
+      return '';
+    }
+    
+    console.log('Getting localized name for subject:', subject, 'with language:', language);
     
     switch(language) {
       case 'fr':
@@ -95,14 +103,17 @@ export const SubjectsSection = ({
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {subjects.map((subjectData) => (
-              <span 
-                key={subjectData.subject_id} 
-                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
-              >
-                {getLocalizedName(subjectData.subject)}
-              </span>
-            ))}
+            {subjects.map((subjectData) => {
+              console.log('Rendering subject:', subjectData);
+              return (
+                <span 
+                  key={subjectData.subject_id} 
+                  className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
+                >
+                  {getLocalizedName(subjectData.subject)}
+                </span>
+              );
+            })}
           </div>
         )}
       </CardContent>
