@@ -11,34 +11,25 @@ export const validateForm = (formData: FormData, t: (key: string) => string) => 
   if (formData.schoolLevels.length === 0) errors.push(t("schoolLevels"));
   if (formData.teachingLocations.length === 0) errors.push(t("teachingLocations"));
   
-  if (formData.teachingLocations.includes("Teacher's Place") && !formData.cityId) {
-    errors.push(t("teacherCity"));
+  if (formData.teachingLocations.includes("Teacher's Place")) {
+    if (!formData.cityId) {
+      errors.push(t("teacherCity"));
+    }
+    if (!formData.pricePerHour.teacherPlace || parseFloat(formData.pricePerHour.teacherPlace) <= 0) {
+      errors.push(t("priceRequired", { location: t("teacherPlace") }));
+    }
   }
 
-  // Check if at least one teaching location has a valid price
-  const hasValidPrice = formData.teachingLocations.some(location => {
-    let priceKey: keyof typeof formData.pricePerHour;
-    
-    switch (location) {
-      case "Teacher's Place":
-        priceKey = "teacherPlace";
-        break;
-      case "Student's Place":
-        priceKey = "studentPlace";
-        break;
-      case "Online":
-        priceKey = "online";
-        break;
-      default:
-        return false;
+  if (formData.teachingLocations.includes("Student's Place")) {
+    if (!formData.pricePerHour.studentPlace || parseFloat(formData.pricePerHour.studentPlace) <= 0) {
+      errors.push(t("priceRequired", { location: t("studentPlace") }));
     }
+  }
 
-    const price = formData.pricePerHour[priceKey];
-    return price && parseFloat(price) > 0;
-  });
-
-  if (!hasValidPrice && formData.teachingLocations.length > 0) {
-    errors.push(t("pricePerHour"));
+  if (formData.teachingLocations.includes("Online")) {
+    if (!formData.pricePerHour.online || parseFloat(formData.pricePerHour.online) <= 0) {
+      errors.push(t("priceRequired", { location: t("online") }));
+    }
   }
 
   return errors;
