@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const Navigation = () => {
   const { t } = useLanguage();
@@ -62,18 +63,52 @@ export const Navigation = () => {
           </div>
           <div className="flex items-center gap-4">
             {!isLoading && profiles && profiles.length > 0 && (
-              <Select value={selectedProfile} onValueChange={handleProfileChange}>
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder={t("selectProfile")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {profiles.map((profile) => (
-                    <SelectItem key={profile.user_id} value={profile.user_id}>
-                      {profile.first_name} {profile.last_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-4">
+                <Select value={selectedProfile} onValueChange={handleProfileChange}>
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder={t("selectProfile")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {profiles.map((profile) => (
+                      <SelectItem 
+                        key={profile.user_id} 
+                        value={profile.user_id}
+                        className="flex items-center gap-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6">
+                            {profile.profile_picture_url ? (
+                              <AvatarImage 
+                                src={profile.profile_picture_url} 
+                                alt={`${profile.first_name} ${profile.last_name}`}
+                              />
+                            ) : (
+                              <AvatarFallback>
+                                <User className="h-4 w-4" />
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
+                          <span>{profile.first_name} {profile.last_name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedProfile && (
+                  <Avatar className="h-8 w-8">
+                    {profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url ? (
+                      <AvatarImage 
+                        src={profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url} 
+                        alt="Profile"
+                      />
+                    ) : (
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                )}
+              </div>
             )}
             <Button onClick={handleCreateAd} className="gap-2">
               <Plus className="h-4 w-4" />
