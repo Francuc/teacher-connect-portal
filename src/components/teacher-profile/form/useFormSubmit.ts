@@ -40,6 +40,7 @@ export const useFormSubmit = (
     }
 
     setIsLoading(true);
+    console.log('Starting form submission for user:', userId);
 
     try {
       // Upload profile picture if exists
@@ -47,6 +48,7 @@ export const useFormSubmit = (
       if (formData.profilePicture) {
         try {
           profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
+          console.log('Profile picture uploaded:', profilePictureUrl);
         } catch (error) {
           console.error('Error uploading profile picture:', error);
           toast({
@@ -60,11 +62,17 @@ export const useFormSubmit = (
       }
 
       // Check if profile exists
-      const { data: existingProfile } = await supabase
+      console.log('Checking if profile exists for user:', userId);
+      const { data: existingProfile, error: checkError } = await supabase
         .from('teachers')
         .select('id')
         .eq('user_id', userId)
         .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking profile:', checkError);
+        throw checkError;
+      }
 
       // Prepare profile data
       const profileData = {
@@ -83,6 +91,8 @@ export const useFormSubmit = (
         ...(profilePictureUrl && { profile_picture_url: profilePictureUrl }),
       };
 
+      console.log('Updating/inserting profile with data:', profileData);
+
       // Update or insert profile
       const { error: profileError } = existingProfile
         ? await supabase
@@ -93,16 +103,24 @@ export const useFormSubmit = (
             .from('teachers')
             .insert([profileData]);
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Error updating/inserting profile:', profileError);
+        throw profileError;
+      }
+
+      console.log('Profile updated successfully, now handling relations');
 
       // Delete existing relations
-      await Promise.all([
+      const deletePromises = [
         supabase.from('teacher_subjects').delete().eq('teacher_id', userId),
         supabase.from('teacher_school_levels').delete().eq('teacher_id', userId),
         supabase.from('teacher_locations').delete().eq('teacher_id', userId),
         supabase.from('teacher_student_regions').delete().eq('teacher_id', userId),
         supabase.from('teacher_student_cities').delete().eq('teacher_id', userId),
-      ]);
+      ];
+
+      const deleteResults = await Promise.all(deletePromises);
+      console.log('Delete results:', deleteResults);
 
       // Insert new relations
       const insertPromises = [];
@@ -171,7 +189,8 @@ export const useFormSubmit = (
         );
       }
 
-      await Promise.all(insertPromises);
+      const insertResults = await Promise.all(insertPromises);
+      console.log('Insert results:', insertResults);
 
       // Show success message
       toast({
