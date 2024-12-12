@@ -121,8 +121,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           onClick={handleEditClick}
           className="bg-primary hover:bg-primary/90 w-[140px] h-10"
         >
-          <Pencil className="w-4 h-4 mr-2" />
-          {t("editProfile")}
+          <Pencil className="w-4 h-4" />
         </Button>
       </div>
       <div className="grid gap-6">
