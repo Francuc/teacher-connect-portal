@@ -16,19 +16,19 @@ export const validateForm = (formData: FormData, t: (key: string) => string) => 
       errors.push(t("teacherCity"));
     }
     if (!formData.pricePerHour.teacherPlace || parseFloat(formData.pricePerHour.teacherPlace) <= 0) {
-      errors.push(t("priceRequired", { location: t("teacherPlace") }));
+      errors.push(t("priceRequired"));
     }
   }
 
   if (formData.teachingLocations.includes("Student's Place")) {
     if (!formData.pricePerHour.studentPlace || parseFloat(formData.pricePerHour.studentPlace) <= 0) {
-      errors.push(t("priceRequired", { location: t("studentPlace") }));
+      errors.push(t("priceRequired"));
     }
   }
 
   if (formData.teachingLocations.includes("Online")) {
     if (!formData.pricePerHour.online || parseFloat(formData.pricePerHour.online) <= 0) {
-      errors.push(t("priceRequired", { location: t("online") }));
+      errors.push(t("priceRequired"));
     }
   }
 

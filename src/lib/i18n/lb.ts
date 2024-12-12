@@ -16,8 +16,5 @@ export const lb = {
   regions: "Regiounen",
   cities: "Stied",
   pricePerHour: "De Präis pro Stonn",
-  priceRequired: "De Präis pro Stonn ass erfuerderlech fir {{location}}",
-  teacherPlace: "Unterrecht bei dir",
-  studentPlace: "Unterrecht beim Student",
-  online: "Online Unterrecht",
+  priceRequired: "De Präis pro Stonn ass erfuerderlech"
 };
