@@ -10,27 +10,27 @@ export const useFormData = (userId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    facebookProfile: "",
-    showEmail: false,
-    showPhone: false,
-    showFacebook: false,
-    bio: "",
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+352 123 456 789",
+    facebookProfile: "https://facebook.com/johndoe",
+    showEmail: true,
+    showPhone: true,
+    showFacebook: true,
+    bio: "I am a passionate teacher with experience in multiple subjects. I enjoy helping students reach their full potential through personalized teaching methods.",
     profilePicture: null,
     profilePictureUrl: "",
     subjects: [],
-    schoolLevels: [],
-    teachingLocations: [],
+    schoolLevels: ["Primary School", "Middle School"],
+    teachingLocations: ["Teacher's Place", "Student's Place", "Online"],
     cityId: "",
     studentRegions: [],
     studentCities: [],
     pricePerHour: {
-      teacherPlace: "",
-      studentPlace: "",
-      online: "",
+      teacherPlace: "50",
+      studentPlace: "60",
+      online: "45",
     },
   });
 
@@ -131,7 +131,7 @@ export const useFormData = (userId?: string) => {
             profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0] // Take the first subject since it's an array with one item
+              subject: s.subject[0]
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
