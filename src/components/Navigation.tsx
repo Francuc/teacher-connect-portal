@@ -27,7 +27,7 @@ export const Navigation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('teachers')
-        .select('user_id, first_name, last_name');
+        .select('*');
       
       if (error) {
         console.error('Error fetching profiles:', error);
