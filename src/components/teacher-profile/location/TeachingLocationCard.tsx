@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { MapPin } from "lucide-react";
 import { TeachingLocationsList } from "./TeachingLocationsList";
 import { type TeachingLocation } from "@/lib/constants";
 
@@ -24,7 +25,10 @@ export const TeachingLocationCard = ({ formData, setFormData }: TeachingLocation
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("teachingLocations")}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="w-5 h-5" />
+          {t("teachingLocations")}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <TeachingLocationsList formData={formData} setFormData={setFormData} />
