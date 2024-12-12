@@ -20,16 +20,15 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
       throw new Error('Failed to fetch random image');
     }
 
-    // Get the image data as a buffer
-    const buffer = await response.arrayBuffer();
+    // Convert the response to a Blob
+    const blob = await response.blob();
     const fileName = `${userId}-${Math.random()}.jpg`;
 
-    // Upload the buffer directly to Supabase storage
-    const { error: uploadError } = await serviceRoleClient.storage
+    // Upload the blob directly to Supabase storage
+    const { data, error: uploadError } = await serviceRoleClient.storage
       .from('profile-pictures')
-      .upload(fileName, buffer, {
+      .upload(fileName, blob, {
         contentType: 'image/jpeg',
-        duplex: 'half',
         upsert: true
       });
 
@@ -38,7 +37,7 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
       throw uploadError;
     }
 
-    // Get the public URL after successful upload
+    // Get the public URL
     const { data: { publicUrl } } = serviceRoleClient.storage
       .from('profile-pictures')
       .getPublicUrl(fileName);
