@@ -35,7 +35,8 @@ export const translations = {
     geography: "Geography",
     "computer science": "Computer Science",
     music: "Music",
-    art: "Art"
+    art: "Art",
+    languages: "Languages"
   },
   fr: {
     search: "Recherche",
@@ -71,7 +72,8 @@ export const translations = {
     geography: "Géographie",
     "computer science": "Informatique",
     music: "Musique",
-    art: "Art"
+    art: "Art",
+    languages: "Langues"
   },
   lb: {
     search: "Sichen",
@@ -107,7 +109,8 @@ export const translations = {
     geography: "Geographie",
     "computer science": "Informatik",
     music: "Musik",
-    art: "Konscht"
+    art: "Konscht",
+    languages: "Sproochen"
   }
 } as const;
 
