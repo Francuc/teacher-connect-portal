@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { User, MapPin, GraduationCap, BookOpen, Euro } from "lucide-react";
+import { User, MapPin, GraduationCap, BookOpen, Euro, Mail, Phone, Facebook } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface TeacherCardProps {
@@ -25,7 +25,7 @@ export const TeacherCard = ({
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border border-purple.soft">
+    <Card className="group overflow-visible hover:shadow-lg transition-all duration-300 border border-purple.soft">
       <div className="relative p-6 flex flex-col h-full">
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
@@ -49,6 +49,39 @@ export const TeacherCard = ({
               <MapPin className="w-4 h-4 flex-shrink-0" />
               <span className="truncate">{getTeacherLocation(teacher)}</span>
             </p>
+            
+            {/* Contact Information */}
+            <div className="mt-2 space-y-1">
+              {teacher.show_email && teacher.email && (
+                <a 
+                  href={`mailto:${teacher.email}`}
+                  className="text-sm text-primary hover:text-primary/90 flex items-center gap-1"
+                >
+                  <Mail className="w-4 h-4" />
+                  {teacher.email}
+                </a>
+              )}
+              {teacher.show_phone && teacher.phone && (
+                <a 
+                  href={`tel:${teacher.phone}`}
+                  className="text-sm text-primary hover:text-primary/90 flex items-center gap-1"
+                >
+                  <Phone className="w-4 h-4" />
+                  {teacher.phone}
+                </a>
+              )}
+              {teacher.show_facebook && teacher.facebook_profile && (
+                <a 
+                  href={teacher.facebook_profile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:text-primary/90 flex items-center gap-1"
+                >
+                  <Facebook className="w-4 h-4" />
+                  {t("facebookProfile")}
+                </a>
+              )}
+            </div>
           </div>
         </div>
 
