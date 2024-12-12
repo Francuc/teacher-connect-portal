@@ -7,6 +7,7 @@ import { RegionsSection } from "./RegionsSection";
 import { type TeachingLocation } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
@@ -31,8 +32,26 @@ export const TeachingLocationItem = ({
 }: TeachingLocationItemProps) => {
   const { t, language } = useLanguage();
 
-  const { data: cities = [], isLoading: isLoadingCities } = useQuery({
-    queryKey: ['cities'],
+  const { data: regions = [] } = useQuery({
+    queryKey: ['regions'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('regions')
+          .select('*')
+          .order('name_en');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching regions:', error);
+        return [];
+      }
+    },
+  });
+
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities', formData.cityId],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
@@ -69,6 +88,10 @@ export const TeachingLocationItem = ({
     }
   };
 
+  const selectedRegion = regions.find(region => 
+    cities.find(city => city.id === formData.cityId)?.region_id === region.id
+  );
+
   return (
     <div className="space-y-2">
       <div className="flex items-center space-x-2">
@@ -90,25 +113,53 @@ export const TeachingLocationItem = ({
       {formData.teachingLocations.includes(location) && (
         <div className="space-y-2 pl-6">
           {location === "Teacher's Place" && (
-            <div className="space-y-2">
-              <Label>{t("cities")}</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {cities.map((city) => (
-                  <div key={city.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`city-${city.id}`}
-                      checked={formData.cityId === city.id}
-                      onCheckedChange={(checked) =>
-                        setFormData({
-                          ...formData,
-                          cityId: checked ? city.id : "",
-                        })
-                      }
-                    />
-                    <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
-                  </div>
-                ))}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>{t("regions")}</Label>
+                <RadioGroup
+                  value={selectedRegion?.id || ""}
+                  onValueChange={(value) => {
+                    // Reset cityId when changing region
+                    setFormData({
+                      ...formData,
+                      cityId: "",
+                    });
+                  }}
+                  className="grid grid-cols-2 gap-2"
+                >
+                  {regions.map((region) => (
+                    <div key={region.id} className="flex items-center space-x-2">
+                      <RadioGroupItem value={region.id} id={`region-${region.id}`} />
+                      <Label htmlFor={`region-${region.id}`}>{getLocalizedName(region)}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
               </div>
+
+              {selectedRegion && (
+                <div className="space-y-2">
+                  <Label>{t("cities")}</Label>
+                  <RadioGroup
+                    value={formData.cityId}
+                    onValueChange={(value) => {
+                      setFormData({
+                        ...formData,
+                        cityId: value,
+                      });
+                    }}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    {cities
+                      .filter(city => city.region_id === selectedRegion.id)
+                      .map((city) => (
+                        <div key={city.id} className="flex items-center space-x-2">
+                          <RadioGroupItem value={city.id} id={`city-${city.id}`} />
+                          <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
+                        </div>
+                      ))}
+                  </RadioGroup>
+                </div>
+              )}
             </div>
           )}
 
