@@ -48,7 +48,20 @@ export const TeachersList = () => {
         `);
       
       if (error) throw error;
-      return data || [];
+
+      // Transform profile picture URLs
+      const teachersWithUrls = await Promise.all((data || []).map(async (teacher) => {
+        if (teacher.profile_picture_url) {
+          const { data: urlData } = supabase
+            .storage
+            .from('profile-pictures')
+            .getPublicUrl(teacher.profile_picture_url);
+          return { ...teacher, profile_picture_url: urlData.publicUrl };
+        }
+        return teacher;
+      }));
+      
+      return teachersWithUrls;
     }
   });
 
