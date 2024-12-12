@@ -7,23 +7,14 @@ type FormContainerProps = {
 };
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
-  // Convert userId to string or undefined if it's an object
-  const actualUserId = typeof userId === 'object' ? undefined : userId;
-  
-  const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(actualUserId);
+  const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
   const { handleSubmit } = useFormSubmit(
     formData,
     isLoading,
     setIsLoading,
-    actualUserId || currentUserId,
-    !actualUserId // isNewProfile when there's no userId in the URL
+    userId || currentUserId,
+    !userId
   );
-
-  // For new profile creation, we need currentUserId
-  if (!actualUserId && !currentUserId) {
-    console.log('No currentUserId available for new profile creation');
-    return null;
-  }
 
   return (
     <FormSections 
@@ -31,7 +22,7 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
       setFormData={setFormData}
       isLoading={isLoading}
       onSubmit={handleSubmit}
-      isUpdate={!!actualUserId}
+      isUpdate={!!userId}
     />
   );
 };

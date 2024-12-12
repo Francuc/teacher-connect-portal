@@ -5,18 +5,10 @@ import { uploadProfilePicture } from "../profilePictureUpload";
 export const handleProfileUpdate = async (
   formData: FormData,
   userId: string,
-  isUpdate: boolean
-) => {
-  console.log('handleProfileUpdate called with:', { userId, isUpdate });
-
+  existingProfile: boolean
+): Promise<{ error?: Error }> => {
   try {
-    // Check if profile exists
-    const { data: existingProfile } = await supabase
-      .from('teachers')
-      .select('id')
-      .eq('user_id', userId)
-      .single();
-
+    // Upload profile picture if exists
     let profilePictureUrl = null;
     if (formData.profilePicture) {
       try {
@@ -39,34 +31,37 @@ export const handleProfileUpdate = async (
       show_phone: formData.showPhone,
       show_facebook: formData.showFacebook,
       bio: formData.bio,
-      city_id: formData.cityId || null,
+      city_id: formData.cityId,
       updated_at: new Date().toISOString(),
     };
 
-    // Add profile picture URL only if a new one was uploaded
+    // Only update profile_picture_url if a new picture was uploaded
     if (profilePictureUrl) {
       profileData.profile_picture_url = profilePictureUrl;
     }
 
-    let result;
+    let updateError;
     if (existingProfile) {
-      // Update existing profile
-      result = await supabase
+      const { error } = await supabase
         .from('teachers')
         .update(profileData)
         .eq('user_id', userId);
+      updateError = error;
     } else {
-      // Create new profile
-      result = await supabase
+      const { error } = await supabase
         .from('teachers')
         .insert([profileData]);
+      updateError = error;
     }
 
-    if (result.error) throw result.error;
-    return { error: null };
+    if (updateError) {
+      console.error('Error updating/inserting profile:', updateError);
+      throw updateError;
+    }
 
+    return {};
   } catch (error) {
     console.error('Error in handleProfileUpdate:', error);
-    return { error };
+    return { error: error as Error };
   }
 };
