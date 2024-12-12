@@ -4,16 +4,29 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session) {
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
           navigate("/");
+        }
+        if (event === 'USER_UPDATED' && session) {
+          navigate("/");
+        }
+        // Handle signup error
+        if (event === 'USER_SIGNUP_ERROR') {
+          toast({
+            variant: "destructive",
+            title: t("error"),
+            description: t("userAlreadyExists"),
+          });
         }
       }
     );
@@ -21,7 +34,7 @@ export default function Login() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, toast, t]);
 
   return (
     <div className="min-h-screen bg-purple.soft/30 flex items-center justify-center p-4">
