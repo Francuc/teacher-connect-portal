@@ -6,6 +6,7 @@ import { PersonalInfoSection } from "./teacher-profile/PersonalInfoSection";
 import { SubjectsSection } from "./teacher-profile/SubjectsSection";
 import { LocationSection } from "./teacher-profile/LocationSection";
 import { BiographySection } from "./teacher-profile/BiographySection";
+import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
@@ -254,6 +255,15 @@ const TeacherProfileForm = () => {
 
       console.log("Inserting teaching locations...");
       if (locationsWithPrices.length > 0) {
+        // First, delete existing locations
+        if (existingProfile) {
+          await supabase
+            .from('teacher_locations')
+            .delete()
+            .eq('teacher_id', userId);
+        }
+
+        // Then insert new locations
         const { error: locationsError } = await supabase
           .from('teacher_locations')
           .insert(
@@ -291,6 +301,12 @@ const TeacherProfileForm = () => {
     return null;
   }
 
+  // If we're viewing the profile, show the TeacherProfileView component
+  if (window.location.pathname === "/profile") {
+    return <TeacherProfileView userId={userId} />;
+  }
+
+  // Otherwise show the form
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
       <PersonalInfoSection formData={formData} setFormData={setFormData} />
