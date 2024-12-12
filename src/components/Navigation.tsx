@@ -26,7 +26,7 @@ export const Navigation = () => {
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: teachers, error } = await supabase
         .from('teachers')
         .select('*');
       
@@ -34,8 +34,21 @@ export const Navigation = () => {
         console.error('Error fetching profiles:', error);
         throw error;
       }
+
+      // Get public URLs for all profile pictures
+      const profilesWithUrls = await Promise.all(teachers.map(async (teacher) => {
+        if (teacher.profile_picture_url) {
+          const { data } = supabase
+            .storage
+            .from('profile-pictures')
+            .getPublicUrl(teacher.profile_picture_url);
+          return { ...teacher, profile_picture_url: data.publicUrl };
+        }
+        return teacher;
+      }));
       
-      return data || [];
+      console.log('Profiles with URLs:', profilesWithUrls);
+      return profilesWithUrls || [];
     }
   });
 
@@ -81,6 +94,7 @@ export const Navigation = () => {
                               <AvatarImage 
                                 src={profile.profile_picture_url} 
                                 alt={`${profile.first_name} ${profile.last_name}`}
+                                className="object-cover"
                               />
                             ) : (
                               <AvatarFallback>
@@ -100,6 +114,7 @@ export const Navigation = () => {
                       <AvatarImage 
                         src={profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url} 
                         alt="Profile"
+                        className="object-cover"
                       />
                     ) : (
                       <AvatarFallback>
