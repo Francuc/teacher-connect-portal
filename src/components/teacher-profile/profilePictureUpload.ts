@@ -1,11 +1,11 @@
 import { supabase } from "@/lib/supabase";
 
-export const uploadProfilePicture = async (file: File, userId: string) => {
+export const uploadProfilePicture = async (file: File, userId: string): Promise<string> => {
   try {
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}-${Math.random()}.${fileExt}`;
     
-    const { error: uploadError, data } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('profile-pictures')
       .upload(fileName, file, {
         upsert: true

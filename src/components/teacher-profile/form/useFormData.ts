@@ -20,6 +20,7 @@ export const useFormData = (userId?: string) => {
     showFacebook: false,
     bio: "",
     profilePicture: null,
+    profilePictureUrl: "",
     subjects: [],
     schoolLevels: [],
     teachingLocations: [],
@@ -102,8 +103,6 @@ export const useFormData = (userId?: string) => {
             }
           });
 
-          console.log('Fetched subjects:', subjects);
-
           setFormData({
             firstName: profile.first_name,
             lastName: profile.last_name,
@@ -115,9 +114,10 @@ export const useFormData = (userId?: string) => {
             showFacebook: profile.show_facebook || false,
             bio: profile.bio,
             profilePicture: null,
+            profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0] // Access the first element of the subject array
+              subject: s.subject[0]
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],

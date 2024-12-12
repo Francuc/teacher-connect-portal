@@ -21,6 +21,7 @@ export interface FormData {
   showFacebook: boolean;
   bio: string;
   profilePicture: File | null;
+  profilePictureUrl?: string;
   subjects: TeacherSubject[];
   schoolLevels: string[];
   teachingLocations: TeachingLocation[];

@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { User, Upload } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 type PersonalInfoProps = {
   formData: {
@@ -17,16 +18,43 @@ type PersonalInfoProps = {
     showPhone: boolean;
     showFacebook: boolean;
     profilePicture: File | null;
+    profilePictureUrl?: string;
   };
   setFormData: (data: any) => void;
 };
 
 export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps) => {
   const { t } = useLanguage();
+  const { toast } = useToast();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, profilePicture: e.target.files[0] });
+      const file = e.target.files[0];
+      
+      // Basic validation
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: t("error"),
+          description: t("profilePictureSizeError"),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: t("error"),
+          description: t("profilePictureTypeError"),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setFormData({ 
+        ...formData, 
+        profilePicture: file,
+        profilePictureUrl: URL.createObjectURL(file)
+      });
     }
   };
 
@@ -42,8 +70,11 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
         <div className="flex justify-center mb-6">
           <div className="relative">
             <Avatar className="w-24 h-24">
-              {formData.profilePicture ? (
-                <AvatarImage src={URL.createObjectURL(formData.profilePicture)} />
+              {(formData.profilePictureUrl || formData.profilePicture) ? (
+                <AvatarImage 
+                  src={formData.profilePictureUrl || (formData.profilePicture ? URL.createObjectURL(formData.profilePicture) : '')} 
+                  className="object-cover"
+                />
               ) : (
                 <AvatarFallback>
                   <User className="w-12 h-12" />
@@ -52,7 +83,7 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
             </Avatar>
             <label
               htmlFor="profile-picture"
-              className="absolute bottom-0 right-0 p-1 bg-primary rounded-full cursor-pointer hover:bg-primary/90"
+              className="absolute bottom-0 right-0 p-1 bg-primary rounded-full cursor-pointer hover:bg-primary/90 transition-colors"
             >
               <Upload className="w-4 h-4 text-white" />
             </label>
