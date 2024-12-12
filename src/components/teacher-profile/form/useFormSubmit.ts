@@ -9,7 +9,7 @@ export const useFormSubmit = (
   formData: FormData,
   isLoading: boolean,
   setIsLoading: (loading: boolean) => void,
-  userId: string,
+  userId: string | null,
   isNewProfile: boolean = false
 ) => {
   const { t } = useLanguage();
@@ -19,7 +19,7 @@ export const useFormSubmit = (
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading) return;
+    if (isLoading || !userId) return;
     
     try {
       setIsLoading(true);
@@ -36,7 +36,7 @@ export const useFormSubmit = (
       // Success notification and redirect
       toast({
         title: t("success"),
-        description: isNewProfile ? t("profileCreated") : t("profileUpdated"),
+        description: isNewProfile ? t("success") : t("success"),
       });
 
       // Redirect to profile view
@@ -45,7 +45,7 @@ export const useFormSubmit = (
       console.error('Form submission error:', error);
       toast({
         title: t("error"),
-        description: t("errorSavingProfile"),
+        description: t("error"),
         variant: "destructive",
       });
     } finally {
