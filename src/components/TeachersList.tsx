@@ -18,6 +18,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const { data: teachers = [], isLoading: isLoadingTeachers } = useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
+      console.log('Fetching teachers data...');
       const { data, error } = await supabase
         .from('teachers')
         .select(`
@@ -34,7 +35,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects(
+          teacher_subjects!inner(
             subject:subjects(
               id,
               name_en,
