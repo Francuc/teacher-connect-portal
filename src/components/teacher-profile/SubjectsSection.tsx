@@ -98,7 +98,7 @@ export const SubjectsSection = ({
             {subjects.map((subjectData, index) => (
               <span 
                 key={index} 
-                className="bg-primary/10 px-3 py-1.5 rounded-full text-sm font-medium"
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-soft text-purple-vivid"
               >
                 {getLocalizedName(subjectData.subject)}
               </span>
