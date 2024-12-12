@@ -23,7 +23,6 @@ export const LocationSummary = ({
 }: LocationSummaryProps) => {
   const { t } = useLanguage();
   const hasPrice = price && parseFloat(price) > 0;
-  const locationKey = location.toLowerCase().replace("'s", "").split(" ")[0];
 
   return (
     <Card 

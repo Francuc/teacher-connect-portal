@@ -121,7 +121,7 @@ export const TeachingLocationItem = ({
     return (
       <LocationSummary
         location={location}
-        price={currentPrice}
+        price={currentPrice || ''}
         selectedCity={selectedCity}
         studentRegions={formData.studentRegions}
         studentCities={formData.studentCities}
