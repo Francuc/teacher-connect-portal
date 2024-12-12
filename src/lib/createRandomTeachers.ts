@@ -1,6 +1,12 @@
-import { supabase } from "./supabase";
+import { createClient } from '@supabase/supabase-js'
 
 const getRandomProfilePicture = async (userId: string): Promise<string> => {
+  // Create a service role client for admin operations
+  const serviceRoleClient = createClient(
+    'https://qhqtflpajutstecqajbl.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
+  );
+
   // Fetch a random image from picsum
   const response = await fetch('https://picsum.photos/400/400');
   const blob = await response.blob();
@@ -9,7 +15,7 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}-${Math.random()}.${fileExt}`;
   
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await serviceRoleClient.storage
     .from('profile-pictures')
     .upload(fileName, file, {
       upsert: true
@@ -20,7 +26,7 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
     throw uploadError;
   }
 
-  const { data: { publicUrl } } = supabase.storage
+  const { data: { publicUrl } } = serviceRoleClient.storage
     .from('profile-pictures')
     .getPublicUrl(fileName);
 
@@ -47,6 +53,12 @@ const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'James'
 const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore'];
 
 export const createRandomTeachers = async () => {
+  // Create a service role client for admin operations
+  const serviceRoleClient = createClient(
+    'https://qhqtflpajutstecqajbl.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
+  );
+
   try {
     console.log('Starting to create random teachers...');
 
@@ -60,7 +72,7 @@ export const createRandomTeachers = async () => {
       const profilePictureUrl = await getRandomProfilePicture(userId);
       
       // 1. Create teacher profile
-      const { error: profileError } = await supabase
+      const { error: profileError } = await serviceRoleClient
         .from('teachers')
         .insert({
           user_id: userId,
@@ -85,7 +97,7 @@ export const createRandomTeachers = async () => {
       console.log(`Created teacher profile for ${firstName} ${lastName}`);
 
       // 2. Add random subjects (2-4 subjects per teacher)
-      const { data: allSubjects } = await supabase
+      const { data: allSubjects } = await serviceRoleClient
         .from('subjects')
         .select('id');
       
@@ -93,7 +105,7 @@ export const createRandomTeachers = async () => {
         const selectedSubjects = getRandomItems(allSubjects, Math.floor(Math.random() * 3) + 2);
         
         for (const subject of selectedSubjects) {
-          const { error: subjectError } = await supabase
+          const { error: subjectError } = await serviceRoleClient
             .from('teacher_subjects')
             .insert({
               teacher_id: userId,
@@ -110,7 +122,7 @@ export const createRandomTeachers = async () => {
       // 3. Add random school levels (1-3 levels per teacher)
       const selectedLevels = getRandomItems(schoolLevels, Math.floor(Math.random() * 3) + 1);
       for (const level of selectedLevels) {
-        const { error: levelError } = await supabase
+        const { error: levelError } = await serviceRoleClient
           .from('teacher_school_levels')
           .insert({
             teacher_id: userId,
@@ -126,7 +138,7 @@ export const createRandomTeachers = async () => {
       // 4. Add teaching locations with random prices
       const locations = ["Teacher's Place", "Student's Place", "Online"];
       for (const location of locations) {
-        const { error: locationError } = await supabase
+        const { error: locationError } = await serviceRoleClient
           .from('teacher_locations')
           .insert({
             teacher_id: userId,
