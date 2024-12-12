@@ -64,7 +64,6 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         throw error;
       }
 
-      // Use the public URL format for profile pictures
       const teachersWithUrls = data.map(teacher => {
         if (teacher.profile_picture_url) {
           return {
