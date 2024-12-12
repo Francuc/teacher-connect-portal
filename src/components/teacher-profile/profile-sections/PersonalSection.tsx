@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+import { User, Mail, Phone, Facebook } from "lucide-react";
 
 type PersonalSectionProps = {
   profile: {
@@ -43,32 +43,46 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
               <h3 className="font-semibold text-lg">{t("name")}</h3>
               <p className="text-lg">{`${profile.first_name} ${profile.last_name}`}</p>
             </div>
-            {profile.show_email && (
-              <div>
-                <h3 className="font-semibold">{t("email")}</h3>
-                <p className="text-primary hover:text-primary/90">
-                  <a href={`mailto:${profile.email}`}>{profile.email}</a>
-                </p>
+            <div>
+              <h3 className="font-semibold">{t("contactInformation")}</h3>
+              <div className="space-y-2">
+                {profile.show_email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <a 
+                      href={`mailto:${profile.email}`}
+                      className="text-primary hover:text-primary/90"
+                    >
+                      {profile.email}
+                    </a>
+                  </div>
+                )}
+                {profile.show_phone && profile.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    <a 
+                      href={`tel:${profile.phone}`}
+                      className="text-primary hover:text-primary/90"
+                    >
+                      {profile.phone}
+                    </a>
+                  </div>
+                )}
+                {profile.show_facebook && profile.facebook_profile && (
+                  <div className="flex items-center gap-2">
+                    <Facebook className="w-4 h-4" />
+                    <a 
+                      href={profile.facebook_profile}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/90"
+                    >
+                      {t("facebookProfile")}
+                    </a>
+                  </div>
+                )}
               </div>
-            )}
-            {profile.show_phone && profile.phone && (
-              <div>
-                <h3 className="font-semibold">{t("phone")}</h3>
-                <p className="text-primary hover:text-primary/90">
-                  <a href={`tel:${profile.phone}`}>{profile.phone}</a>
-                </p>
-              </div>
-            )}
-            {profile.show_facebook && profile.facebook_profile && (
-              <div>
-                <h3 className="font-semibold">{t("facebookProfile")}</h3>
-                <p className="text-primary hover:text-primary/90">
-                  <a href={profile.facebook_profile} target="_blank" rel="noopener noreferrer">
-                    {profile.facebook_profile}
-                  </a>
-                </p>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </CardContent>

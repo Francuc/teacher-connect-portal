@@ -83,7 +83,9 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       return {
         profile,
         subjects: subjects?.map(s => ({
-          subject: s.subject
+          subject: {
+            ...s.subject[0]
+          }
         })) || [],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
