@@ -47,7 +47,7 @@ export const useFormData = (userId?: string) => {
         console.error('Error fetching default city:', error);
         toast({
           title: t("error"),
-          description: t("errorLoadingCity"),
+          description: t("error"),
           variant: "destructive",
         });
         return;
@@ -63,7 +63,7 @@ export const useFormData = (userId?: string) => {
         console.error('No cities found in the database');
         toast({
           title: t("error"),
-          description: t("noCitiesAvailable"),
+          description: t("noResults"),
           variant: "destructive",
         });
       }
