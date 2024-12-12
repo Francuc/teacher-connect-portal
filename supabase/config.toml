@@ -1,1 +1,4 @@
 project_id = "qhqtflpajutstecqajbl"
+
+[functions.create-random-teachers]
+verify_jwt = false

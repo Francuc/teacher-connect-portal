@@ -6,113 +6,96 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 const subjects = [
-  "Mathematics", "Physics", "Chemistry", "Biology", 
-  "French", "English", "German", "History", 
-  "Geography", "Economics", "Computer Science"
+  'Mathematics', 'Physics', 'Chemistry', 'Biology', 'History',
+  'Geography', 'English', 'French', 'German', 'Computer Science'
 ];
 
 const schoolLevels = [
-  "Primary School", "Secondary School", "High School",
-  "University", "Professional Training"
+  'Primary School', 'Middle School', 'High School', 'University'
 ];
 
-const locations = ["Teacher's Place", "Student's Place", "Online"];
+const regions = [
+  'Luxembourg City', 'Esch-sur-Alzette', 'Differdange', 'Dudelange'
+];
 
-function getRandomItems<T>(array: T[], count: number): T[] {
-  const shuffled = [...array].sort(() => 0.5 - Math.random());
+const cities = [
+  'Luxembourg City', 'Esch-sur-Alzette', 'Differdange', 'Dudelange',
+  'Bettembourg', 'Schifflange', 'Kayl', 'Rumelange'
+];
+
+const getRandomItems = <T>(arr: T[], count: number): T[] => {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
-}
+};
 
-function getRandomPrice(): number {
-  return Math.floor(Math.random() * (80 - 30) + 30);
-}
+const getRandomPrice = () => Math.floor(Math.random() * (80 - 30) + 30);
+
+const generateRandomTeacher = () => ({
+  first_name: ['John', 'Jane', 'Michael', 'Sarah'][Math.floor(Math.random() * 4)],
+  last_name: ['Smith', 'Johnson', 'Williams', 'Brown'][Math.floor(Math.random() * 4)],
+  email: `teacher${Math.random().toString(36).substring(7)}@example.com`,
+  phone: `+352 ${Math.floor(Math.random() * 900000000) + 100000000}`,
+  facebook_profile: `https://facebook.com/profile${Math.floor(Math.random() * 1000)}`,
+  show_email: true,
+  show_phone: Math.random() > 0.5,
+  show_facebook: Math.random() > 0.5,
+  bio: "I am an experienced teacher passionate about helping students learn and grow. I specialize in creating engaging lessons that make complex subjects easy to understand.",
+  profile_picture_url: `https://picsum.photos/seed/${Math.random()}/200/200`,
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    // Get a random city for the teacher
-    const { data: cities } = await supabase
-      .from('cities')
-      .select('id, name_en, region:regions(name_en)')
-      .limit(1)
-      .single();
-
-    if (!cities) {
-      throw new Error('No cities found');
-    }
+    console.log('Starting to create random teachers...');
 
     // Create two random teachers
     for (let i = 0; i < 2; i++) {
-      // Create auth user
-      const email = `teacher${Date.now()}${i}@example.com`;
+      // 1. Create auth user
       const password = 'password123';
+      const teacherData = generateRandomTeacher();
       
-      const { data: { user }, error: authError } = await supabase.auth.admin.createUser({
-        email,
-        password,
+      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+        email: teacherData.email,
+        password: password,
         email_confirm: true
       });
 
-      if (authError || !user) {
-        throw authError || new Error('Failed to create user');
+      if (authError) {
+        console.error('Error creating auth user:', authError);
+        throw authError;
       }
 
-      // Upload a random profile picture
-      const imageResponse = await fetch('https://picsum.photos/400/400');
-      const imageBlob = await imageResponse.blob();
-      const fileName = `${user.id}-profile.jpg`;
+      const userId = authUser.user.id;
+      console.log(`Created auth user with ID: ${userId}`);
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('profile-pictures')
-        .upload(fileName, imageBlob, {
-          contentType: 'image/jpeg',
-          upsert: true
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('profile-pictures')
-        .getPublicUrl(fileName);
-
-      // Create teacher profile
+      // 2. Create teacher profile
       const { error: profileError } = await supabase
         .from('teachers')
         .insert({
-          user_id: user.id,
-          first_name: `Teacher${i + 1}`,
-          last_name: `Sample${i + 1}`,
-          email: email,
-          phone: `+352 ${Math.floor(Math.random() * 900000 + 100000)}`,
-          facebook_profile: `https://facebook.com/teacher${i + 1}`,
-          show_email: true,
-          show_phone: true,
-          show_facebook: true,
-          bio: `I am an experienced teacher with a passion for education. I specialize in various subjects and adapt my teaching methods to each student's needs.`,
-          profile_picture_url: publicUrl,
-          city_id: cities.id,
+          ...teacherData,
+          user_id: userId,
+          updated_at: new Date().toISOString()
         });
 
       if (profileError) {
+        console.error('Error creating teacher profile:', profileError);
         throw profileError;
       }
 
-      // Add random subjects
+      console.log(`Created teacher profile for ${teacherData.first_name}`);
+
+      // 3. Add subjects
       const teacherSubjects = getRandomItems(subjects, 3).map(subject => ({
-        teacher_id: user.id,
-        subject
+        teacher_id: userId,
+        subject: subject
       }));
 
       const { error: subjectsError } = await supabase
@@ -120,12 +103,13 @@ serve(async (req) => {
         .insert(teacherSubjects);
 
       if (subjectsError) {
+        console.error('Error adding subjects:', subjectsError);
         throw subjectsError;
       }
 
-      // Add random school levels
+      // 4. Add school levels
       const teacherLevels = getRandomItems(schoolLevels, 2).map(level => ({
-        teacher_id: user.id,
+        teacher_id: userId,
         school_level: level
       }));
 
@@ -134,12 +118,14 @@ serve(async (req) => {
         .insert(teacherLevels);
 
       if (levelsError) {
+        console.error('Error adding school levels:', levelsError);
         throw levelsError;
       }
 
-      // Add teaching locations with random prices
+      // 5. Add teaching locations
+      const locations = ["Teacher's Place", "Student's Place", "Online"];
       const teacherLocations = locations.map(location => ({
-        teacher_id: user.id,
+        teacher_id: userId,
         location_type: location,
         price_per_hour: getRandomPrice()
       }));
@@ -149,35 +135,44 @@ serve(async (req) => {
         .insert(teacherLocations);
 
       if (locationsError) {
+        console.error('Error adding locations:', locationsError);
         throw locationsError;
       }
 
-      // Add student regions and cities
+      // 6. Add student regions and cities
+      const teacherRegions = getRandomItems(regions, 2).map(region => ({
+        teacher_id: userId,
+        region_name: region
+      }));
+
       const { error: regionsError } = await supabase
         .from('teacher_student_regions')
-        .insert({
-          teacher_id: user.id,
-          region_name: cities.region.name_en
-        });
+        .insert(teacherRegions);
 
       if (regionsError) {
+        console.error('Error adding regions:', regionsError);
         throw regionsError;
       }
 
+      const teacherCities = getRandomItems(cities, 3).map(city => ({
+        teacher_id: userId,
+        city_name: city
+      }));
+
       const { error: citiesError } = await supabase
         .from('teacher_student_cities')
-        .insert({
-          teacher_id: user.id,
-          city_name: cities.name_en
-        });
+        .insert(teacherCities);
 
       if (citiesError) {
+        console.error('Error adding cities:', citiesError);
         throw citiesError;
       }
+
+      console.log(`Completed creating teacher ${teacherData.first_name}`);
     }
 
     return new Response(
-      JSON.stringify({ message: 'Successfully created 2 random teacher profiles' }),
+      JSON.stringify({ message: 'Successfully created 2 random teachers' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
@@ -185,7 +180,10 @@ serve(async (req) => {
     console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500
+      }
     );
   }
 });
