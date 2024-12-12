@@ -18,6 +18,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
+  // ⚠️ CRITICAL: Do not modify these queries without explicit permission
   const { data: teachers = [], isLoading: isLoadingTeachers } = useTeachersData();
 
   const { data: subjects = [] } = useQuery({
@@ -45,6 +46,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
       return data || [];
     },
   });
+  // End of critical section ⚠️
 
   const getLowestPrice = (locations: any[]) => {
     if (!locations || locations.length === 0) return null;
@@ -74,10 +76,13 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     
     const matchesSearch = !searchQuery || 
       `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      allLocations.some(loc => loc.toLowerCase().includes(searchQuery.toLowerCase()));
+      allLocations.some(loc => loc?.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesSubject && matchesLevel && matchesSearch;
   });
+
+  // Add console log to debug the data flow
+  console.log('Filtered Teachers:', filteredTeachers);
 
   return (
     <div className="container mx-auto px-4 space-y-8">
