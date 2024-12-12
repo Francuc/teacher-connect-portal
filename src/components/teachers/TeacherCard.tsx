@@ -25,16 +25,7 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-
-  // Add console log to debug teacher data
-  console.log('Teacher data in card:', teacher);
-
-  const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
-
-  // Ensure teacher_subjects and teacher_school_levels exist before rendering
-  const hasSubjects = teacher.teacher_subjects && teacher.teacher_subjects.length > 0;
-  const hasLevels = teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0;
-  const hasLocations = teacher.teacher_locations && teacher.teacher_locations.length > 0;
+  const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
   return (
     <Card className="flex flex-col h-full">
@@ -45,29 +36,27 @@ export const TeacherCard = ({
         />
 
         <div className="flex-grow space-y-4">
-          {hasSubjects && (
+          {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
             <TeacherSubjects 
               subjects={teacher.teacher_subjects}
               getLocalizedName={getLocalizedName}
             />
           )}
 
-          {hasLevels && (
+          {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
             <TeacherLevels 
               levels={teacher.teacher_school_levels}
             />
           )}
 
-          {hasLocations && (
-            <TeacherLocations 
-              teacher={teacher}
-              getLocalizedName={getLocalizedName}
-            />
-          )}
+          <TeacherLocations 
+            teacher={teacher}
+            getLocalizedName={getLocalizedName}
+          />
         </div>
 
         <div className="flex items-center justify-between pt-4 mt-4 border-t">
-          {lowestPrice !== null && (
+          {lowestPrice && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Euro className="w-4 h-4" />
               <span>

@@ -18,13 +18,9 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  console.log('Fetching teacher profile for userId:', userId);
-
-  const { data: teacherData, isLoading, error } = useQuery({
+  const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
-      console.log('Starting teacher data fetch...');
-
       const { data: profile, error: profileError } = await supabase
         .from('teachers')
         .select(`
@@ -45,17 +41,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         .eq('user_id', userId)
         .single();
 
-      if (profileError) {
-        console.error('Error fetching teacher profile:', profileError);
-        throw profileError;
-      }
-
-      console.log('Fetched teacher profile:', profile);
-
-      if (!profile) {
-        console.error('No teacher profile found for userId:', userId);
-        throw new Error('Teacher profile not found');
-      }
+      if (profileError) throw profileError;
 
       if (profile.profile_picture_url) {
         const { data } = supabase
@@ -102,17 +88,9 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .eq('teacher_id', userId)
       ]);
 
-      console.log('Fetched related data:', {
-        subjects: subjectsData,
-        schoolLevels,
-        locations,
-        studentRegions,
-        studentCities
-      });
-
       const subjects = subjectsData?.map(item => ({
         subject_id: item.subject_id,
-        subject: item.subject[0] // Access the first element of the subjects array
+        subject: item.subject[0]
       })) || [];
 
       return {
@@ -125,15 +103,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       };
     },
   });
-
-  console.log('Query state:', { isLoading, error, teacherData });
-
-  if (error) {
-    console.error('Error in TeacherProfileView:', error);
-    return <div className="flex justify-center items-center min-h-screen text-red-500">
-      Error loading teacher profile. Please try again later.
-    </div>;
-  }
 
   if (isLoading || !teacherData) {
     return <div className="flex justify-center items-center min-h-screen">

@@ -1,5 +1,7 @@
 import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 interface TeacherLocationsProps {
   teacher: any;
@@ -9,16 +11,30 @@ interface TeacherLocationsProps {
 export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocationsProps) => {
   const { t } = useLanguage();
 
-  // Add null check for teacher_student_cities
-  const studentCities = teacher.teacher_student_cities || [];
-  const hasStudentCities = studentCities.length > 0;
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*, region:regions(*)');
+      if (error) throw error;
+      return data;
+    }
+  });
 
-  // Add null check for teacher_locations
+  const getTranslatedCityName = (cityName: string) => {
+    const city = cities.find(c => c.name_en === cityName);
+    if (city) {
+      return getLocalizedName(city);
+    }
+    return cityName;
+  };
+
   const studentPlaceLocation = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
 
-  if (!studentPlaceLocation || !hasStudentCities) return null;
+  if (!studentPlaceLocation) return null;
 
   return (
     <div className="space-y-2">
@@ -27,12 +43,12 @@ export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocations
         <span>{t("availableIn")}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {studentCities.map((cityData: any) => (
+        {teacher.teacher_student_cities?.map((cityData: any) => (
           <span
             key={cityData.id}
             className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"
           >
-            {cityData.city_name}
+            {getTranslatedCityName(cityData.city_name)}
           </span>
         ))}
       </div>
