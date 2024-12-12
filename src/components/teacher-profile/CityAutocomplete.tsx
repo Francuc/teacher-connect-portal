@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/integrations/supabase/client"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 interface CityAutocompleteProps {
@@ -30,19 +30,12 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const { data: cities = [], isLoading, isError } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('cities')
-          .select('*')
-        
-        if (error) throw error
-        
-        console.log('Cities data:', data)
-        return data || []
-      } catch (error) {
-        console.error('Error fetching cities:', error)
-        throw error
-      }
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*')
+      
+      if (error) throw error
+      return data || []
     },
     retry: 3,
     retryDelay: 1000,
