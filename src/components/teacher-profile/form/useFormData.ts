@@ -3,7 +3,6 @@ import { FormData } from "./types";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { PostgrestResponse } from "@supabase/supabase-js";
 
 interface TeacherSubject {
   subject_id: string;
@@ -79,7 +78,7 @@ export const useFormData = (userId?: string) => {
             // Fetch related data in parallel
             const [
               { data: locations },
-              teacherSubjectsResponse,
+              { data: teacherSubjects },
               { data: schoolLevels },
               { data: studentRegions },
               { data: studentCities }
@@ -114,12 +113,12 @@ export const useFormData = (userId?: string) => {
                 .eq('teacher_id', userId)
             ]);
 
-            console.log('Fetched teacher subjects:', teacherSubjectsResponse.data);
+            console.log('Fetched teacher subjects:', teacherSubjects);
 
             // Update form data with fetched related data
             setFormData(prev => ({
               ...prev,
-              subjects: teacherSubjectsResponse.data?.map(s => s.subjects.name_en) || [],
+              subjects: teacherSubjects?.map((s: TeacherSubject) => s.subjects.name_en) || [],
               schoolLevels: schoolLevels?.map(l => l.school_level) || [],
               teachingLocations: locations?.map(l => l.location_type) || [],
               studentRegions: studentRegions?.map(r => r.region_name) || [],
