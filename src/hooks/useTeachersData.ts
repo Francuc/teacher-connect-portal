@@ -6,42 +6,44 @@ export const useTeachersData = () => {
     queryKey: ['teachers'],
     queryFn: async () => {
       console.log('Fetching teachers data...');
-      const { data, error } = await supabase
+      const { data: teachers, error } = await supabase
         .from('teachers')
         .select(`
           *,
-          city:cities(
+          teacher_subjects!inner (
+            subject:subjects (
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          ),
+          teacher_school_levels!inner (
+            school_level
+          ),
+          teacher_locations!inner (
+            location_type,
+            price_per_hour
+          ),
+          teacher_student_cities!inner (
+            id,
+            city_name
+          ),
+          teacher_student_regions!inner (
+            id,
+            region_name
+          ),
+          city:cities (
             id,
             name_en,
             name_fr,
             name_lb,
-            region:regions(
+            region:regions (
               id,
               name_en,
               name_fr,
               name_lb
             )
-          ),
-          teacher_subjects(
-            subject:subjects(
-              id,
-              name_en,
-              name_fr,
-              name_lb
-            )
-          ),
-          teacher_school_levels(
-            school_level
-          ),
-          teacher_locations(
-            location_type,
-            price_per_hour
-          ),
-          teacher_student_cities(
-            city_name
-          ),
-          teacher_student_regions(
-            region_name
           )
         `);
       
@@ -50,8 +52,11 @@ export const useTeachersData = () => {
         throw error;
       }
 
+      // Log the fetched data for debugging
+      console.log('Fetched teachers data:', teachers);
+
       // Use the public URL format for profile pictures
-      const teachersWithUrls = data.map(teacher => {
+      const teachersWithUrls = teachers?.map(teacher => {
         if (teacher.profile_picture_url) {
           return {
             ...teacher,
@@ -59,10 +64,9 @@ export const useTeachersData = () => {
           };
         }
         return teacher;
-      });
+      }) || [];
       
-      console.log('Teachers data with subjects:', teachersWithUrls);
-      return teachersWithUrls || [];
+      return teachersWithUrls;
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     refetchOnWindowFocus: false,
