@@ -94,16 +94,16 @@ export const TeachersFilters = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30">
+    <div className="bg-white rounded-2xl shadow-lg border border-purple.soft/30 backdrop-blur-sm">
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-purple.soft/30">
-        <div className="p-6 space-y-2">
-          <Label className="flex items-center gap-2 text-purple.dark">
-            <Search className="w-4 h-4" />
+        <div className="p-8 space-y-3">
+          <Label className="flex items-center gap-2 text-purple.dark font-medium">
+            <Search className="w-5 h-5" />
             {t("search")}
           </Label>
           <div className="relative">
             <Input
-              className="pl-4 border-purple.soft/30 focus:border-primary focus:ring-primary/30"
+              className="pl-4 h-12 border-purple.soft/30 focus:border-primary focus:ring-primary/30 text-lg"
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
@@ -112,13 +112,12 @@ export const TeachersFilters = ({
             {showSuggestions && suggestions.length > 0 && (
               <div 
                 ref={suggestionsRef}
-                className="absolute z-50 w-full bg-white border border-purple.soft/30 rounded-md shadow-lg"
-                style={{ position: 'absolute', top: 'calc(100% + 4px)' }}
+                className="absolute z-50 w-full bg-white border border-purple.soft/30 rounded-xl shadow-xl mt-2"
               >
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="px-4 py-2 cursor-pointer hover:bg-purple.soft/10"
+                    className="px-4 py-3 cursor-pointer hover:bg-purple.soft/10 first:rounded-t-xl last:rounded-b-xl"
                     onClick={() => {
                       setSearchQuery(suggestion);
                       setShowSuggestions(false);
@@ -132,13 +131,13 @@ export const TeachersFilters = ({
           </div>
         </div>
         
-        <div className="p-6 space-y-2">
-          <Label className="flex items-center gap-2 text-purple.dark">
-            <BookOpen className="w-4 h-4" />
+        <div className="p-8 space-y-3">
+          <Label className="flex items-center gap-2 text-purple.dark font-medium">
+            <BookOpen className="w-5 h-5" />
             {t("subjects")}
           </Label>
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-            <SelectTrigger className="border-purple.soft/30 focus:border-primary focus:ring-primary/30">
+            <SelectTrigger className="h-12 border-purple.soft/30 focus:border-primary focus:ring-primary/30">
               <SelectValue placeholder={t("allSubjects")} />
             </SelectTrigger>
             <SelectContent>
@@ -152,13 +151,13 @@ export const TeachersFilters = ({
           </Select>
         </div>
 
-        <div className="p-6 space-y-2">
-          <Label className="flex items-center gap-2 text-purple.dark">
-            <GraduationCap className="w-4 h-4" />
+        <div className="p-8 space-y-3">
+          <Label className="flex items-center gap-2 text-purple.dark font-medium">
+            <GraduationCap className="w-5 h-5" />
             {t("schoolLevels")}
           </Label>
           <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-            <SelectTrigger className="border-purple.soft/30 focus:border-primary focus:ring-primary/30">
+            <SelectTrigger className="h-12 border-purple.soft/30 focus:border-primary focus:ring-primary/30">
               <SelectValue placeholder={t("allLevels")} />
             </SelectTrigger>
             <SelectContent>

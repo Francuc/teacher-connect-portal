@@ -22,7 +22,6 @@ export const Navigation = () => {
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
 
-  // Fetch all teacher profiles
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
@@ -35,7 +34,6 @@ export const Navigation = () => {
         throw error;
       }
 
-      // Get public URLs for all profile pictures
       const profilesWithUrls = await Promise.all(teachers.map(async (teacher) => {
         if (teacher.profile_picture_url) {
           const { data } = supabase
@@ -63,21 +61,21 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className="border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+    <nav className="border-b border-purple.soft/30 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex justify-between h-20">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-xl font-bold">
+              <Link to="/" className="text-2xl font-bold text-purple.dark hover:text-primary transition-colors">
                 Nohëllef.lu
               </Link>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             {!isLoading && profiles && profiles.length > 0 && (
               <div className="flex items-center gap-4">
                 <Select value={selectedProfile} onValueChange={handleProfileChange}>
-                  <SelectTrigger className="w-[250px]">
+                  <SelectTrigger className="w-[280px] h-12 border-purple.soft/30">
                     <SelectValue placeholder={t("selectProfile")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -85,10 +83,10 @@ export const Navigation = () => {
                       <SelectItem 
                         key={profile.user_id} 
                         value={profile.user_id}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 py-3"
                       >
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
                             {profile.profile_picture_url ? (
                               <AvatarImage 
                                 src={profile.profile_picture_url} 
@@ -101,14 +99,14 @@ export const Navigation = () => {
                               </AvatarFallback>
                             )}
                           </Avatar>
-                          <span>{profile.first_name} {profile.last_name}</span>
+                          <span className="text-base">{profile.first_name} {profile.last_name}</span>
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {selectedProfile && (
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-10 w-10">
                     {profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url ? (
                       <AvatarImage 
                         src={profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url} 
@@ -117,15 +115,15 @@ export const Navigation = () => {
                       />
                     ) : (
                       <AvatarFallback>
-                        <User className="h-4 w-4" />
+                        <User className="h-5 w-5" />
                       </AvatarFallback>
                     )}
                   </Avatar>
                 )}
               </div>
             )}
-            <Button onClick={handleCreateAd} className="gap-2">
-              <Plus className="h-4 w-4" />
+            <Button onClick={handleCreateAd} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
+              <Plus className="h-5 w-5" />
               {t("createAd")}
             </Button>
             <LanguageSwitcher />
