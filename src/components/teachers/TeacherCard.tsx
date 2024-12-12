@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { User, MapPin, GraduationCap, BookOpen, Euro, Mail, Phone, Facebook } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 interface TeacherCardProps {
   teacher: any;
@@ -28,12 +30,22 @@ export const TeacherCard = ({
     (loc: any) => loc.location_type === "Student's Place"
   );
 
-  const getTranslatedCityName = (cityName: string) => {
-    // Try to find the city in the teacher's city data
-    if (teacher.city && teacher.city.name_en === cityName) {
-      return getLocalizedName(teacher.city);
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*, region:regions(*)');
+      if (error) throw error;
+      return data;
     }
-    // If we can't find a translation, return the original name
+  });
+
+  const getTranslatedCityName = (cityName: string) => {
+    const city = cities.find(c => c.name_en === cityName);
+    if (city) {
+      return getLocalizedName(city);
+    }
     return cityName;
   };
 

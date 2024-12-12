@@ -146,6 +146,25 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     }).format(price);
   };
 
+  const { data: allCities = [] } = useQuery({
+    queryKey: ['allCities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*, region:regions(*)');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getCityTranslation = (cityName: string) => {
+    const city = allCities.find(c => c.name_en === cityName);
+    if (city) {
+      return getLocalizedName(city);
+    }
+    return cityName;
+  };
+
   const filteredTeachers = teachers.filter(teacher => {
     const teacherSubjects = teacher.teacher_subjects?.map(s => getLocalizedName(s.subject)) || [];
     const teacherLevels = teacher.teacher_school_levels?.map(l => l.school_level) || [];
@@ -155,10 +174,10 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     
     // Get all locations (teacher's place and student cities)
     const location = getTeacherLocation(teacher);
-    const studentCities = teacher.teacher_student_cities?.map(c => c.city_name) || [];
+    const studentCities = teacher.teacher_student_cities?.map(c => getCityTranslation(c.city_name)) || [];
     const allLocations = [location, ...studentCities];
     
-    // Check if search query matches any location
+    // Check if search query matches any location or teacher name
     const matchesSearch = !searchQuery || 
       `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       allLocations.some(loc => loc.toLowerCase().includes(searchQuery.toLowerCase()));
