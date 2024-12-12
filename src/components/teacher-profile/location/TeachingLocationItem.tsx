@@ -8,12 +8,13 @@ import { type TeachingLocation } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { CityAutocomplete } from "../CityAutocomplete";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
   formData: {
     teachingLocations: TeachingLocation[];
-    teacherCity: string;
+    cityId: string;
     studentRegions: string[];
     studentCities: string[];
     pricePerHour: {
@@ -30,37 +31,7 @@ export const TeachingLocationItem = ({
   formData,
   setFormData,
 }: TeachingLocationItemProps) => {
-  const { t, language } = useLanguage();
-
-  const { data: cities = [], isLoading, error } = useQuery({
-    queryKey: ['cities'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('cities')
-          .select('*')
-          .order('name_en');
-        if (error) throw error;
-        return data || [];
-      } catch (error) {
-        console.error('Error fetching cities:', error);
-        return [];
-      }
-    },
-    initialData: [],
-  });
-
-  const getLocalizedName = (city: any) => {
-    if (!city) return '';
-    switch(language) {
-      case 'fr':
-        return city.name_fr;
-      case 'lb':
-        return city.name_lb;
-      default:
-        return city.name_en;
-    }
-  };
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-2">
@@ -85,39 +56,10 @@ export const TeachingLocationItem = ({
           {location === "Teacher's Place" && (
             <div className="space-y-2">
               <Label>{t("city")}</Label>
-              <ScrollArea className="h-[200px] rounded-md border p-4">
-                {isLoading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : error ? (
-                  <div className="text-sm text-destructive text-center">
-                    {t("errorLoadingCities")}
-                  </div>
-                ) : cities.length === 0 ? (
-                  <div className="text-sm text-muted-foreground text-center">
-                    {t("noCitiesAvailable")}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {cities.map((city) => (
-                      <div key={city.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`city-${city.id}`}
-                          checked={formData.teacherCity === getLocalizedName(city)}
-                          onCheckedChange={(checked) => {
-                            setFormData({
-                              ...formData,
-                              teacherCity: checked ? getLocalizedName(city) : "",
-                            });
-                          }}
-                        />
-                        <Label htmlFor={`city-${city.id}`}>{getLocalizedName(city)}</Label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </ScrollArea>
+              <CityAutocomplete
+                value={formData.cityId}
+                onChange={(value) => setFormData({ ...formData, cityId: value })}
+              />
             </div>
           )}
 
