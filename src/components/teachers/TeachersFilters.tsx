@@ -3,14 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Search, BookOpen, GraduationCap } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useState } from "react";
-import { Button } from "../ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TeachersFiltersProps {
   searchQuery: string;
@@ -35,44 +27,7 @@ export const TeachersFilters = ({
   schoolLevels,
   getLocalizedName,
 }: TeachersFiltersProps) => {
-  const { t, language } = useLanguage();
-  const [open, setOpen] = useState(false);
-
-  const { data: cities = [], isLoading: isCitiesLoading } = useQuery({
-    queryKey: ['cities', searchQuery],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities')
-        .select(`
-          *,
-          region:regions(
-            id,
-            name_en,
-            name_fr,
-            name_lb
-          )
-        `)
-        .order('name_en');
-      
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  const getLocalizedCityName = (city: any) => {
-    if (!city) return '';
-    const cityName = language === 'fr' ? city.name_fr : language === 'lb' ? city.name_lb : city.name_en;
-    const regionName = language === 'fr' ? city.region.name_fr : language === 'lb' ? city.region.name_lb : city.region.name_en;
-    return `${cityName}, ${regionName}`;
-  };
-
-  const filteredCities = searchQuery
-    ? cities.filter((city) =>
-        getLocalizedCityName(city)
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      )
-    : cities;
+  const { t } = useLanguage();
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30 overflow-hidden">
@@ -82,49 +37,14 @@ export const TeachersFilters = ({
             <Search className="w-4 h-4" />
             {t("search")}
           </Label>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between"
-              >
-                {searchQuery
-                  ? cities.find((city) => getLocalizedCityName(city).toLowerCase() === searchQuery.toLowerCase())
-                    ? getLocalizedCityName(cities.find((city) => getLocalizedCityName(city).toLowerCase() === searchQuery.toLowerCase())!)
-                    : searchQuery
-                  : t("searchPlaceholder")}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput placeholder={t("searchPlaceholder")} onValueChange={setSearchQuery} />
-                <CommandEmpty>{t("noCityFound")}</CommandEmpty>
-                <CommandGroup>
-                  {filteredCities.map((city) => (
-                    <CommandItem
-                      key={city.id}
-                      value={getLocalizedCityName(city)}
-                      onSelect={(currentValue) => {
-                        setSearchQuery(currentValue === searchQuery ? "" : currentValue);
-                        setOpen(false);
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          searchQuery.toLowerCase() === getLocalizedCityName(city).toLowerCase() ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {getLocalizedCityName(city)}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <div className="relative">
+            <Input
+              className="pl-4 border-purple.soft/30 focus:border-primary focus:ring-primary/30"
+              placeholder={t("searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
         
         <div className="p-6 space-y-2">

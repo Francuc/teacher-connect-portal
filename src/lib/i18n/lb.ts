@@ -1,7 +1,7 @@
 import type { Translation } from "./translations";
 
 export const lb: Translation = {
-  search: "Stad",
+  search: "Sichen",
   loading: "Lueden",
   required: "Felder sinn erfuerderlech",
   signIn: "Anmelden",
