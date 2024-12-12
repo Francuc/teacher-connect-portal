@@ -59,6 +59,8 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!userId) return;
+      
       try {
         const { data: teacherData, error: teacherError } = await supabase
           .from('teachers')
