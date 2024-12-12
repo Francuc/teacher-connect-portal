@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { type Subject, type SchoolLevel, type TeachingLocation } from "@/lib/constants";
 import { PersonalInfoSection } from "./teacher-profile/PersonalInfoSection";
 import { SubjectsSection } from "./teacher-profile/SubjectsSection";
@@ -27,10 +27,74 @@ const TeacherProfileForm = () => {
           description: t("pleaseLoginFirst"),
           variant: "destructive",
         });
-        navigate("/login");
+        navigate("/");
         return;
       }
       setUserId(user.id);
+
+      // Check if teacher profile exists
+      const { data: existingProfile } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (existingProfile) {
+        // Pre-fill form with existing data
+        setFormData({
+          firstName: existingProfile.first_name,
+          lastName: existingProfile.last_name,
+          email: existingProfile.email,
+          phone: existingProfile.phone || "",
+          facebookProfile: existingProfile.facebook_profile || "",
+          showEmail: existingProfile.show_email,
+          showPhone: existingProfile.show_phone,
+          showFacebook: existingProfile.show_facebook,
+          bio: existingProfile.bio,
+          profilePicture: null,
+          subjects: [],
+          schoolLevels: [],
+          teachingLocations: [],
+          cityId: existingProfile.city_id || "",
+          studentRegions: [],
+          studentCities: [],
+          pricePerHour: {
+            teacherPlace: "",
+            studentPlace: "",
+            online: "",
+          },
+        });
+
+        // Fetch related data
+        const { data: subjects } = await supabase
+          .from('teacher_subjects')
+          .select('subject')
+          .eq('teacher_id', user.id);
+        
+        const { data: schoolLevels } = await supabase
+          .from('teacher_school_levels')
+          .select('school_level')
+          .eq('teacher_id', user.id);
+        
+        const { data: locations } = await supabase
+          .from('teacher_locations')
+          .select('*')
+          .eq('teacher_id', user.id);
+
+        if (subjects) setFormData(prev => ({ ...prev, subjects: subjects.map(s => s.subject) }));
+        if (schoolLevels) setFormData(prev => ({ ...prev, schoolLevels: schoolLevels.map(l => l.school_level) }));
+        if (locations) {
+          setFormData(prev => ({
+            ...prev,
+            teachingLocations: locations.map(l => l.location_type as TeachingLocation),
+            pricePerHour: {
+              teacherPlace: locations.find(l => l.location_type === "Teacher's Place")?.price_per_hour || "",
+              studentPlace: locations.find(l => l.location_type === "Student's Place")?.price_per_hour || "",
+              online: locations.find(l => l.location_type === "Online")?.price_per_hour || "",
+            }
+          }));
+        }
+      }
     };
 
     checkAuth();
@@ -62,6 +126,36 @@ const TeacherProfileForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.bio || 
+        !formData.subjects.length || !formData.schoolLevels.length || !formData.teachingLocations.length ||
+        !formData.cityId) {
+      toast({
+        title: t("error"),
+        description: t("pleaseCompleteAllRequiredFields"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate at least one teaching location with price
+    const hasValidLocation = formData.teachingLocations.some(location => {
+      const price = formData.pricePerHour[
+        location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
+      ];
+      return price && parseFloat(price) > 0;
+    });
+
+    if (!hasValidLocation) {
+      toast({
+        title: t("error"),
+        description: t("pleaseAddAtLeastOneLocationWithPrice"),
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!userId) {
       toast({
         title: t("error"),
@@ -75,6 +169,13 @@ const TeacherProfileForm = () => {
     console.log("Starting form submission...");
 
     try {
+      // Check if profile exists
+      const { data: existingProfile } = await supabase
+        .from('teachers')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
       // Upload profile picture if exists
       let profilePictureUrl = null;
       if (formData.profilePicture) {
@@ -89,29 +190,43 @@ const TeacherProfileForm = () => {
         profilePictureUrl = data.path;
       }
 
-      console.log("Inserting teacher profile...");
-      // Insert teacher profile
-      const { error: profileError } = await supabase
-        .from('teachers')
-        .insert({
-          user_id: userId,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          facebook_profile: formData.facebookProfile,
-          show_email: formData.showEmail,
-          show_phone: formData.showPhone,
-          show_facebook: formData.showFacebook,
-          bio: formData.bio,
-          profile_picture_url: profilePictureUrl,
-          city_id: formData.cityId || null,
-        });
+      console.log("Inserting/updating teacher profile...");
+      const profileData = {
+        user_id: userId,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone || null,
+        facebook_profile: formData.facebookProfile || null,
+        show_email: formData.showEmail,
+        show_phone: formData.showPhone,
+        show_facebook: formData.showFacebook,
+        bio: formData.bio,
+        profile_picture_url: profilePictureUrl,
+        city_id: formData.cityId,
+      };
 
-      if (profileError) throw profileError;
+      if (existingProfile) {
+        // Update existing profile
+        const { error: updateError } = await supabase
+          .from('teachers')
+          .update(profileData)
+          .eq('user_id', userId);
+        if (updateError) throw updateError;
+
+        // Delete existing relations
+        await supabase.from('teacher_subjects').delete().eq('teacher_id', userId);
+        await supabase.from('teacher_school_levels').delete().eq('teacher_id', userId);
+        await supabase.from('teacher_locations').delete().eq('teacher_id', userId);
+      } else {
+        // Insert new profile
+        const { error: profileError } = await supabase
+          .from('teachers')
+          .insert([profileData]);
+        if (profileError) throw profileError;
+      }
 
       console.log("Inserting subjects...");
-      // Insert subjects
       if (formData.subjects.length > 0) {
         const { error: subjectsError } = await supabase
           .from('teacher_subjects')
@@ -125,7 +240,6 @@ const TeacherProfileForm = () => {
       }
 
       console.log("Inserting school levels...");
-      // Insert school levels
       if (formData.schoolLevels.length > 0) {
         const { error: levelsError } = await supabase
           .from('teacher_school_levels')
@@ -139,7 +253,6 @@ const TeacherProfileForm = () => {
       }
 
       console.log("Inserting teaching locations...");
-      // Insert teaching locations with prices
       if (formData.teachingLocations.length > 0) {
         const { error: locationsError } = await supabase
           .from('teacher_locations')
@@ -156,11 +269,11 @@ const TeacherProfileForm = () => {
       }
 
       toast({
-        title: t("profileSaved"),
-        description: t("profileSavedDesc"),
+        title: existingProfile ? t("profileUpdated") : t("profileCreated"),
+        description: existingProfile ? t("profileUpdatedDesc") : t("profileCreatedDesc"),
       });
       
-      // Navigate to profile view or dashboard
+      // Navigate to profile view
       navigate("/profile");
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -175,7 +288,7 @@ const TeacherProfileForm = () => {
   };
 
   if (!userId) {
-    return null; // Don't render the form until we confirm authentication
+    return null;
   }
 
   return (

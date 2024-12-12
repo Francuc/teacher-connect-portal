@@ -64,6 +64,12 @@ export const translations = {
     signIn: "Sign In",
     signUp: "Sign Up",
     userAlreadyExists: "User already exists",
+    profileCreated: "Profile Created",
+    profileCreatedDesc: "Your teacher profile has been created successfully",
+    profileUpdated: "Profile Updated",
+    profileUpdatedDesc: "Your teacher profile has been updated successfully",
+    pleaseCompleteAllRequiredFields: "Please complete all required fields",
+    pleaseAddAtLeastOneLocationWithPrice: "Please add at least one teaching location with a price",
   },
   fr: {
     welcome: "Bienvenue",
@@ -80,7 +86,7 @@ export const translations = {
     pricePerHour: "Prix par heure",
     saveProfile: "Enregistrer le profil",
     profileSaved: "Profil enregistré",
-    profileSavedDesc: "Votre profil a été enregistré avec succès",
+    profileSavedDesc: "Votre profil d'enseignant a été enregistré avec succès",
     findTeacher: "Trouvez votre professeur idéal",
     landingTitle: "Bienvenue sur Nohëllef.lu",
     landingDescription: "Trouvez le tuteur parfait pour vos besoins",
@@ -128,6 +134,12 @@ export const translations = {
     signIn: "Se connecter",
     signUp: "S'inscrire",
     userAlreadyExists: "L'utilisateur existe déjà",
+    profileCreated: "Profil créé",
+    profileCreatedDesc: "Votre profil d'enseignant a été créé avec succès",
+    profileUpdated: "Profil mis à jour",
+    profileUpdatedDesc: "Votre profil d'enseignant a été mis à jour avec succès",
+    pleaseCompleteAllRequiredFields: "Veuillez remplir tous les champs obligatoires",
+    pleaseAddAtLeastOneLocationWithPrice: "Veuillez ajouter au moins un lieu d'enseignement avec un prix",
   },
   lb: {
     welcome: "Wëllkomm",
@@ -192,6 +204,12 @@ export const translations = {
     signIn: "Aloggen",
     signUp: "Registréieren",
     userAlreadyExists: "De Benotzer existéiert schon",
+    profileCreated: "Profil erstallt",
+    profileCreatedDesc: "Äre Profil gouf erfollegräich erstallt",
+    profileUpdated: "Profil aktualiséiert",
+    profileUpdatedDesc: "Äre Profil gouf erfollegräich aktualiséiert",
+    pleaseCompleteAllRequiredFields: "Fëllt w.e.g. all obligatoresch Felder aus",
+    pleaseAddAtLeastOneLocationWithPrice: "Füügt w.e.g. mindestens een Unterrechtsuert mat engem Präis dobäi",
   }
 } as const;
 
