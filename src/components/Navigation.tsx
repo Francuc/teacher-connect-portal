@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const Navigation = () => {
@@ -21,6 +21,7 @@ export const Navigation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
@@ -38,7 +39,7 @@ export const Navigation = () => {
         if (teacher.profile_picture_url) {
           return {
             ...teacher,
-            profile_picture_url: `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+            profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
           };
         }
         return teacher;
@@ -47,6 +48,11 @@ export const Navigation = () => {
       return profilesWithUrls || [];
     }
   });
+
+  // Reset image errors when profiles change
+  useEffect(() => {
+    setImageErrors({});
+  }, [profiles]);
 
   const handleCreateAd = async () => {
     navigate("/profile/new");
@@ -57,6 +63,13 @@ export const Navigation = () => {
     if (value) {
       navigate(`/profile/${value}`);
     }
+  };
+
+  const handleImageError = (userId: string) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [userId]: true
+    }));
   };
 
   return (
@@ -86,11 +99,12 @@ export const Navigation = () => {
                       >
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
-                            {profile.profile_picture_url ? (
+                            {profile.profile_picture_url && !imageErrors[profile.user_id] ? (
                               <AvatarImage 
                                 src={profile.profile_picture_url} 
                                 alt={`${profile.first_name} ${profile.last_name}`}
                                 className="object-cover"
+                                onError={() => handleImageError(profile.user_id)}
                               />
                             ) : (
                               <AvatarFallback>
@@ -106,11 +120,13 @@ export const Navigation = () => {
                 </Select>
                 {selectedProfile && (
                   <Avatar className="h-10 w-10">
-                    {profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url ? (
+                    {profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url && 
+                     !imageErrors[selectedProfile] ? (
                       <AvatarImage 
                         src={profiles.find(p => p.user_id === selectedProfile)?.profile_picture_url} 
                         alt="Profile"
                         className="object-cover"
+                        onError={() => handleImageError(selectedProfile)}
                       />
                     ) : (
                       <AvatarFallback>

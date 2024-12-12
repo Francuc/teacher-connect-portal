@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, MapPin, Mail, Phone, Facebook } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useState } from "react";
 
 interface TeacherHeaderProps {
   teacher: any;
@@ -9,15 +10,22 @@ interface TeacherHeaderProps {
 
 export const TeacherHeader = ({ teacher, getTeacherLocation }: TeacherHeaderProps) => {
   const { t } = useLanguage();
+  const [imageError, setImageError] = useState(false);
+
+  // Reset image error state when teacher changes
+  useEffect(() => {
+    setImageError(false);
+  }, [teacher.profile_picture_url]);
 
   return (
     <div className="flex items-start gap-4 mb-4">
       <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
-        {teacher.profile_picture_url ? (
+        {teacher.profile_picture_url && !imageError ? (
           <AvatarImage 
             src={teacher.profile_picture_url} 
             alt={`${teacher.first_name} ${teacher.last_name}`}
             className="object-cover"
+            onError={() => setImageError(true)}
           />
         ) : (
           <AvatarFallback className="bg-primary/5">
