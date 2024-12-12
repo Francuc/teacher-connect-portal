@@ -62,26 +62,32 @@ export const handleRelationsUpdate = async (
     if (formData.teachingLocations.length > 0) {
       const locationData = formData.teachingLocations.map(location => {
         let price = 0;
+        
         switch (location) {
           case "Teacher's Place":
             price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
+            console.log("Teacher's Place price:", price);
             break;
           case "Student's Place":
             price = parseFloat(formData.pricePerHour.studentPlace) || 0;
+            console.log("Student's Place price:", price);
             break;
           case "Online":
             price = parseFloat(formData.pricePerHour.online) || 0;
+            console.log("Online price:", price);
             break;
         }
-        
-        console.log(`Processing location ${location} with price ${price}`);
-        
+
         return {
           teacher_id: userId,
           location_type: location,
           price_per_hour: price
         };
-      }).filter(location => location.price_per_hour > 0); // Only insert locations with prices
+      }).filter(location => {
+        const hasValidPrice = location.price_per_hour > 0;
+        console.log(`Location ${location.location_type} has valid price: ${hasValidPrice}, price: ${location.price_per_hour}`);
+        return hasValidPrice;
+      });
 
       if (locationData.length > 0) {
         console.log('Inserting locations:', locationData);
