@@ -1,63 +1,46 @@
-import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { SUBJECTS } from "@/lib/constants";
-import { UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { SUBJECTS } from "@/lib/constants";
 
-export const Navigation = () => {
+const Navigation = () => {
   const { t } = useLanguage();
 
-  const getSubjectTranslationKey = (subject: string) => {
-    return subject.toLowerCase() as "mathematics" | "physics" | "languages";
+  // Type-safe translation keys for subjects
+  const getSubjectTranslationKey = (subject: string): "math" | "physics" | "chemistry" | "biology" | "languages" => {
+    const key = subject.toLowerCase() as "math" | "physics" | "chemistry" | "biology" | "languages";
+    return key;
   };
 
   return (
-    <header className="sticky top-0 z-50">
-      <div className="flex items-center justify-between p-4 bg-white shadow-sm">
-        <Link to="/" className="text-2xl font-bold text-primary">
-          Nohëllef.lu
-        </Link>
-
-        <div className="flex items-center gap-4">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>{t("subjects")}</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {SUBJECTS.map((subject) => (
-                      <NavigationMenuLink
-                        key={subject}
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        {t(getSubjectTranslationKey(subject))}
-                      </NavigationMenuLink>
-                    ))}
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          <LanguageSwitcher />
-
-          <Link to="/profile/create">
-            <Button className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              {t("createProfile")}
-            </Button>
-          </Link>
+    <nav className="bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <Link to="/" className="text-xl font-bold text-primary">
+                Nohëllef.lu
+              </Link>
+            </div>
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              {SUBJECTS.map((subject) => (
+                <Link
+                  key={subject}
+                  to={`/subjects/${subject.toLowerCase()}`}
+                  className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium"
+                >
+                  {t(getSubjectTranslationKey(subject))}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
+
+export default Navigation;
