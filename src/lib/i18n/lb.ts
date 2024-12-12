@@ -91,5 +91,9 @@ export const lb = {
   contactInformation: "Kontaktinformatiounen",
   name: "Numm",
   selectedLocation: "Ausgewielten Uert",
-  errorLoadingProfile: "Fehler beim Lueden vum Profil"
+  errorLoadingProfile: "Fehler beim Lueden vum Profil",
+
+  // Profile actions
+  updateProfile: "Profil aktualiséieren",
+  saveProfile: "Profil späicheren",
 };

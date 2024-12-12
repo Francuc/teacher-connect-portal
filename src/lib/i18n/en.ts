@@ -91,5 +91,9 @@ export const en = {
   contactInformation: "Contact Information",
   name: "Name",
   selectedLocation: "Selected Location",
-  errorLoadingProfile: "Error loading profile"
+  errorLoadingProfile: "Error loading profile",
+
+  // Profile actions
+  updateProfile: "Update Profile",
+  saveProfile: "Save Profile",
 };
