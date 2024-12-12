@@ -44,6 +44,9 @@ export const en = {
   teachingLocations: "Teaching Locations",
   editProfile: "Edit Profile",
   viewProfile: "View Profile",
+  updateProfile: "Update Profile",
+  pleaseLoginFirst: "Please log in first",
+  profileSaved: "Profile saved successfully",
 
   // Search
   search: "Search",

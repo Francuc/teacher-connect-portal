@@ -52,7 +52,6 @@ export const fr = {
   error: "Erreur",
   pleaseLoginFirst: "Veuillez vous connecter d'abord",
   profileSaved: "Profil enregistré avec succès",
-  errorSavingProfile: "Erreur lors de l'enregistrement du profil",
   emailAlreadyExists: "Un profil avec cet email existe déjà",
   profileAlreadyExists: "Vous avez déjà un profil d'enseignant",
 
