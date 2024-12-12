@@ -25,7 +25,7 @@ export const TeacherCard = ({
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
   return (
-    <Card className="group overflow-visible hover:shadow-lg transition-all duration-300 border border-purple.soft">
+    <Card className="group hover:shadow-lg transition-all duration-300 border border-purple.soft">
       <div className="relative p-6 flex flex-col h-full">
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
