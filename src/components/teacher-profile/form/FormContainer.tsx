@@ -8,23 +8,26 @@ type FormContainerProps = {
 };
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
-  const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
+  // Convert userId to string or undefined if it's an object
+  const actualUserId = typeof userId === 'object' ? undefined : userId;
+  
+  const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(actualUserId);
   const { handleSubmit } = useFormSubmit(
     formData as FormData, 
     isLoading, 
     setIsLoading, 
-    userId || currentUserId,
-    !userId // isNewProfile when there's no userId in the URL
+    actualUserId || currentUserId,
+    !actualUserId // isNewProfile when there's no userId in the URL
   );
 
   console.log('FormContainer rendered with:', {
-    userId,
+    userId: actualUserId,
     currentUserId,
     formData,
     isLoading
   });
 
-  if (!userId && !currentUserId) {
+  if (!actualUserId && !currentUserId) {
     console.log('No userId or currentUserId available');
     return null;
   }
@@ -35,7 +38,7 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
       setFormData={setFormData}
       isLoading={isLoading}
       onSubmit={handleSubmit}
-      isUpdate={!!userId}
+      isUpdate={!!actualUserId}
     />
   );
 };
