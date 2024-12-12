@@ -1,49 +1,104 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { PersonalSection } from "./profile-sections/PersonalSection";
+import { BiographySection } from "./profile-sections/BiographySection";
+import { SubjectsSection } from "./SubjectsSection";
+import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
+import { LocationsSection } from "./profile-sections/LocationsSection";
 
 interface TeacherProfileViewProps {
   userId: string;
 }
 
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
-  const { data: teacherData } = useQuery({
+  const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('teachers')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
+      const [
+        { data: profile },
+        { data: subjects },
+        { data: schoolLevels },
+        { data: locations },
+        { data: studentRegions },
+        { data: studentCities },
+        { data: city }
+      ] = await Promise.all([
+        supabase
+          .from('teachers')
+          .select('*')
+          .eq('user_id', userId)
+          .single(),
+        supabase
+          .from('teacher_subjects')
+          .select(`
+            subject_id,
+            subject:subjects (
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          `)
+          .eq('teacher_id', userId),
+        supabase
+          .from('teacher_school_levels')
+          .select('school_level')
+          .eq('teacher_id', userId),
+        supabase
+          .from('teacher_locations')
+          .select('*')
+          .eq('teacher_id', userId),
+        supabase
+          .from('teacher_student_regions')
+          .select('region_name')
+          .eq('teacher_id', userId),
+        supabase
+          .from('teacher_student_cities')
+          .select('city_name')
+          .eq('teacher_id', userId),
+        supabase
+          .from('cities')
+          .select(`
+            *,
+            region:regions (
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          `)
+          .eq('id', profile?.city_id)
+          .single()
+      ]);
 
-      if (error) throw error;
-      return data;
+      return {
+        profile,
+        subjects: subjects || [],
+        schoolLevels: schoolLevels?.map(l => l.school_level) || [],
+        locations: locations || [],
+        studentRegions: studentRegions?.map(r => r.region_name) || [],
+        studentCities: studentCities?.map(c => c.city_name) || [],
+        city
+      };
     },
   });
 
-  if (!teacherData) {
+  if (isLoading || !teacherData) {
     return null;
   }
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="w-5 h-5" />
-            Personal Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Name</h3>
-              <p>{teacherData.first_name} {teacherData.last_name}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <PersonalSection profile={teacherData.profile} />
+      <BiographySection bio={teacherData.profile.bio} />
+      <SubjectsSection subjects={teacherData.subjects} />
+      <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />
+      <LocationsSection 
+        locations={teacherData.locations}
+        city={teacherData.city}
+        studentRegions={teacherData.studentRegions}
+        studentCities={teacherData.studentCities}
+      />
     </div>
   );
 };

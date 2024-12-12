@@ -47,20 +47,90 @@ export const useFormData = (userId?: string) => {
     if (userId) {
       const fetchTeacherData = async () => {
         try {
-          const { data: teacherData, error } = await supabase
-            .from('teachers')
-            .select('*')
-            .eq('user_id', userId)
-            .single();
+          const [
+            { data: profile },
+            { data: subjects },
+            { data: schoolLevels },
+            { data: locations },
+            { data: studentRegions },
+            { data: studentCities }
+          ] = await Promise.all([
+            supabase
+              .from('teachers')
+              .select('*')
+              .eq('user_id', userId)
+              .single(),
+            supabase
+              .from('teacher_subjects')
+              .select(`
+                subject_id,
+                subject:subjects (
+                  id,
+                  name_en,
+                  name_fr,
+                  name_lb
+                )
+              `)
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_school_levels')
+              .select('school_level')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_locations')
+              .select('*')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_student_regions')
+              .select('region_name')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_student_cities')
+              .select('city_name')
+              .eq('teacher_id', userId)
+          ]);
 
-          if (error) throw error;
+          if (!profile) throw new Error('Profile not found');
 
-          setFormData(prev => ({
-            ...prev,
-            firstName: teacherData.first_name,
-            lastName: teacherData.last_name,
-            email: teacherData.email || "",
-          }));
+          const pricePerHour: { [key: string]: string } = {
+            teacherPlace: "",
+            studentPlace: "",
+            online: ""
+          };
+
+          locations?.forEach(location => {
+            switch (location.location_type) {
+              case "Teacher's Place":
+                pricePerHour.teacherPlace = location.price_per_hour.toString();
+                break;
+              case "Student's Place":
+                pricePerHour.studentPlace = location.price_per_hour.toString();
+                break;
+              case "Online":
+                pricePerHour.online = location.price_per_hour.toString();
+                break;
+            }
+          });
+
+          setFormData({
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            email: profile.email,
+            phone: profile.phone || "",
+            facebookProfile: profile.facebook_profile || "",
+            showEmail: profile.show_email || false,
+            showPhone: profile.show_phone || false,
+            showFacebook: profile.show_facebook || false,
+            bio: profile.bio,
+            profilePicture: null,
+            subjects: subjects || [],
+            schoolLevels: schoolLevels?.map(l => l.school_level) || [],
+            teachingLocations: locations?.map(l => l.location_type) || [],
+            cityId: profile.city_id || "",
+            studentRegions: studentRegions?.map(r => r.region_name) || [],
+            studentCities: studentCities?.map(c => c.city_name) || [],
+            pricePerHour: pricePerHour as FormData['pricePerHour'],
+          });
         } catch (error) {
           console.error('Error fetching teacher data:', error);
           toast({
