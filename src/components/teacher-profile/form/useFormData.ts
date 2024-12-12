@@ -54,7 +54,7 @@ export const useFormData = (userId?: string) => {
               .from('teacher_subjects')
               .select(`
                 subject_id,
-                subject:subjects (
+                subject:subjects!inner (
                   id,
                   name_en,
                   name_fr,
@@ -115,7 +115,12 @@ export const useFormData = (userId?: string) => {
             profilePicture: null,
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0]
+              subject: {
+                id: s.subject.id,
+                name_en: s.subject.name_en,
+                name_fr: s.subject.name_fr,
+                name_lb: s.subject.name_lb
+              }
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
