@@ -35,7 +35,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects!inner(
+          teacher_subjects(
             subject:subjects(
               id,
               name_en,
@@ -83,7 +83,9 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
       
       console.log('Teachers data with subjects:', teachersWithUrls);
       return teachersWithUrls || [];
-    }
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const { data: subjects = [] } = useQuery({
