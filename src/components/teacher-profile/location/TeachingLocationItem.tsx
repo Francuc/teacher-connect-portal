@@ -116,14 +116,13 @@ export const TeachingLocationItem = ({
 
   const locationKey = getLocationKey(location);
   const currentPrice = formData.pricePerHour[locationKey];
+  const formattedPrice = currentPrice ? `${currentPrice}€/h` : '';
 
   if (!isEditing && formData.teachingLocations.includes(location)) {
-    const priceDisplay = currentPrice ? `${currentPrice}€/h` : '';
-    
     return (
       <LocationSummary
         location={location}
-        price={priceDisplay}
+        price={formattedPrice}
         selectedCity={selectedCity}
         studentRegions={formData.studentRegions}
         studentCities={formData.studentCities}
