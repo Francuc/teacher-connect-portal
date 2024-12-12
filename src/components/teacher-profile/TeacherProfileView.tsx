@@ -49,17 +49,25 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<TeacherProfile | null>(null);
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setIsCurrentUser(user.id === userId);
-      }
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
     };
-    getCurrentUser();
-  }, [userId]);
+
+    checkAuth();
+
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -164,7 +172,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
             </AvatarFallback>
           )}
         </Avatar>
-        {isCurrentUser && (
+        {isAuthenticated && (
           <Button
             onClick={handleEditClick}
             className="flex items-center gap-2"
