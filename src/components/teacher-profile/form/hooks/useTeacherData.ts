@@ -58,7 +58,7 @@ export const useTeacherData = (userId: string | undefined) => {
       return {
         profile,
         locations: locations || [],
-        subjects: (teacherSubjects || []) as TeacherSubject[],
+        subjects: teacherSubjects as TeacherSubject[],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
         studentCities: studentCities?.map(c => c.city_name) || []
