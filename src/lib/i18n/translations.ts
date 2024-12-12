@@ -36,7 +36,15 @@ export const translations = {
     "computer science": "Computer Science",
     music: "Music",
     art: "Art",
-    languages: "Languages"
+    languages: "Languages",
+    firstName: "First Name",
+    lastName: "Last Name",
+    phone: "Phone Number",
+    facebookProfile: "Facebook Profile",
+    showInProfile: "Show in Profile",
+    teacherCity: "City",
+    selectRegions: "Select Regions",
+    selectCities: "Select Cities",
   },
   fr: {
     search: "Recherche",
@@ -73,7 +81,15 @@ export const translations = {
     "computer science": "Informatique",
     music: "Musique",
     art: "Art",
-    languages: "Langues"
+    languages: "Langues",
+    firstName: "Prénom",
+    lastName: "Nom",
+    phone: "Numéro de téléphone",
+    facebookProfile: "Profil Facebook",
+    showInProfile: "Afficher dans le profil",
+    teacherCity: "Ville",
+    selectRegions: "Sélectionner les régions",
+    selectCities: "Sélectionner les villes",
   },
   lb: {
     search: "Sichen",
@@ -110,7 +126,15 @@ export const translations = {
     "computer science": "Informatik",
     music: "Musik",
     art: "Konscht",
-    languages: "Sproochen"
+    languages: "Sproochen",
+    firstName: "Virnumm",
+    lastName: "Familljennumm",
+    phone: "Telefonsnummer",
+    facebookProfile: "Facebook Profil",
+    showInProfile: "Am Profil weisen",
+    teacherCity: "Stad",
+    selectRegions: "Regiounen auswielen",
+    selectCities: "Stied auswielen",
   }
 } as const;
 

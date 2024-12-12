@@ -5,20 +5,29 @@ import { type Subject, type SchoolLevel, type TeachingLocation } from "@/lib/con
 import { PersonalInfoSection } from "./teacher-profile/PersonalInfoSection";
 import { SubjectsSection } from "./teacher-profile/SubjectsSection";
 import { LocationSection } from "./teacher-profile/LocationSection";
+import { BiographySection } from "./teacher-profile/BiographySection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const TeacherProfileForm = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
+    facebookProfile: "",
+    showEmail: false,
+    showPhone: false,
+    showFacebook: false,
     bio: "",
+    profilePicture: null as File | null,
     subjects: [] as Subject[],
     schoolLevels: [] as SchoolLevel[],
     teachingLocations: [] as TeachingLocation[],
-    location: "",
+    teacherCity: "",
+    studentRegions: [] as string[],
+    studentCities: [] as string[],
     pricePerHour: {
       teacherPlace: "",
       studentPlace: "",
@@ -40,6 +49,7 @@ const TeacherProfileForm = () => {
       <PersonalInfoSection formData={formData} setFormData={setFormData} />
       <SubjectsSection formData={formData} setFormData={setFormData} />
       <LocationSection formData={formData} setFormData={setFormData} />
+      <BiographySection formData={formData} setFormData={setFormData} />
 
       <div className="flex justify-end">
         <Button type="submit" className="bg-primary hover:bg-primary/90">
