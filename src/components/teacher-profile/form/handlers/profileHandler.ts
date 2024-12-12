@@ -10,11 +10,11 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
-    // First check if a profile already exists
+    // Check if a profile already exists with this email
     const { data: existingProfile } = await supabase
       .from('teachers')
-      .select('user_id')
-      .eq('user_id', userId)
+      .select('user_id, email')
+      .eq('email', formData.email)
       .single();
 
     let profilePictureUrl = null;
@@ -37,8 +37,8 @@ export const handleProfileUpdate = async (
       profile_picture_url: profilePictureUrl,
     };
 
-    // If profile exists, update it regardless of isUpdate flag
-    if (existingProfile) {
+    // Only update if we're editing an existing profile (same email and user_id)
+    if (existingProfile && existingProfile.user_id === userId) {
       console.log('Updating existing profile for user:', userId);
       const { error } = await supabase
         .from('teachers')
@@ -47,7 +47,7 @@ export const handleProfileUpdate = async (
       
       if (error) throw error;
     } else {
-      // Only create new profile if one doesn't exist
+      // Create new profile if email doesn't exist or belongs to another user
       console.log('Creating new profile for user:', userId);
       const { error } = await supabase
         .from('teachers')
