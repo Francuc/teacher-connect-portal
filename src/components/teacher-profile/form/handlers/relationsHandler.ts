@@ -61,22 +61,20 @@ export const handleRelationsUpdate = async (
     // Insert teaching locations with proper price handling
     if (formData.teachingLocations.length > 0) {
       const locationData = formData.teachingLocations.map(location => {
-        let priceKey: keyof typeof formData.pricePerHour;
+        let price = 0;
+        
         switch (location) {
           case "Teacher's Place":
-            priceKey = "teacherPlace";
+            price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
             break;
           case "Student's Place":
-            priceKey = "studentPlace";
+            price = parseFloat(formData.pricePerHour.studentPlace) || 0;
             break;
           case "Online":
-            priceKey = "online";
+            price = parseFloat(formData.pricePerHour.online) || 0;
             break;
-          default:
-            priceKey = "online";
         }
-        
-        const price = parseFloat(formData.pricePerHour[priceKey]) || 0;
+
         console.log(`Processing location ${location} with price ${price}`);
         
         return {
@@ -84,7 +82,13 @@ export const handleRelationsUpdate = async (
           location_type: location,
           price_per_hour: price
         };
-      }).filter(location => location.price_per_hour > 0); // Only insert locations with prices
+      }).filter(location => {
+        const hasPrice = location.price_per_hour > 0;
+        console.log(`Location ${location.location_type} has price: ${hasPrice ? 'yes' : 'no'}, price: ${location.price_per_hour}`);
+        return hasPrice;
+      });
+
+      console.log('Locations after filtering:', locationData);
 
       if (locationData.length > 0) {
         console.log('Inserting locations:', locationData);
