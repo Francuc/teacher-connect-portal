@@ -1,3 +1,6 @@
+-- Enable UUID extension
+create extension if not exists "uuid-ossp";
+
 -- Create teachers table
 create table public.teachers (
   id uuid primary key default uuid_generate_v4(),
