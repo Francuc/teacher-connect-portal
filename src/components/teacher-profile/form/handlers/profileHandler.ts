@@ -1,5 +1,6 @@
 import { FormData } from "../types";
 import { supabase } from "@/lib/supabase";
+import { uploadProfilePicture } from "../profilePictureUpload";
 
 export const handleProfileUpdate = async (
   formData: FormData,
@@ -34,12 +35,8 @@ export const handleProfileUpdate = async (
       bio: formData.bio,
       city_id: formData.cityId || null,
       updated_at: new Date().toISOString(),
+      profile_picture_url: profilePictureUrl
     };
-
-    // Only add profile_picture_url if a new picture was uploaded
-    if (profilePictureUrl) {
-      profileData.profile_picture_url = profilePictureUrl;
-    }
 
     if (isNewProfile) {
       console.log('Creating new profile:', profileData);
