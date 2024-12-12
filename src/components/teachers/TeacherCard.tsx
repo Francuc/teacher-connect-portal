@@ -24,6 +24,11 @@ export const TeacherCard = ({
   const navigate = useNavigate();
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
+  // Find the student's place location if it exists
+  const studentPlaceLocation = teacher.teacher_locations?.find(
+    (loc: any) => loc.location_type === "Student's Place"
+  );
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 border border-purple.soft">
       <div className="p-6 flex flex-col h-full space-y-6">
@@ -129,6 +134,31 @@ export const TeacherCard = ({
               )}
             </div>
           </div>
+
+          {/* Student Cities Section */}
+          {studentPlaceLocation && teacher.teacher_student_cities?.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>{t("availableIn")}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {teacher.teacher_student_cities.slice(0, 3).map((cityData: any) => (
+                  <span
+                    key={cityData.id}
+                    className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"
+                  >
+                    {cityData.city_name}
+                  </span>
+                ))}
+                {teacher.teacher_student_cities.length > 3 && (
+                  <span className="text-xs px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium">
+                    +{teacher.teacher_student_cities.length - 3}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between pt-6 border-t border-purple.soft/30">
