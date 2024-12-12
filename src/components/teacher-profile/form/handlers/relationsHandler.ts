@@ -81,16 +81,14 @@ export const handleRelationsUpdate = async (
           location_type: location,
           price_per_hour: price
         };
-      }).filter(location => location.price_per_hour > 0); // Only insert locations with valid prices
+      });
 
-      if (locationData.length > 0) {
-        console.log('Inserting locations:', locationData);
-        insertPromises.push(
-          supabase
-            .from('teacher_locations')
-            .insert(locationData)
-        );
-      }
+      console.log('Inserting locations:', locationData);
+      insertPromises.push(
+        supabase
+          .from('teacher_locations')
+          .insert(locationData)
+      );
     }
 
     // Insert student regions
