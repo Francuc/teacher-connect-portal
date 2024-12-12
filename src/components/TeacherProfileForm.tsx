@@ -28,8 +28,7 @@ const TeacherProfileForm = () => {
     subjects: [] as Subject[],
     schoolLevels: [] as SchoolLevel[],
     teachingLocations: [] as TeachingLocation[],
-    location: "",
-    teacherCity: "",
+    cityId: "",
     studentRegions: [] as string[],
     studentCities: [] as string[],
     pricePerHour: {
@@ -77,7 +76,7 @@ const TeacherProfileForm = () => {
           show_facebook: formData.showFacebook,
           bio: formData.bio,
           profile_picture_url: profilePictureUrl,
-          teacher_city: formData.teacherCity,
+          city_id: formData.cityId || null,
         });
 
       if (profileError) throw profileError;
@@ -122,31 +121,6 @@ const TeacherProfileForm = () => {
             }))
           );
         if (locationsError) throw locationsError;
-      }
-
-      // Insert regions and cities
-      if (formData.studentRegions.length > 0) {
-        const { error: regionsError } = await supabase
-          .from('teacher_regions')
-          .insert(
-            formData.studentRegions.map(region => ({
-              teacher_id: user.id,
-              region: region
-            }))
-          );
-        if (regionsError) throw regionsError;
-      }
-
-      if (formData.studentCities.length > 0) {
-        const { error: citiesError } = await supabase
-          .from('teacher_cities')
-          .insert(
-            formData.studentCities.map(city => ({
-              teacher_id: user.id,
-              city: city
-            }))
-          );
-        if (citiesError) throw citiesError;
       }
 
       toast({

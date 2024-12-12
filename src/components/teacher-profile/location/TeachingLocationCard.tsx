@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TeachingLocationsList } from "./TeachingLocationsList";
 import { type TeachingLocation } from "@/lib/constants";
+import { CityAutocomplete } from "../CityAutocomplete";
 
 type TeachingLocationCardProps = {
   formData: {
     teachingLocations: TeachingLocation[];
-    teacherCity: string;
+    cityId: string;
     studentRegions: string[];
     studentCities: string[];
     pricePerHour: {
@@ -25,13 +25,19 @@ export const TeachingLocationCard = ({ formData, setFormData }: TeachingLocation
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MapPin className="w-5 h-5" />
-          {t("teachingLocations")}
-        </CardTitle>
+        <CardTitle>{t("teachingLocations")}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <TeachingLocationsList formData={formData} setFormData={setFormData} />
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t("yourCity")}</label>
+            <CityAutocomplete
+              value={formData.cityId}
+              onChange={(value) => setFormData({ ...formData, cityId: value })}
+            />
+          </div>
+          <TeachingLocationsList formData={formData} setFormData={setFormData} />
+        </div>
       </CardContent>
     </Card>
   );

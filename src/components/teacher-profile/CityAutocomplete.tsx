@@ -32,7 +32,16 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cities')
-        .select('*')
+        .select(`
+          *,
+          region:regions(
+            id,
+            name_en,
+            name_fr,
+            name_lb
+          )
+        `)
+        .order('name_en');
       
       if (error) throw error
       return data || []
@@ -42,16 +51,22 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     staleTime: 300000, // 5 minutes
   })
 
-  const getLocalizedName = (city: any) => {
-    if (!city) return ''
+  const getLocalizedName = (item: any) => {
+    if (!item) return ''
     switch(language) {
       case 'fr':
-        return city.name_fr
+        return item.name_fr
       case 'lb':
-        return city.name_lb
+        return item.name_lb
       default:
-        return city.name_en
+        return item.name_en
     }
+  }
+
+  const getCityWithRegion = (city: any) => {
+    const cityName = getLocalizedName(city);
+    const regionName = getLocalizedName(city.region);
+    return `${cityName}, ${regionName}`;
   }
 
   // Show error state if query fails
@@ -76,9 +91,9 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           {isLoading ? (
             t("loading")
           ) : value ? (
-            cities.find((city) => getLocalizedName(city) === value)
-              ? value
-              : value
+            cities.find((city) => city.id === value)
+              ? getCityWithRegion(cities.find((city) => city.id === value))
+              : t("selectCity")
           ) : (
             t("selectCity")
           )}
@@ -96,19 +111,19 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
               cities.map((city) => (
                 <CommandItem
                   key={city.id}
-                  value={getLocalizedName(city)}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue)
+                  value={getCityWithRegion(city)}
+                  onSelect={() => {
+                    onChange(city.id)
                     setOpen(false)
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === getLocalizedName(city) ? "opacity-100" : "opacity-0"
+                      value === city.id ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {getLocalizedName(city)}
+                  {getCityWithRegion(city)}
                 </CommandItem>
               ))
             ) : (
