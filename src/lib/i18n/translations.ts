@@ -55,6 +55,8 @@ export const translations = {
     searchCity: "Search city...",
     noCityFound: "No city found.",
     loading: "Loading...",
+    errorLoadingCities: "Error loading cities",
+    noCitiesAvailable: "No cities available"
   },
   fr: {
     search: "Recherche",
@@ -110,6 +112,8 @@ export const translations = {
     searchCity: "Rechercher une ville...",
     noCityFound: "Aucune ville trouvée.",
     loading: "Chargement...",
+    errorLoadingCities: "Erreur lors du chargement des villes",
+    noCitiesAvailable: "Aucune ville disponible"
   },
   lb: {
     search: "Sichen",
@@ -165,6 +169,8 @@ export const translations = {
     searchCity: "Stad sichen...",
     noCityFound: "Keng Stad fonnt.",
     loading: "Lueden...",
+    errorLoadingCities: "Feeler beim Lueden vun de Stied",
+    noCitiesAvailable: "Keng Stied verfügbar"
   }
 } as const;
 
