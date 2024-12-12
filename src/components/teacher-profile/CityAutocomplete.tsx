@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 interface CityAutocompleteProps {
@@ -25,16 +25,16 @@ interface CityAutocompleteProps {
 
 export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const [open, setOpen] = React.useState(false)
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
 
-  const { data: cities = [] } = useQuery({
+  const { data: cities = [], isLoading } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cities')
         .select('*')
       if (error) throw error
-      return data
+      return data || []
     }
   })
 
@@ -62,33 +62,37 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
             ? cities.find((city) => getLocalizedName(city) === value)
               ? value
               : value
-            : "Select city..."}
+            : t("selectCity")}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Search city..." />
-          <CommandEmpty>No city found.</CommandEmpty>
+          <CommandInput placeholder={t("searchCity")} />
+          <CommandEmpty>{t("noCityFound")}</CommandEmpty>
           <CommandGroup>
-            {cities.map((city) => (
-              <CommandItem
-                key={city.id}
-                value={getLocalizedName(city)}
-                onSelect={(currentValue) => {
-                  onChange(currentValue === value ? "" : currentValue)
-                  setOpen(false)
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === getLocalizedName(city) ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {getLocalizedName(city)}
-              </CommandItem>
-            ))}
+            {isLoading ? (
+              <CommandItem disabled>{t("loading")}</CommandItem>
+            ) : (
+              cities.map((city) => (
+                <CommandItem
+                  key={city.id}
+                  value={getLocalizedName(city)}
+                  onSelect={(currentValue) => {
+                    onChange(currentValue === value ? "" : currentValue)
+                    setOpen(false)
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === getLocalizedName(city) ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {getLocalizedName(city)}
+                </CommandItem>
+              ))
+            )}
           </CommandGroup>
         </Command>
       </PopoverContent>
