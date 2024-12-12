@@ -36,6 +36,24 @@ export const SubjectsSection = ({
 
   console.log('Current subjects prop:', subjects);
 
+  const handleSubjectToggle = (subjectId: string, subject: any) => {
+    if (!onSubjectsChange) return;
+
+    const isSelected = subjects.some(s => s.subject_id === subjectId);
+    let updatedSubjects;
+
+    if (isSelected) {
+      updatedSubjects = subjects.filter(s => s.subject_id !== subjectId);
+    } else {
+      updatedSubjects = [...subjects, {
+        subject_id: subjectId,
+        subject: subject // Pass the entire subject object
+      }];
+    }
+
+    onSubjectsChange(updatedSubjects);
+  };
+
   const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string } | null | undefined) => {
     if (!subject) {
       console.log('Subject is null or undefined');
@@ -54,28 +72,11 @@ export const SubjectsSection = ({
     }
   };
 
-  const handleSubjectToggle = (subjectId: string, subject: any) => {
-    if (!onSubjectsChange) return;
-
-    const isSelected = subjects.some(s => s.subject_id === subjectId);
-    let updatedSubjects;
-
-    if (isSelected) {
-      updatedSubjects = subjects.filter(s => s.subject_id !== subjectId);
-    } else {
-      updatedSubjects = [...subjects, {
-        subject_id: subjectId,
-        subject: {
-          id: subject.id,
-          name_en: subject.name_en,
-          name_fr: subject.name_fr,
-          name_lb: subject.name_lb
-        }
-      }];
-    }
-
-    onSubjectsChange(updatedSubjects);
-  };
+  // Find the full subject data for each selected subject
+  const enrichedSubjects = subjects.map(subjectData => ({
+    ...subjectData,
+    subject: availableSubjects?.find(s => s.id === subjectData.subject_id) || subjectData.subject
+  }));
 
   return (
     <Card>
@@ -103,8 +104,8 @@ export const SubjectsSection = ({
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {subjects.map((subjectData) => {
-              console.log('Rendering subject:', subjectData);
+            {enrichedSubjects.map((subjectData) => {
+              console.log('Rendering enriched subject:', subjectData);
               return (
                 <span 
                   key={subjectData.subject_id} 
