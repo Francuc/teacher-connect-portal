@@ -64,12 +64,11 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         throw error;
       }
 
-      // Transform profile picture URLs
       const teachersWithUrls = data.map(teacher => {
         if (teacher.profile_picture_url) {
           return {
             ...teacher,
-            profile_picture_url: `${supabase.storageUrl}/object/public/profile-pictures/${teacher.profile_picture_url}`
+            profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
           };
         }
         return teacher;
@@ -166,12 +165,10 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     const matchesSubject = selectedSubject === "all" || teacherSubjects.includes(selectedSubject);
     const matchesLevel = selectedLevel === "all" || teacherLevels.includes(selectedLevel);
     
-    // Get all locations (teacher's place and student cities)
     const location = getTeacherLocation(teacher);
     const studentCities = teacher.teacher_student_cities?.map(c => getCityTranslation(c.city_name)) || [];
     const allLocations = [location, ...studentCities];
     
-    // Check if search query matches any location or teacher name
     const matchesSearch = !searchQuery || 
       `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
       allLocations.some(loc => loc.toLowerCase().includes(searchQuery.toLowerCase()));

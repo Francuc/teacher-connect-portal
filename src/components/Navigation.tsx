@@ -38,7 +38,7 @@ export const Navigation = () => {
         if (teacher.profile_picture_url) {
           return {
             ...teacher,
-            profile_picture_url: `${supabase.storageUrl}/object/public/profile-pictures/${teacher.profile_picture_url}`
+            profile_picture_url: `${process.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
           };
         }
         return teacher;
