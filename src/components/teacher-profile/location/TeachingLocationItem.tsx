@@ -8,6 +8,7 @@ import { type TeachingLocation } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useState } from "react";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
@@ -31,6 +32,7 @@ export const TeachingLocationItem = ({
   setFormData,
 }: TeachingLocationItemProps) => {
   const { t, language } = useLanguage();
+  const [selectedRegionId, setSelectedRegionId] = useState<string>("");
 
   const { data: regions = [] } = useQuery({
     queryKey: ['regions'],
@@ -88,9 +90,7 @@ export const TeachingLocationItem = ({
     }
   };
 
-  const selectedRegion = regions.find(region => 
-    cities.find(city => city.id === formData.cityId)?.region_id === region.id
-  );
+  const selectedRegion = regions.find(region => region.id === selectedRegionId);
 
   return (
     <div className="space-y-2">
@@ -117,15 +117,15 @@ export const TeachingLocationItem = ({
               <div className="space-y-2">
                 <Label>{t("regions")}</Label>
                 <RadioGroup
-                  value={selectedRegion?.id || ""}
+                  value={selectedRegionId}
                   onValueChange={(value) => {
-                    const selectedRegionId = value;
+                    setSelectedRegionId(value);
                     // Reset cityId when changing region
                     setFormData({
                       ...formData,
                       cityId: "",
                     });
-                    console.log("Selected region:", selectedRegionId);
+                    console.log("Selected region:", value);
                   }}
                   className="grid grid-cols-2 gap-2"
                 >
