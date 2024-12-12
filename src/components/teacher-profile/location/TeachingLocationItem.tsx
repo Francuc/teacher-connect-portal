@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RegionsSection } from "./RegionsSection";
 import { type TeachingLocation } from "@/lib/constants";
@@ -10,8 +9,8 @@ import { supabase } from "@/lib/supabase";
 import { RegionSelector } from "./RegionSelector";
 import { CitySelector } from "./CitySelector";
 import { LocationDisplay } from "./LocationDisplay";
-import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { LocationSummary } from "./LocationSummary";
+import { PriceInput } from "./PriceInput";
 
 type TeachingLocationItemProps = {
   location: TeachingLocation;
@@ -101,66 +100,32 @@ export const TeachingLocationItem = ({
     });
   };
 
-  const formatPrice = (price: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(parseFloat(price || '0'));
-  };
-
   const getLocationKey = (location: TeachingLocation) => {
     return location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour;
   };
 
-  const renderLocationSummary = () => {
-    const isSelected = formData.teachingLocations.includes(location);
-    const price = formData.pricePerHour[getLocationKey(location)];
-    const hasPrice = price && parseFloat(price) > 0;
-
-    if (!isSelected) return null;
-
-    return (
-      <Card 
-        className="p-4 cursor-pointer hover:bg-accent"
-        onClick={() => setIsEditing(true)}
-      >
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="font-medium">{location}</span>
-            {hasPrice && <span className="font-semibold">{formatPrice(price)}/h</span>}
-          </div>
-
-          {location === "Teacher's Place" && selectedCity && (
-            <div className="text-sm text-muted-foreground">
-              {`${getLocalizedName(selectedCity)}, ${getLocalizedName(selectedCity.region)}`}
-            </div>
-          )}
-
-          {location === "Student's Place" && (
-            <div className="text-sm text-muted-foreground">
-              {formData.studentRegions.length > 0 && (
-                <div>
-                  <span className="font-medium">{t("regions")}: </span>
-                  {formData.studentRegions.join(", ")}
-                </div>
-              )}
-              {formData.studentCities.length > 0 && (
-                <div>
-                  <span className="font-medium">{t("cities")}: </span>
-                  {formData.studentCities.join(", ")}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Card>
-    );
+  const handlePriceChange = (value: string) => {
+    setFormData({
+      ...formData,
+      pricePerHour: {
+        ...formData.pricePerHour,
+        [getLocationKey(location)]: value,
+      },
+    });
   };
 
   if (!isEditing && formData.teachingLocations.includes(location)) {
-    return renderLocationSummary();
+    return (
+      <LocationSummary
+        location={location}
+        price={formData.pricePerHour[getLocationKey(location)]}
+        selectedCity={selectedCity}
+        studentRegions={formData.studentRegions}
+        studentCities={formData.studentCities}
+        getLocalizedName={getLocalizedName}
+        onEdit={() => setIsEditing(true)}
+      />
+    );
   }
 
   return (
@@ -213,27 +178,10 @@ export const TeachingLocationItem = ({
             <RegionsSection formData={formData} setFormData={setFormData} />
           )}
 
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-500">€</span>
-            <Input
-              type="number"
-              placeholder={t("pricePerHour")}
-              value={
-                formData.pricePerHour[getLocationKey(location)]
-              }
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  pricePerHour: {
-                    ...formData.pricePerHour,
-                    [getLocationKey(location)]: e.target.value,
-                  },
-                })
-              }
-              className="w-32"
-              required
-            />
-          </div>
+          <PriceInput
+            value={formData.pricePerHour[getLocationKey(location)]}
+            onChange={handlePriceChange}
+          />
         </div>
       )}
     </div>
