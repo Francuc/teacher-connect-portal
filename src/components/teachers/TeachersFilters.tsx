@@ -26,8 +26,8 @@ export const TeachersFilters = ({
   setSelectedSubject,
   selectedLevel,
   setSelectedLevel,
-  subjects,
-  schoolLevels,
+  subjects = [],
+  schoolLevels = [],
   getLocalizedName,
 }: TeachersFiltersProps) => {
   const { t, language } = useLanguage();

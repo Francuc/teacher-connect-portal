@@ -5,6 +5,8 @@ import { TeachersGrid } from "./teachers/TeachersGrid";
 import { RandomTeachersButton } from "./teachers/RandomTeachersButton";
 import { useTeachersData } from "@/hooks/useTeachersData";
 import { getLocalizedName, getTeacherLocation } from "@/utils/localization";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 interface TeachersListProps {
   initialSearchQuery?: string;
@@ -17,6 +19,32 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
   const { data: teachers = [], isLoading: isLoadingTeachers } = useTeachersData();
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*')
+        .order('name_en');
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: schoolLevels = [] } = useQuery({
+    queryKey: ['school_levels'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('school_levels')
+        .select('*')
+        .order('name_en');
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
 
   const getLowestPrice = (locations: any[]) => {
     if (!locations || locations.length === 0) return null;
@@ -61,6 +89,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         setSelectedSubject={setSelectedSubject}
         selectedLevel={selectedLevel}
         setSelectedLevel={setSelectedLevel}
+        subjects={subjects}
+        schoolLevels={schoolLevels}
         getLocalizedName={(item) => getLocalizedName(item, language)}
       />
 
