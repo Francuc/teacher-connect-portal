@@ -51,6 +51,10 @@ export const translations = {
     selectCities: "Select Cities",
     error: "Error",
     errorSavingProfile: "Error saving profile",
+    selectCity: "Select city...",
+    searchCity: "Search city...",
+    noCityFound: "No city found.",
+    loading: "Loading...",
   },
   fr: {
     search: "Recherche",
@@ -102,6 +106,10 @@ export const translations = {
     selectCities: "Sélectionner les villes",
     error: "Erreur",
     errorSavingProfile: "Erreur lors de l'enregistrement du profil",
+    selectCity: "Sélectionner une ville...",
+    searchCity: "Rechercher une ville...",
+    noCityFound: "Aucune ville trouvée.",
+    loading: "Chargement...",
   },
   lb: {
     search: "Sichen",
@@ -153,6 +161,10 @@ export const translations = {
     selectCities: "Stied auswielen",
     error: "Feeler",
     errorSavingProfile: "Feeler beim Späichere vum Profil",
+    selectCity: "Stad auswielen...",
+    searchCity: "Stad sichen...",
+    noCityFound: "Keng Stad fonnt.",
+    loading: "Lueden...",
   }
 } as const;
 
