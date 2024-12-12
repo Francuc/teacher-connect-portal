@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { TeacherCard } from "./teachers/TeacherCard";
 import { TeachersFilters } from "./teachers/TeachersFilters";
 
-export const TeachersList = () => {
+interface TeachersListProps {
+  initialSearchQuery?: string;
+}
+
+export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => {
   const { language } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
   const { data: teachers = [], isLoading: isLoadingTeachers } = useQuery({
     queryKey: ['teachers'],
@@ -61,7 +65,8 @@ export const TeachersList = () => {
         return teacher;
       }));
       
-      return teachersWithUrls;
+      console.log('Profiles with URLs:', teachersWithUrls);
+      return teachersWithUrls || [];
     }
   });
 
@@ -136,7 +141,7 @@ export const TeachersList = () => {
   });
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="container mx-auto px-4 space-y-8">
       <TeachersFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -150,13 +155,13 @@ export const TeachersList = () => {
       />
 
       {isLoadingTeachers ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-64 bg-gray-100 rounded-lg animate-pulse" />
+            <div key={i} className="h-64 bg-purple.soft/30 rounded-xl animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredTeachers.map((teacher) => (
             <TeacherCard
               key={teacher.id}

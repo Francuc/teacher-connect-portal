@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Search } from "lucide-react";
+import { Search, BookOpen, GraduationCap } from "lucide-react";
 
 interface TeachersFiltersProps {
   searchQuery: string;
@@ -30,15 +30,16 @@ export const TeachersFilters = ({
   const { t } = useLanguage();
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="search">{t("search")}</Label>
+    <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-purple.soft/30">
+        <div className="p-6 space-y-2">
+          <Label className="flex items-center gap-2 text-purple.dark">
+            <Search className="w-4 h-4" />
+            {t("search")}
+          </Label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              id="search"
-              className="pl-10"
+              className="pl-4 border-purple.soft/30 focus:border-primary focus:ring-primary/30"
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -46,10 +47,13 @@ export const TeachersFilters = ({
           </div>
         </div>
         
-        <div className="space-y-2">
-          <Label>{t("subjects")}</Label>
+        <div className="p-6 space-y-2">
+          <Label className="flex items-center gap-2 text-purple.dark">
+            <BookOpen className="w-4 h-4" />
+            {t("subjects")}
+          </Label>
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-            <SelectTrigger>
+            <SelectTrigger className="border-purple.soft/30 focus:border-primary focus:ring-primary/30">
               <SelectValue placeholder={t("allSubjects")} />
             </SelectTrigger>
             <SelectContent>
@@ -63,10 +67,13 @@ export const TeachersFilters = ({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label>{t("schoolLevels")}</Label>
+        <div className="p-6 space-y-2">
+          <Label className="flex items-center gap-2 text-purple.dark">
+            <GraduationCap className="w-4 h-4" />
+            {t("schoolLevels")}
+          </Label>
           <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-            <SelectTrigger>
+            <SelectTrigger className="border-purple.soft/30 focus:border-primary focus:ring-primary/30">
               <SelectValue placeholder={t("allLevels")} />
             </SelectTrigger>
             <SelectContent>
