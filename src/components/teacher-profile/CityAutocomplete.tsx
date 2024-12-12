@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
+import { supabase } from "@/lib/supabase"
 import { useLanguage } from "@/contexts/LanguageContext"
 
 interface CityAutocompleteProps {
@@ -30,53 +30,52 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const { data: cities = [], isLoading, isError } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities')
-        .select(`
-          *,
-          region:regions(
-            id,
-            name_en,
-            name_fr,
-            name_lb
-          )
-        `)
-        .order('name_en');
-      
-      if (error) throw error
-      return data || []
+      try {
+        const { data, error } = await supabase
+          .from('cities')
+          .select(`
+            *,
+            region:regions(
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          `)
+          .order('name_en');
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+        return [];
+      }
     },
-    retry: 3,
-    retryDelay: 1000,
-    staleTime: 300000, // 5 minutes
   })
 
   const getLocalizedName = (item: any) => {
-    if (!item) return ''
+    if (!item) return '';
     switch(language) {
       case 'fr':
-        return item.name_fr
+        return item.name_fr;
       case 'lb':
-        return item.name_lb
+        return item.name_lb;
       default:
-        return item.name_en
+        return item.name_en;
     }
   }
 
   const getCityWithRegion = (city: any) => {
+    if (!city || !city.region) return '';
     const cityName = getLocalizedName(city);
     const regionName = getLocalizedName(city.region);
     return `${cityName}, ${regionName}`;
   }
 
-  // Show error state if query fails
-  if (isError) {
-    return (
-      <Button variant="outline" className="w-full justify-between text-destructive">
-        {t("errorLoadingCities")}
-      </Button>
-    )
-  }
+  const selectedCity = React.useMemo(() => {
+    if (!value || !cities) return null;
+    return cities.find((city) => city.id === value);
+  }, [value, cities]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -90,10 +89,8 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
         >
           {isLoading ? (
             t("loading")
-          ) : value ? (
-            cities.find((city) => city.id === value)
-              ? getCityWithRegion(cities.find((city) => city.id === value))
-              : t("selectCity")
+          ) : selectedCity ? (
+            getCityWithRegion(selectedCity)
           ) : (
             t("selectCity")
           )}
@@ -107,14 +104,16 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           <CommandGroup>
             {isLoading ? (
               <CommandItem disabled>{t("loading")}</CommandItem>
+            ) : isError ? (
+              <CommandItem disabled>{t("errorLoadingCities")}</CommandItem>
             ) : cities && cities.length > 0 ? (
               cities.map((city) => (
                 <CommandItem
                   key={city.id}
                   value={getCityWithRegion(city)}
                   onSelect={() => {
-                    onChange(city.id)
-                    setOpen(false)
+                    onChange(city.id);
+                    setOpen(false);
                   }}
                 >
                   <Check
