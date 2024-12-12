@@ -1,8 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { BookOpen, Search } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { TeachersList } from "./TeachersList";
-import { Input } from "./ui/input";
 import { useState } from "react";
 
 export const LandingPage = () => {
@@ -24,20 +23,6 @@ export const LandingPage = () => {
               <p className="text-xl text-white/90">
                 {t("landingDescription")}
               </p>
-              
-              {/* Search Bar */}
-              <div className="w-full max-w-2xl mt-8 relative">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    type="text"
-                    placeholder={t("searchPlaceholder")}
-                    className="w-full pl-12 pr-4 py-4 text-lg rounded-full border-2 border-white/20 bg-white/10 text-white placeholder:text-white/60 focus:ring-2 focus:ring-white/30 backdrop-blur-sm"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
 
               <div className="mt-8">
                 <LanguageSwitcher />
