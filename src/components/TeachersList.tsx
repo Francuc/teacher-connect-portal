@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { TeacherCard } from "./teachers/TeacherCard";
 import { TeachersFilters } from "./teachers/TeachersFilters";
+import { TeachersGrid } from "./teachers/TeachersGrid";
 
 interface TeachersListProps {
   initialSearchQuery?: string;
@@ -158,26 +158,14 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         getLocalizedName={getLocalizedName}
       />
 
-      {isLoadingTeachers ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-64 bg-purple.soft/30 rounded-xl animate-pulse" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredTeachers.map((teacher) => (
-            <TeacherCard
-              key={teacher.id}
-              teacher={teacher}
-              getLocalizedName={getLocalizedName}
-              getTeacherLocation={getTeacherLocation}
-              getLowestPrice={getLowestPrice}
-              formatPrice={formatPrice}
-            />
-          ))}
-        </div>
-      )}
+      <TeachersGrid
+        teachers={filteredTeachers}
+        isLoading={isLoadingTeachers}
+        getLocalizedName={getLocalizedName}
+        getTeacherLocation={getTeacherLocation}
+        getLowestPrice={getLowestPrice}
+        formatPrice={formatPrice}
+      />
     </div>
   );
 };
