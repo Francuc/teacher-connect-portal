@@ -11,11 +11,14 @@ export const handleProfileUpdate = async (
 
   try {
     // Check if a profile already exists with this email
-    const { data: existingProfile } = await supabase
+    const { data: existingProfiles, error: queryError } = await supabase
       .from('teachers')
       .select('user_id, email')
-      .eq('email', formData.email)
-      .single();
+      .eq('email', formData.email);
+
+    if (queryError) throw queryError;
+
+    const existingProfile = existingProfiles?.[0];
 
     let profilePictureUrl = null;
     if (formData.profilePicture) {
