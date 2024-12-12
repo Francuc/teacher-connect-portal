@@ -91,5 +91,9 @@ export const lb = {
   contactInformation: "Kontaktinformatiounen",
   name: "Numm",
   selectedLocation: "Ausgewielten Uert",
-  errorLoadingProfile: "Fehler beim Lueden vum Profil"
+  errorLoadingProfile: "Fehler beim Lueden vum Profil",
+
+  // Profile Picture
+  profilePictureSizeError: "D'Profilbild muss manner wéi 5MB sinn",
+  profilePictureTypeError: "Nëmmen Bilddateie sinn erlaabt",
 };

@@ -91,5 +91,9 @@ export const en = {
   contactInformation: "Contact Information",
   name: "Name",
   selectedLocation: "Selected Location",
-  errorLoadingProfile: "Error loading profile"
+  errorLoadingProfile: "Error loading profile",
+
+  // Profile Picture
+  profilePictureSizeError: "Profile picture must be less than 5MB",
+  profilePictureTypeError: "Only image files are allowed",
 };
