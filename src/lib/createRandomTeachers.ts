@@ -1,6 +1,11 @@
 import { supabase } from "./supabase";
 
 export const createRandomTeachers = async () => {
+  console.log('Teacher generation is currently disabled');
+  return null;
+  
+  // Commented out for now - uncomment when needed
+  /*
   try {
     const { data, error } = await supabase.functions.invoke('create-random-teachers', {
       method: 'POST'
@@ -17,4 +22,5 @@ export const createRandomTeachers = async () => {
     console.error('Error invoking function:', error);
     throw error;
   }
+  */
 };
