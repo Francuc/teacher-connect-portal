@@ -7,12 +7,12 @@ type FormContainerProps = {
 };
 
 export const FormContainer = ({ userId }: FormContainerProps) => {
-  const { formData, setFormData, isLoading, setIsLoading, currentUserId } = useFormData(userId);
+  const { formData, setFormData, isLoading, setIsLoading } = useFormData(userId);
   const { handleSubmit } = useFormSubmit(
     formData,
     isLoading,
     setIsLoading,
-    userId || currentUserId,
+    userId || crypto.randomUUID(),
     !userId
   );
 
