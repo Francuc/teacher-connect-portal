@@ -35,7 +35,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects(
+          teacher_subjects!inner(
             subject:subjects(
               id,
               name_en,
@@ -57,19 +57,32 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         throw error;
       }
 
-      // Transform profile picture URLs
+      // Transform profile picture URLs and normalize subject data
       const teachersWithUrls = await Promise.all((data || []).map(async (teacher) => {
-        if (teacher.profile_picture_url) {
+        // Handle profile picture URL
+        let profileUrl = teacher.profile_picture_url;
+        if (profileUrl) {
           const { data: urlData } = supabase
             .storage
             .from('profile-pictures')
-            .getPublicUrl(teacher.profile_picture_url);
-          return { ...teacher, profile_picture_url: urlData.publicUrl };
+            .getPublicUrl(profileUrl);
+          profileUrl = urlData.publicUrl;
         }
-        return teacher;
+
+        // Normalize subject data structure
+        const normalizedSubjects = teacher.teacher_subjects.map((subjectData: any) => ({
+          subject_id: subjectData.subject.id,
+          subject: subjectData.subject
+        }));
+
+        return {
+          ...teacher,
+          profile_picture_url: profileUrl,
+          teacher_subjects: normalizedSubjects
+        };
       }));
       
-      console.log('Teachers with subjects:', teachersWithUrls);
+      console.log('Teachers with normalized subjects:', teachersWithUrls);
       return teachersWithUrls || [];
     }
   });
@@ -79,7 +92,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     queryFn: async () => {
       const { data, error } = await supabase
         .from('subjects')
-        .select('*');
+        .select('*')
+        .order('name_en');
       if (error) throw error;
       return data;
     }
@@ -90,7 +104,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     queryFn: async () => {
       const { data, error } = await supabase
         .from('school_levels')
-        .select('*');
+        .select('*')
+        .order('name_en');
       if (error) throw error;
       return data;
     }
