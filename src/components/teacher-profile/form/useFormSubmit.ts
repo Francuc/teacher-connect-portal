@@ -32,15 +32,11 @@ export const useFormSubmit = (
 
     try {
       // Check if profile exists
-      const { data: existingProfile, error: checkError } = await supabase
+      const { data: existingProfile } = await supabase
         .from('teachers')
         .select('id')
         .eq('user_id', userId)
-        .single();
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
+        .maybeSingle(); // Changed from single() to maybeSingle()
 
       // Prepare basic profile data
       const profileData = {
@@ -52,18 +48,24 @@ export const useFormSubmit = (
         updated_at: new Date().toISOString(),
       };
 
-      // Update or insert profile
-      const { error: profileError } = existingProfile
-        ? await supabase
-            .from('teachers')
-            .update(profileData)
-            .eq('user_id', userId)
-        : await supabase
-            .from('teachers')
-            .insert([profileData]);
+      let error;
+      if (existingProfile) {
+        // Update existing profile
+        const { error: updateError } = await supabase
+          .from('teachers')
+          .update(profileData)
+          .eq('user_id', userId);
+        error = updateError;
+      } else {
+        // Insert new profile
+        const { error: insertError } = await supabase
+          .from('teachers')
+          .insert([profileData]);
+        error = insertError;
+      }
 
-      if (profileError) {
-        throw profileError;
+      if (error) {
+        throw error;
       }
 
       // Show success message
