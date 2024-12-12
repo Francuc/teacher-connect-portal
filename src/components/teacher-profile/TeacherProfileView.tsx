@@ -49,17 +49,17 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<TeacherProfile | null>(null);
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
 
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        setCurrentUserEmail(user.email);
+        setIsCurrentUser(user.id === userId);
       }
     };
     getCurrentUser();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -152,8 +152,6 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
     navigate(`/profile/edit/${userId}`);
   };
 
-  const showEditButton = currentUserEmail === 'franco@example.com';
-
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       <div className="flex flex-col items-center mb-8">
@@ -166,7 +164,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
             </AvatarFallback>
           )}
         </Avatar>
-        {showEditButton && (
+        {isCurrentUser && (
           <Button
             onClick={handleEditClick}
             className="flex items-center gap-2"
