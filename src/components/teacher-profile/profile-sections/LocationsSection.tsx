@@ -34,6 +34,15 @@ export const LocationsSection = ({ locations, city }: LocationsSectionProps) => 
     }
   };
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -42,17 +51,18 @@ export const LocationsSection = ({ locations, city }: LocationsSectionProps) => 
       <CardContent>
         <div className="grid gap-4">
           {locations.map((location, index) => (
-            <div key={index} className="flex justify-between items-center">
-              <span>{location.location_type}</span>
-              <span className="font-semibold">€{location.price_per_hour}/h</span>
+            <div key={index} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">{location.location_type}</span>
+                <span className="font-semibold">{formatPrice(location.price_per_hour)}/h</span>
+              </div>
+              {location.location_type === "Teacher's Place" && city && (
+                <div className="text-sm text-muted-foreground">
+                  {`${getLocalizedName(city)}, ${getLocalizedName(city.region)}`}
+                </div>
+              )}
             </div>
           ))}
-          {city && (
-            <div>
-              <h3 className="font-semibold">{t("teacherLocation")}</h3>
-              <p>{`${getLocalizedName(city)}, ${getLocalizedName(city.region)}`}</p>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
