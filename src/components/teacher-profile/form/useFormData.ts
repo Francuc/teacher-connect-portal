@@ -41,6 +41,8 @@ export const useFormData = (userId?: string) => {
 
       if (userId) {
         try {
+          console.log('Fetching teacher profile for userId:', userId);
+          
           // Fetch teacher profile
           const { data: existingProfile } = await supabase
             .from('teachers')
@@ -71,17 +73,42 @@ export const useFormData = (userId?: string) => {
               { data: studentRegions },
               { data: studentCities }
             ] = await Promise.all([
-              supabase.from('teacher_locations').select('*').eq('teacher_id', userId),
-              supabase.from('teacher_subjects').select('subject').eq('teacher_id', userId),
-              supabase.from('teacher_school_levels').select('school_level').eq('teacher_id', userId),
-              supabase.from('teacher_student_regions').select('region_name').eq('teacher_id', userId),
-              supabase.from('teacher_student_cities').select('city_name').eq('teacher_id', userId)
+              supabase
+                .from('teacher_locations')
+                .select('*')
+                .eq('teacher_id', userId),
+              supabase
+                .from('teacher_subjects')
+                .select(`
+                  subject_id,
+                  subjects (
+                    id,
+                    name_en,
+                    name_fr,
+                    name_lb
+                  )
+                `)
+                .eq('teacher_id', userId),
+              supabase
+                .from('teacher_school_levels')
+                .select('school_level')
+                .eq('teacher_id', userId),
+              supabase
+                .from('teacher_student_regions')
+                .select('region_name')
+                .eq('teacher_id', userId),
+              supabase
+                .from('teacher_student_cities')
+                .select('city_name')
+                .eq('teacher_id', userId)
             ]);
+
+            console.log('Fetched subjects:', subjects);
 
             // Update form data with fetched related data
             setFormData(prev => ({
               ...prev,
-              subjects: subjects?.map(s => s.subject) || [],
+              subjects: subjects?.map(s => s.subjects.name_en) || [],
               schoolLevels: schoolLevels?.map(l => l.school_level) || [],
               teachingLocations: locations?.map(l => l.location_type) || [],
               studentRegions: studentRegions?.map(r => r.region_name) || [],

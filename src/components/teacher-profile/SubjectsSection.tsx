@@ -2,15 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Book } from "lucide-react";
-import { type Subject, type SchoolLevel } from "@/lib/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 type SubjectsSectionProps = {
   formData: {
-    subjects: Subject[];
-    schoolLevels: SchoolLevel[];
+    subjects: string[];
+    schoolLevels: string[];
   };
   setFormData: (data: any) => void;
 };
@@ -18,24 +17,18 @@ type SubjectsSectionProps = {
 export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps) => {
   const { t, language } = useLanguage();
   
-  const { data: subjects = [] } = useQuery({
+  const { data: subjects = [], isLoading } = useQuery({
     queryKey: ['subjects'],
     queryFn: async () => {
+      console.log('Fetching subjects...');
       const { data, error } = await supabase
         .from('subjects')
-        .select('*');
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const { data: schoolLevels = [] } = useQuery({
-    queryKey: ['schoolLevels'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('school_levels')
-        .select('*');
-      if (error) throw error;
+        .select('id, name_en, name_fr, name_lb');
+      if (error) {
+        console.error('Error fetching subjects:', error);
+        throw error;
+      }
+      console.log('Fetched subjects:', data);
       return data;
     }
   });
@@ -50,6 +43,10 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
         return item.name_en;
     }
   };
+
+  if (isLoading) {
+    return <div>Loading subjects...</div>;
+  }
 
   return (
     <Card>
@@ -70,6 +67,11 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
                   checked={formData.subjects.includes(getLocalizedName(subject))}
                   onCheckedChange={(checked) => {
                     const subjectName = getLocalizedName(subject);
+                    console.log('Subject selection changed:', {
+                      subject: subjectName,
+                      checked,
+                      currentSubjects: formData.subjects
+                    });
                     setFormData({
                       ...formData,
                       subjects: checked
@@ -79,30 +81,6 @@ export const SubjectsSection = ({ formData, setFormData }: SubjectsSectionProps)
                   }}
                 />
                 <Label htmlFor={subject.id}>{getLocalizedName(subject)}</Label>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label>{t("schoolLevels")}</Label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {schoolLevels.map((level) => (
-              <div key={level.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={level.id}
-                  checked={formData.schoolLevels.includes(getLocalizedName(level))}
-                  onCheckedChange={(checked) => {
-                    const levelName = getLocalizedName(level);
-                    setFormData({
-                      ...formData,
-                      schoolLevels: checked
-                        ? [...formData.schoolLevels, levelName]
-                        : formData.schoolLevels.filter((l) => l !== levelName),
-                    });
-                  }}
-                />
-                <Label htmlFor={level.id}>{getLocalizedName(level)}</Label>
               </div>
             ))}
           </div>
