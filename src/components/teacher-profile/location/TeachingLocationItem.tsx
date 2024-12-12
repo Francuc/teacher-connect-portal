@@ -51,7 +51,7 @@ export const TeachingLocationItem = ({
   });
 
   const { data: cities = [] } = useQuery({
-    queryKey: ['cities', formData.cityId],
+    queryKey: ['cities'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
@@ -119,11 +119,13 @@ export const TeachingLocationItem = ({
                 <RadioGroup
                   value={selectedRegion?.id || ""}
                   onValueChange={(value) => {
+                    const selectedRegionId = value;
                     // Reset cityId when changing region
                     setFormData({
                       ...formData,
                       cityId: "",
                     });
+                    console.log("Selected region:", selectedRegionId);
                   }}
                   className="grid grid-cols-2 gap-2"
                 >
@@ -146,6 +148,7 @@ export const TeachingLocationItem = ({
                         ...formData,
                         cityId: value,
                       });
+                      console.log("Selected city:", value);
                     }}
                     className="grid grid-cols-2 gap-2"
                   >
