@@ -62,9 +62,11 @@ export const handleRelationsUpdate = async (
     if (formData.teachingLocations.length > 0) {
       console.log('Processing teaching locations:', formData.teachingLocations);
       
+      // First, create location entries for all selected locations
       const locationData = formData.teachingLocations.map(location => {
         let price = 0;
         
+        // Set price based on location type
         if (location === "Teacher's Place") {
           price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
         } else if (location === "Student's Place") {
@@ -82,22 +84,14 @@ export const handleRelationsUpdate = async (
         };
       });
 
-      // Filter out locations with no price
-      const validLocations = locationData.filter(location => {
-        const isValid = location.price_per_hour > 0;
-        console.log(`Location ${location.location_type} is valid: ${isValid}, price: ${location.price_per_hour}`);
-        return isValid;
-      });
+      console.log('All locations to insert:', locationData);
 
-      console.log('Valid locations to insert:', validLocations);
-
-      if (validLocations.length > 0) {
-        insertPromises.push(
-          supabase
-            .from('teacher_locations')
-            .insert(validLocations)
-        );
-      }
+      // Insert all locations regardless of price
+      insertPromises.push(
+        supabase
+          .from('teacher_locations')
+          .insert(locationData)
+      );
     }
 
     // Insert student regions
