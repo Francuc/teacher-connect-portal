@@ -32,6 +32,13 @@ export const useFormSubmit = (
     console.log('Starting form submission for user:', userId);
 
     try {
+      // First, check if a profile already exists
+      const { data: existingProfile } = await supabase
+        .from('teachers')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
       // Upload profile picture if exists
       let profilePictureUrl = null;
       if (formData.profilePicture) {
@@ -43,7 +50,7 @@ export const useFormSubmit = (
         }
       }
 
-      // Update or create teacher profile
+      // Prepare profile data
       const profileData = {
         user_id: userId,
         first_name: formData.firstName,
@@ -56,15 +63,29 @@ export const useFormSubmit = (
         show_facebook: formData.showFacebook,
         bio: formData.bio,
         city_id: formData.cityId || null,
-        profile_picture_url: profilePictureUrl,
         updated_at: new Date().toISOString(),
       };
 
-      const { error: profileError } = await supabase
-        .from('teachers')
-        .upsert(profileData);
+      // If a profile picture was uploaded, add it to the profile data
+      if (profilePictureUrl) {
+        profileData.profile_picture_url = profilePictureUrl;
+      }
 
-      if (profileError) throw profileError;
+      // Update or insert profile based on existence
+      if (existingProfile) {
+        const { error: profileError } = await supabase
+          .from('teachers')
+          .update(profileData)
+          .eq('user_id', userId);
+
+        if (profileError) throw profileError;
+      } else {
+        const { error: profileError } = await supabase
+          .from('teachers')
+          .insert([profileData]);
+
+        if (profileError) throw profileError;
+      }
 
       // Update subjects
       await supabase
