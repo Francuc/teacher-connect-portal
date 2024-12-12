@@ -26,7 +26,7 @@ export const TeacherCard = ({
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 border border-purple.soft">
-      <div className="relative p-6 flex flex-col h-full">
+      <div className="p-6 flex flex-col h-full space-y-6">
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
             {teacher.profile_picture_url ? (
@@ -85,7 +85,7 @@ export const TeacherCard = ({
           </div>
         </div>
 
-        <div className="mt-6 space-y-4 flex-1">
+        <div className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BookOpen className="w-4 h-4" />
@@ -131,7 +131,7 @@ export const TeacherCard = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-6 mt-4 border-t border-purple.soft/30">
+        <div className="flex items-center justify-between pt-6 border-t border-purple.soft/30">
           {lowestPrice && (
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Euro className="w-4 h-4" />
