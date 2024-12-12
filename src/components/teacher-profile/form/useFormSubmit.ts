@@ -19,28 +19,32 @@ export const useFormSubmit = (
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isLoading || !userId) return;
+    if (isLoading) return;
     
     try {
       setIsLoading(true);
-      console.log('Starting form submission for user:', userId);
+      
+      // For testing: Generate a random UUID for new profiles
+      const testUserId = isNewProfile ? 
+        crypto.randomUUID() : 
+        userId;
+      
+      console.log('Starting form submission for user:', testUserId);
 
       // Step 1: Create/Update teacher profile
-      const { error: profileError } = await handleProfileUpdate(formData, userId, isNewProfile);
+      const { error: profileError } = await handleProfileUpdate(formData, testUserId!, isNewProfile);
       if (profileError) {
-        if (profileError.message === 'Profile already exists') {
-          toast({
-            title: t("error"),
-            description: t("profileAlreadyExists"),
-            variant: "destructive",
-          });
-          return;
-        }
-        throw profileError;
+        console.error('Profile creation error:', profileError);
+        toast({
+          title: t("error"),
+          description: t("error"),
+          variant: "destructive",
+        });
+        return;
       }
 
       // Step 2: Update relations (subjects, school levels, locations, etc.)
-      const { error: relationsError } = await handleRelationsUpdate(formData, userId);
+      const { error: relationsError } = await handleRelationsUpdate(formData, testUserId!);
       if (relationsError) throw relationsError;
 
       // Success notification and redirect
@@ -50,7 +54,7 @@ export const useFormSubmit = (
       });
 
       // Redirect to profile view
-      navigate(`/profile/${userId}`);
+      navigate(`/profile/${testUserId}`);
     } catch (error) {
       console.error('Form submission error:', error);
       toast({

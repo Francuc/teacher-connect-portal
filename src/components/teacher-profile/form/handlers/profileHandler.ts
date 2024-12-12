@@ -10,19 +10,6 @@ export const handleProfileUpdate = async (
 ): Promise<{ error?: Error }> => {
   try {
     console.log('Starting profile update for user:', userId);
-    
-    // Check if profile already exists
-    const { data: existingProfile } = await supabase
-      .from('teachers')
-      .select('user_id')
-      .eq('user_id', userId)
-      .single();
-
-    // If we're trying to create a new profile but one exists, return error
-    if (isNewProfile && existingProfile) {
-      console.error('Profile already exists for user:', userId);
-      return { error: new Error('Profile already exists') };
-    }
 
     // Upload profile picture if exists
     let profilePictureUrl = null;
