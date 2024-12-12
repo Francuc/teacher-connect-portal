@@ -27,9 +27,9 @@ export const FormSections = ({
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
       <PersonalInfoSection formData={formData} setFormData={setFormData} />
-      <SubjectsSection formData={formData} setFormData={setFormData} />
-      <LocationSection formData={formData} setFormData={setFormData} />
       <BiographySection formData={formData} setFormData={setFormData} />
+      <SubjectsSection subjects={[]} />
+      <LocationSection formData={formData} setFormData={setFormData} />
 
       <div className="flex justify-end">
         <Button 
