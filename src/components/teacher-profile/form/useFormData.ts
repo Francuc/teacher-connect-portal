@@ -24,7 +24,7 @@ export const useFormData = (userId?: string) => {
     subjects: [],
     schoolLevels: ["Primary School", "Middle School"],
     teachingLocations: ["Teacher's Place", "Student's Place", "Online"],
-    cityId: null, // Changed from empty string to null
+    cityId: null,
     studentRegions: [],
     studentCities: [],
     pricePerHour: {
@@ -33,6 +33,32 @@ export const useFormData = (userId?: string) => {
       online: "45",
     },
   });
+
+  // Fetch and set default city
+  useEffect(() => {
+    const fetchDefaultCity = async () => {
+      const { data: cities, error } = await supabase
+        .from('cities')
+        .select('id')
+        .limit(1);
+
+      if (error) {
+        console.error('Error fetching default city:', error);
+        return;
+      }
+
+      if (cities && cities.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          cityId: cities[0].id
+        }));
+      }
+    };
+
+    if (!userId && !formData.cityId) {
+      fetchDefaultCity();
+    }
+  }, [userId, formData.cityId]);
 
   useEffect(() => {
     if (userId) {
@@ -135,7 +161,7 @@ export const useFormData = (userId?: string) => {
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
-            cityId: profile.city_id || null, // Changed from empty string to null
+            cityId: profile.city_id,
             studentRegions: studentRegions?.map(r => r.region_name) || [],
             studentCities: studentCities?.map(c => c.city_name) || [],
             pricePerHour: pricePerHour as FormData['pricePerHour'],
