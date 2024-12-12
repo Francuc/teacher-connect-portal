@@ -1,13 +1,10 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { DollarSign, Loader2 } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RegionsSection } from "./RegionsSection";
 import { type TeachingLocation } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { CityAutocomplete } from "../CityAutocomplete";
 
 type TeachingLocationItemProps = {

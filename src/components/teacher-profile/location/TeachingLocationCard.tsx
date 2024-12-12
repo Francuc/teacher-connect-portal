@@ -30,7 +30,7 @@ export const TeachingLocationCard = ({ formData, setFormData }: TeachingLocation
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">{t("yourCity")}</label>
+            <label className="text-sm font-medium">{t("city")}</label>
             <CityAutocomplete
               value={formData.cityId}
               onChange={(value) => setFormData({ ...formData, cityId: value })}

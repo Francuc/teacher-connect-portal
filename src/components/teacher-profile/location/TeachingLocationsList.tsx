@@ -5,7 +5,7 @@ import { type TeachingLocation } from "@/lib/constants";
 type TeachingLocationsListProps = {
   formData: {
     teachingLocations: TeachingLocation[];
-    teacherCity: string;
+    cityId: string;
     studentRegions: string[];
     studentCities: string[];
     pricePerHour: {
