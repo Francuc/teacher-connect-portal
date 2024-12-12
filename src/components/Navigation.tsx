@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SUBJECTS } from "@/lib/constants";
 
-const Navigation = () => {
+export const Navigation = () => {
   const { t } = useLanguage();
 
   // Type-safe translation keys for subjects
@@ -42,5 +42,3 @@ const Navigation = () => {
     </nav>
   );
 };
-
-export default Navigation;
