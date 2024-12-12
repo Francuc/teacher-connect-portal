@@ -10,7 +10,7 @@ export const useTeachersData = () => {
         .from('teachers')
         .select(`
           *,
-          teacher_subjects!inner (
+          teacher_subjects (
             subject:subjects (
               id,
               name_en,
@@ -18,18 +18,18 @@ export const useTeachersData = () => {
               name_lb
             )
           ),
-          teacher_school_levels!inner (
+          teacher_school_levels (
             school_level
           ),
-          teacher_locations!inner (
+          teacher_locations (
             location_type,
             price_per_hour
           ),
-          teacher_student_cities!inner (
+          teacher_student_cities (
             id,
             city_name
           ),
-          teacher_student_regions!inner (
+          teacher_student_regions (
             id,
             region_name
           ),
