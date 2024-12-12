@@ -49,6 +49,12 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
           teacher_locations(
             location_type,
             price_per_hour
+          ),
+          teacher_student_cities(
+            city_name
+          ),
+          teacher_student_regions(
+            region_name
           )
         `);
       
@@ -69,20 +75,13 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
           profileUrl = urlData.publicUrl;
         }
 
-        // Normalize subject data structure
-        const normalizedSubjects = teacher.teacher_subjects.map((subjectData: any) => ({
-          subject_id: subjectData.subject.id,
-          subject: subjectData.subject
-        }));
-
         return {
           ...teacher,
           profile_picture_url: profileUrl,
-          teacher_subjects: normalizedSubjects
         };
       }));
       
-      console.log('Teachers with normalized subjects:', teachersWithUrls);
+      console.log('Teachers data with subjects:', teachersWithUrls);
       return teachersWithUrls || [];
     }
   });
