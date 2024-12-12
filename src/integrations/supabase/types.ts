@@ -9,7 +9,208 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      teacher_cities: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          teacher_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          teacher_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_cities_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_locations: {
+        Row: {
+          created_at: string
+          id: string
+          location_type: string
+          price_per_hour: number
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_type: string
+          price_per_hour: number
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_type?: string
+          price_per_hour?: number
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_locations_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_regions: {
+        Row: {
+          created_at: string
+          id: string
+          region: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          region: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          region?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_regions_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_school_levels: {
+        Row: {
+          created_at: string
+          id: string
+          school_level: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          school_level: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          school_level?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_school_levels_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_subjects: {
+        Row: {
+          created_at: string
+          id: string
+          subject: string
+          teacher_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          subject: string
+          teacher_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          subject?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_subjects_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teachers: {
+        Row: {
+          bio: string
+          created_at: string
+          email: string
+          facebook_profile: string | null
+          first_name: string
+          id: string
+          last_name: string
+          phone: string | null
+          profile_picture_url: string | null
+          show_email: boolean | null
+          show_facebook: boolean | null
+          show_phone: boolean | null
+          teacher_city: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio: string
+          created_at?: string
+          email: string
+          facebook_profile?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          phone?: string | null
+          profile_picture_url?: string | null
+          show_email?: boolean | null
+          show_facebook?: boolean | null
+          show_phone?: boolean | null
+          teacher_city: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          email?: string
+          facebook_profile?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string | null
+          profile_picture_url?: string | null
+          show_email?: boolean | null
+          show_facebook?: boolean | null
+          show_phone?: boolean | null
+          teacher_city?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
