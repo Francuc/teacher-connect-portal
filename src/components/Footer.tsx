@@ -1,51 +1,31 @@
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Link } from "react-router-dom";
+import { VersionInfo } from "./VersionInfo";
 
 export const Footer = () => {
-  const { t } = useLanguage();
-
   return (
-    <footer className="bg-white border-t mt-auto">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Nohëllef.lu</h3>
-            <p className="text-gray-600">{t("landingDescription")}</p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg mb-4">{t("subjects")}</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/" className="text-gray-600 hover:text-primary">
-                  {t("mathematics")}
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-gray-600 hover:text-primary">
-                  {t("physics")}
-                </Link>
-              </li>
-              <li>
-                <Link to="/" className="text-gray-600 hover:text-primary">
-                  {t("languages")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg mb-4">{t("getStarted")}</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/profile/create" className="text-gray-600 hover:text-primary">
-                  {t("createProfile")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t mt-8 pt-8 text-center text-gray-600">
-          <p>&copy; {new Date().getFullYear()} Nohëllef.lu. {t("allRights")}</p>
-        </div>
+    <footer className="py-6 md:px-8 md:py-0">
+      <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+        <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
+          Built by{" "}
+          <a
+            href="https://lovable.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline underline-offset-4"
+          >
+            Lovable
+          </a>
+          . The source code is available on{" "}
+          <a
+            href="https://github.com/lovable-dev/tutoring"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium underline underline-offset-4"
+          >
+            GitHub
+          </a>
+          .
+        </p>
+        <VersionInfo />
       </div>
     </footer>
   );
