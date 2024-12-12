@@ -28,7 +28,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const { language, t } = useLanguage()
 
   // First, get the Capellen region ID
-  const { data: capellenRegion } = useQuery({
+  const { data: capellenRegion, isError: isRegionError } = useQuery({
     queryKey: ['capellen-region'],
     queryFn: async () => {
       try {
@@ -39,11 +39,11 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           .single()
         
         if (error) throw error
-        console.log('Capellen region data:', data)  // Log region data
+        console.log('Capellen region data:', data)
         return data
       } catch (error) {
         console.error('Error fetching Capellen region:', error)
-        return null
+        throw error
       }
     },
     retry: 3,
@@ -52,7 +52,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   })
 
   // Then get cities in Capellen
-  const { data: cities = [], isLoading, error } = useQuery({
+  const { data: cities = [], isLoading, isError: isCitiesError } = useQuery({
     queryKey: ['capellen-cities', capellenRegion?.id],
     queryFn: async () => {
       if (!capellenRegion?.id) return []
@@ -68,11 +68,11 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           regionId: capellenRegion.id,
           citiesCount: data?.length || 0,
           cities: data
-        }) // Detailed logging of cities data
+        })
         return data || []
       } catch (error) {
         console.error('Error fetching cities:', error)
-        return []
+        throw error
       }
     },
     enabled: !!capellenRegion?.id,
@@ -93,8 +93,8 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
     }
   }
 
-  if (error) {
-    console.error('Error in CityAutocomplete:', error)
+  // Show error state if either query fails
+  if (isRegionError || isCitiesError) {
     return (
       <Button variant="outline" className="w-full justify-between text-destructive">
         {t("errorLoadingCities")}
