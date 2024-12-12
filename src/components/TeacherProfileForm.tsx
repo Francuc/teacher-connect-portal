@@ -139,15 +139,15 @@ const TeacherProfileForm = () => {
       return;
     }
 
-    // Validate at least one teaching location with price
-    const hasValidLocation = formData.teachingLocations.some(location => {
+    // Filter out locations without prices and validate at least one teaching location with price
+    const locationsWithPrices = formData.teachingLocations.filter(location => {
       const price = formData.pricePerHour[
         location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
       ];
       return price && parseFloat(price) > 0;
     });
 
-    if (!hasValidLocation) {
+    if (locationsWithPrices.length === 0) {
       toast({
         title: t("error"),
         description: t("pleaseAddAtLeastOneLocationWithPrice"),
@@ -253,16 +253,16 @@ const TeacherProfileForm = () => {
       }
 
       console.log("Inserting teaching locations...");
-      if (formData.teachingLocations.length > 0) {
+      if (locationsWithPrices.length > 0) {
         const { error: locationsError } = await supabase
           .from('teacher_locations')
           .insert(
-            formData.teachingLocations.map(location => ({
+            locationsWithPrices.map(location => ({
               teacher_id: userId,
               location_type: location,
-              price_per_hour: formData.pricePerHour[
+              price_per_hour: parseFloat(formData.pricePerHour[
                 location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-              ]
+              ])
             }))
           );
         if (locationsError) throw locationsError;
