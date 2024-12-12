@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { type Subject, type SchoolLevel, type TeachingLocation } from "@/lib/constants";
@@ -9,11 +9,33 @@ import { BiographySection } from "./teacher-profile/BiographySection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const TeacherProfileForm = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: t("error"),
+          description: t("pleaseLoginFirst"),
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+      setUserId(user.id);
+    };
+
+    checkAuth();
+  }, [navigate, t, toast]);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -40,18 +62,24 @@ const TeacherProfileForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userId) {
+      toast({
+        title: t("error"),
+        description: t("pleaseLoginFirst"),
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
+    console.log("Starting form submission...");
 
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
-
       // Upload profile picture if exists
       let profilePictureUrl = null;
       if (formData.profilePicture) {
         const fileExt = formData.profilePicture.name.split('.').pop();
-        const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+        const fileName = `${userId}-${Math.random()}.${fileExt}`;
         
         const { error: uploadError, data } = await supabase.storage
           .from('profile-pictures')
@@ -61,11 +89,12 @@ const TeacherProfileForm = () => {
         profilePictureUrl = data.path;
       }
 
+      console.log("Inserting teacher profile...");
       // Insert teacher profile
       const { error: profileError } = await supabase
         .from('teachers')
         .insert({
-          user_id: user.id,
+          user_id: userId,
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
@@ -81,39 +110,42 @@ const TeacherProfileForm = () => {
 
       if (profileError) throw profileError;
 
+      console.log("Inserting subjects...");
       // Insert subjects
       if (formData.subjects.length > 0) {
         const { error: subjectsError } = await supabase
           .from('teacher_subjects')
           .insert(
             formData.subjects.map(subject => ({
-              teacher_id: user.id,
+              teacher_id: userId,
               subject: subject
             }))
           );
         if (subjectsError) throw subjectsError;
       }
 
+      console.log("Inserting school levels...");
       // Insert school levels
       if (formData.schoolLevels.length > 0) {
         const { error: levelsError } = await supabase
           .from('teacher_school_levels')
           .insert(
             formData.schoolLevels.map(level => ({
-              teacher_id: user.id,
+              teacher_id: userId,
               school_level: level
             }))
           );
         if (levelsError) throw levelsError;
       }
 
+      console.log("Inserting teaching locations...");
       // Insert teaching locations with prices
       if (formData.teachingLocations.length > 0) {
         const { error: locationsError } = await supabase
           .from('teacher_locations')
           .insert(
             formData.teachingLocations.map(location => ({
-              teacher_id: user.id,
+              teacher_id: userId,
               location_type: location,
               price_per_hour: formData.pricePerHour[
                 location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
@@ -127,6 +159,9 @@ const TeacherProfileForm = () => {
         title: t("profileSaved"),
         description: t("profileSavedDesc"),
       });
+      
+      // Navigate to profile view or dashboard
+      navigate("/profile");
     } catch (error) {
       console.error('Error saving profile:', error);
       toast({
@@ -138,6 +173,10 @@ const TeacherProfileForm = () => {
       setIsLoading(false);
     }
   };
+
+  if (!userId) {
+    return null; // Don't render the form until we confirm authentication
+  }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
