@@ -35,7 +35,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_lb
             )
           ),
-          teacher_subjects!inner(
+          teacher_subjects(
             subject:subjects(
               id,
               name_en,
