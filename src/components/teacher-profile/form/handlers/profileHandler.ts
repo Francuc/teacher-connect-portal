@@ -10,21 +10,26 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
-    // Check if a profile already exists with this email
-    const { data: existingProfiles, error: queryError } = await supabase
+    // First check if this user already has a profile
+    const { data: existingProfile, error: profileError } = await supabase
       .from('teachers')
-      .select('user_id, email')
-      .eq('email', formData.email);
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (queryError) throw queryError;
-
-    const existingProfile = existingProfiles?.[0];
+    if (profileError) throw profileError;
 
     let profilePictureUrl = null;
     if (formData.profilePicture) {
-      profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
+      try {
+        profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        return { error: new Error('errorUploadingProfilePicture') };
+      }
     }
 
+    // Prepare profile data
     const profileData = {
       user_id: userId,
       first_name: formData.firstName,
@@ -37,28 +42,31 @@ export const handleProfileUpdate = async (
       show_facebook: formData.showFacebook,
       bio: formData.bio,
       city_id: formData.cityId || null,
-      profile_picture_url: profilePictureUrl,
+      updated_at: new Date().toISOString(),
     };
 
-    // Only update if we're editing an existing profile (same email and user_id)
-    if (existingProfile && existingProfile.user_id === userId) {
+    // Only update profile_picture_url if a new picture was uploaded
+    if (profilePictureUrl) {
+      profileData.profile_picture_url = profilePictureUrl;
+    }
+
+    let result;
+    if (existingProfile) {
+      // Update existing profile
       console.log('Updating existing profile for user:', userId);
-      const { error } = await supabase
+      result = await supabase
         .from('teachers')
         .update(profileData)
         .eq('user_id', userId);
-      
-      if (error) throw error;
     } else {
-      // Create new profile if email doesn't exist or belongs to another user
+      // Create new profile
       console.log('Creating new profile for user:', userId);
-      const { error } = await supabase
+      result = await supabase
         .from('teachers')
         .insert([profileData]);
-      
-      if (error) throw error;
     }
 
+    if (result.error) throw result.error;
     return { error: null };
   } catch (error) {
     console.error('Error in handleProfileUpdate:', error);
