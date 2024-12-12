@@ -3,9 +3,6 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import { validateForm } from "./validation";
-import { uploadProfilePicture } from "../profilePictureUpload";
-import { handleRelationsUpdate } from "./handlers/relationsUpdateHandler";
 
 export const useFormSubmit = (
   formData: FormData,
@@ -30,43 +27,11 @@ export const useFormSubmit = (
       return;
     }
 
-    // Validate required fields
-    const validationErrors = validateForm(formData, t);
-    if (validationErrors.length > 0) {
-      console.error('Validation errors:', validationErrors);
-      toast({
-        title: t("error"),
-        description: t("pleaseCompleteAllRequiredFields") + ": " + validationErrors.join(", "),
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     console.log('Starting form submission for user:', userId);
-    console.log('Form data:', formData);
 
     try {
-      // Upload profile picture if exists
-      let profilePictureUrl = null;
-      if (formData.profilePicture) {
-        try {
-          profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
-          console.log('Profile picture uploaded:', profilePictureUrl);
-        } catch (error) {
-          console.error('Error uploading profile picture:', error);
-          toast({
-            title: t("error"),
-            description: t("errorUploadingProfilePicture"),
-            variant: "destructive",
-          });
-          setIsLoading(false);
-          return;
-        }
-      }
-
       // Check if profile exists
-      console.log('Checking if profile exists for user:', userId);
       const { data: existingProfile, error: checkError } = await supabase
         .from('teachers')
         .select('id')
@@ -74,28 +39,18 @@ export const useFormSubmit = (
         .single();
 
       if (checkError && checkError.code !== 'PGRST116') {
-        console.error('Error checking profile:', checkError);
         throw checkError;
       }
 
-      // Prepare profile data
+      // Prepare basic profile data
       const profileData = {
         user_id: userId,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        email: formData.email,
-        phone: formData.phone || null,
-        facebook_profile: formData.facebookProfile || null,
-        show_email: formData.showEmail,
-        show_phone: formData.showPhone,
-        show_facebook: formData.showFacebook,
-        bio: formData.bio,
-        city_id: formData.cityId || null,
+        email: formData.email || '',
+        bio: '',
         updated_at: new Date().toISOString(),
-        ...(profilePictureUrl && { profile_picture_url: profilePictureUrl }),
       };
-
-      console.log('Updating/inserting profile with data:', profileData);
 
       // Update or insert profile
       const { error: profileError } = existingProfile
@@ -108,25 +63,7 @@ export const useFormSubmit = (
             .insert([profileData]);
 
       if (profileError) {
-        console.error('Error updating/inserting profile:', profileError);
         throw profileError;
-      }
-
-      // Handle relations update (subjects, locations, etc.)
-      console.log('Updating relations with data:', {
-        subjects: formData.subjects,
-        schoolLevels: formData.schoolLevels,
-        teachingLocations: formData.teachingLocations,
-        pricePerHour: formData.pricePerHour,
-        studentRegions: formData.studentRegions,
-        studentCities: formData.studentCities
-      });
-
-      const { error: relationsError } = await handleRelationsUpdate(formData, userId);
-      
-      if (relationsError) {
-        console.error('Error updating relations:', relationsError);
-        throw relationsError;
       }
 
       // Show success message

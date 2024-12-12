@@ -2,9 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PersonalInfoSection } from "../PersonalInfoSection";
-import { SubjectsSection } from "../SubjectsSection";
-import { LocationSection } from "../LocationSection";
-import { BiographySection } from "../BiographySection";
 import { type FormData } from "./types";
 
 interface FormSectionsProps {
@@ -27,10 +24,7 @@ export const FormSections = ({
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
       <PersonalInfoSection formData={formData} setFormData={setFormData} />
-      <BiographySection formData={formData} setFormData={setFormData} />
-      <SubjectsSection subjects={[]} />
-      <LocationSection formData={formData} setFormData={setFormData} />
-
+      
       <div className="flex justify-end">
         <Button 
           type="submit" 
