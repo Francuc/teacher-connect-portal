@@ -66,6 +66,7 @@ export const en: Translation = {
   profilePictureTypeError: "Only image files are allowed",
   findTeacher: "Find Your Perfect Teacher",
   landingDescription: "Connect with experienced teachers for personalized learning",
+  selectProfile: "Select Profile", // Added missing translation
   createAd: "Create Ad",
   errorLoadingCities: "Error loading cities",
   noCitiesAvailable: "No cities available",
