@@ -24,7 +24,7 @@ export const useFormData = (userId?: string) => {
     subjects: [],
     schoolLevels: ["Primary School", "Middle School"],
     teachingLocations: ["Teacher's Place", "Student's Place", "Online"],
-    cityId: "",
+    cityId: null, // Changed from empty string to null
     studentRegions: [],
     studentCities: [],
     pricePerHour: {
@@ -135,7 +135,7 @@ export const useFormData = (userId?: string) => {
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
-            cityId: profile.city_id || "",
+            cityId: profile.city_id || null, // Changed from empty string to null
             studentRegions: studentRegions?.map(r => r.region_name) || [],
             studentCities: studentCities?.map(c => c.city_name) || [],
             pricePerHour: pricePerHour as FormData['pricePerHour'],

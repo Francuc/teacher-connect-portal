@@ -25,7 +25,7 @@ export interface FormData {
   subjects: TeacherSubject[];
   schoolLevels: string[];
   teachingLocations: TeachingLocation[];
-  cityId: string;
+  cityId: string | null;
   studentRegions: string[];
   studentCities: string[];
   pricePerHour: {
