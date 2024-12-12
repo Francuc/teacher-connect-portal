@@ -34,18 +34,18 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
       // Basic validation
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
         toast({
+          variant: "destructive",
           title: t("error"),
           description: t("profilePictureSizeError"),
-          variant: "destructive",
         });
         return;
       }
 
       if (!file.type.startsWith('image/')) {
         toast({
+          variant: "destructive",
           title: t("error"),
           description: t("profilePictureTypeError"),
-          variant: "destructive",
         });
         return;
       }
