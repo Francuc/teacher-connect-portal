@@ -80,4 +80,5 @@ export const fr: Translation = {
   viewProfile: "Voir le Profil",
   allSubjects: "Toutes les Matières",
   allLevels: "Tous les Niveaux",
+  availableIn: "Disponible à",
 };

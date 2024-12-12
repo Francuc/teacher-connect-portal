@@ -80,4 +80,5 @@ export const en: Translation = {
   viewProfile: "View Profile",
   allSubjects: "All Subjects",
   allLevels: "All Levels",
+  availableIn: "Available in",
 };

@@ -80,4 +80,5 @@ export const lb: Translation = {
   viewProfile: "Profil ukucken",
   allSubjects: "All Fächer",
   allLevels: "All Niveauen",
+  availableIn: "Verfügbar an",
 };
