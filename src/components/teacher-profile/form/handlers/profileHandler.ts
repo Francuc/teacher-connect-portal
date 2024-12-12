@@ -10,6 +10,13 @@ export const handleProfileUpdate = async (
   console.log('handleProfileUpdate called with:', { userId, isUpdate });
 
   try {
+    // First check if a profile already exists
+    const { data: existingProfile } = await supabase
+      .from('teachers')
+      .select('user_id')
+      .eq('user_id', userId)
+      .single();
+
     let profilePictureUrl = null;
     if (formData.profilePicture) {
       profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
@@ -30,7 +37,8 @@ export const handleProfileUpdate = async (
       profile_picture_url: profilePictureUrl,
     };
 
-    if (isUpdate) {
+    // If profile exists, update it regardless of isUpdate flag
+    if (existingProfile) {
       console.log('Updating existing profile for user:', userId);
       const { error } = await supabase
         .from('teachers')
@@ -39,6 +47,7 @@ export const handleProfileUpdate = async (
       
       if (error) throw error;
     } else {
+      // Only create new profile if one doesn't exist
       console.log('Creating new profile for user:', userId);
       const { error } = await supabase
         .from('teachers')
