@@ -58,44 +58,44 @@ export const handleRelationsUpdate = async (
       );
     }
 
-    // Insert teaching locations with proper price handling
+    // Insert teaching locations
     if (formData.teachingLocations.length > 0) {
+      console.log('Processing teaching locations:', formData.teachingLocations);
+      
       const locationData = formData.teachingLocations.map(location => {
         let price = 0;
         
-        switch (location) {
-          case "Teacher's Place":
-            price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
-            break;
-          case "Student's Place":
-            price = parseFloat(formData.pricePerHour.studentPlace) || 0;
-            break;
-          case "Online":
-            price = parseFloat(formData.pricePerHour.online) || 0;
-            break;
+        if (location === "Teacher's Place") {
+          price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
+        } else if (location === "Student's Place") {
+          price = parseFloat(formData.pricePerHour.studentPlace) || 0;
+        } else if (location === "Online") {
+          price = parseFloat(formData.pricePerHour.online) || 0;
         }
 
-        console.log(`Processing location ${location} with price ${price}`);
+        console.log(`Creating location data for ${location} with price ${price}`);
         
         return {
           teacher_id: userId,
           location_type: location,
           price_per_hour: price
         };
-      }).filter(location => {
-        const hasPrice = location.price_per_hour > 0;
-        console.log(`Location ${location.location_type} has price: ${hasPrice ? 'yes' : 'no'}, price: ${location.price_per_hour}`);
-        return hasPrice;
       });
 
-      console.log('Locations after filtering:', locationData);
+      // Filter out locations with no price
+      const validLocations = locationData.filter(location => {
+        const isValid = location.price_per_hour > 0;
+        console.log(`Location ${location.location_type} is valid: ${isValid}, price: ${location.price_per_hour}`);
+        return isValid;
+      });
 
-      if (locationData.length > 0) {
-        console.log('Inserting locations:', locationData);
+      console.log('Valid locations to insert:', validLocations);
+
+      if (validLocations.length > 0) {
         insertPromises.push(
           supabase
             .from('teacher_locations')
-            .insert(locationData)
+            .insert(validLocations)
         );
       }
     }
