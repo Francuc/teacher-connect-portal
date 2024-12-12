@@ -92,6 +92,7 @@ export const TeacherCard = ({
 
         {/* Content Section */}
         <div className="flex-grow space-y-6">
+          {/* Subjects Section */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-base text-muted-foreground">
               <BookOpen className="w-5 h-5" />
@@ -100,7 +101,7 @@ export const TeacherCard = ({
             <div className="flex flex-wrap gap-2">
               {teacher.teacher_subjects?.slice(0, 3).map((subject: any) => (
                 <span
-                  key={subject.subject.id}
+                  key={subject.subject_id}
                   className="text-sm px-4 py-2 rounded-full bg-primary/10 text-primary font-medium"
                 >
                   {getLocalizedName(subject.subject)}
@@ -114,6 +115,7 @@ export const TeacherCard = ({
             </div>
           </div>
 
+          {/* School Levels Section */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-base text-muted-foreground">
               <GraduationCap className="w-5 h-5" />
