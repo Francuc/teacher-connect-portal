@@ -1,7 +1,7 @@
 import type { Translation } from "./translations";
 
 export const en: Translation = {
-  search: "Search",
+  search: "City",
   loading: "Loading...",
   required: "This field is required",
   signIn: "Sign In",
@@ -66,7 +66,6 @@ export const en: Translation = {
   profilePictureTypeError: "Only image files are allowed",
   findTeacher: "Find Your Perfect Teacher",
   landingDescription: "Connect with experienced teachers for personalized learning",
-  selectProfile: "Select Profile",
   createAd: "Create Ad",
   errorLoadingCities: "Error loading cities",
   noCitiesAvailable: "No cities available",
