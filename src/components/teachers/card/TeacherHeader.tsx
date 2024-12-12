@@ -15,7 +15,7 @@ export const TeacherHeader = ({ teacher, getTeacherLocation }: TeacherHeaderProp
       <Avatar className="w-24 h-24 rounded-xl border-2 border-primary/20">
         {teacher.profile_picture_url ? (
           <AvatarImage 
-            src={teacher.profile_picture_url}
+            src={teacher.profile_picture_url} 
             alt={`${teacher.first_name} ${teacher.last_name}`}
             className="object-cover"
           />

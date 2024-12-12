@@ -9,10 +9,6 @@ interface TeacherSubjectsProps {
 export const TeacherSubjects = ({ subjects, getLocalizedName }: TeacherSubjectsProps) => {
   const { t } = useLanguage();
 
-  if (!subjects || subjects.length === 0) {
-    return null;
-  }
-
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -20,15 +16,15 @@ export const TeacherSubjects = ({ subjects, getLocalizedName }: TeacherSubjectsP
         <span>{t("subjects")}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {subjects.slice(0, 3).map((subjectData, index) => (
+        {subjects?.slice(0, 3).map((subjectData: any) => (
           <span
-            key={`${subjectData.subject_id}-${index}`}
+            key={subjectData.subject_id}
             className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium"
           >
             {getLocalizedName(subjectData.subject)}
           </span>
         ))}
-        {subjects.length > 3 && (
+        {subjects?.length > 3 && (
           <span className="text-xs px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium">
             +{subjects.length - 3}
           </span>
