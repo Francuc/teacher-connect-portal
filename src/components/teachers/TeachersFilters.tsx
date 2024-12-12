@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect, useRef } from "react";
 
+// ⚠️ CRITICAL: Do not modify this interface without explicit permission
 interface TeachersFiltersProps {
   searchQuery: string;
   setSearchQuery: (value: string) => void;
@@ -18,6 +19,7 @@ interface TeachersFiltersProps {
   schoolLevels: any[];
   getLocalizedName: (item: any) => string;
 }
+// End of critical section ⚠️
 
 export const TeachersFilters = ({
   searchQuery,
