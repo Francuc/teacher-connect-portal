@@ -21,14 +21,21 @@ export const Navigation = () => {
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
 
-  // Fetch existing profiles
-  const { data: profiles } = useQuery({
-    queryKey: ['profiles'],
+  // Fetch existing profiles with names
+  const { data: profiles, isLoading } = useQuery({
+    queryKey: ['teachers'],
     queryFn: async () => {
+      console.log('Fetching teacher profiles');
       const { data, error } = await supabase
         .from('teachers')
-        .select('*');
-      if (error) throw error;
+        .select('user_id, first_name, last_name');
+      
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        throw error;
+      }
+      
+      console.log('Fetched profiles:', data);
       return data || [];
     }
   });
@@ -68,10 +75,10 @@ export const Navigation = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {profiles && profiles.length > 0 && (
+            {!isLoading && profiles && profiles.length > 0 && (
               <Select value={selectedProfile} onValueChange={handleProfileChange}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select a profile" />
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder={t("selectProfile")} />
                 </SelectTrigger>
                 <SelectContent>
                   {profiles.map((profile) => (
