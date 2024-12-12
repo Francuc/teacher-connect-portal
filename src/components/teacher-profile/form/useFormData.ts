@@ -41,6 +41,7 @@ export const useFormData = (userId?: string) => {
 
       if (userId) {
         try {
+          // Fetch teacher profile
           const { data: existingProfile } = await supabase
             .from('teachers')
             .select('*')
@@ -62,30 +63,35 @@ export const useFormData = (userId?: string) => {
               cityId: existingProfile.city_id || "",
             }));
 
-            // Fetch related data
-            const [subjects, schoolLevels, locations] = await Promise.all([
+            // Fetch related data in parallel
+            const [
+              { data: locations },
+              { data: subjects },
+              { data: schoolLevels },
+              { data: studentRegions },
+              { data: studentCities }
+            ] = await Promise.all([
+              supabase.from('teacher_locations').select('*').eq('teacher_id', userId),
               supabase.from('teacher_subjects').select('subject').eq('teacher_id', userId),
               supabase.from('teacher_school_levels').select('school_level').eq('teacher_id', userId),
-              supabase.from('teacher_locations').select('*').eq('teacher_id', userId)
+              supabase.from('teacher_student_regions').select('region_name').eq('teacher_id', userId),
+              supabase.from('teacher_student_cities').select('city_name').eq('teacher_id', userId)
             ]);
 
-            if (subjects.data) {
-              setFormData(prev => ({ ...prev, subjects: subjects.data.map(s => s.subject) }));
-            }
-            if (schoolLevels.data) {
-              setFormData(prev => ({ ...prev, schoolLevels: schoolLevels.data.map(l => l.school_level) }));
-            }
-            if (locations.data) {
-              setFormData(prev => ({
-                ...prev,
-                teachingLocations: locations.data.map(l => l.location_type),
-                pricePerHour: {
-                  teacherPlace: locations.data.find(l => l.location_type === "Teacher's Place")?.price_per_hour.toString() || "",
-                  studentPlace: locations.data.find(l => l.location_type === "Student's Place")?.price_per_hour.toString() || "",
-                  online: locations.data.find(l => l.location_type === "Online")?.price_per_hour.toString() || "",
-                }
-              }));
-            }
+            // Update form data with fetched related data
+            setFormData(prev => ({
+              ...prev,
+              subjects: subjects?.map(s => s.subject) || [],
+              schoolLevels: schoolLevels?.map(l => l.school_level) || [],
+              teachingLocations: locations?.map(l => l.location_type) || [],
+              studentRegions: studentRegions?.map(r => r.region_name) || [],
+              studentCities: studentCities?.map(c => c.city_name) || [],
+              pricePerHour: {
+                teacherPlace: locations?.find(l => l.location_type === "Teacher's Place")?.price_per_hour.toString() || "",
+                studentPlace: locations?.find(l => l.location_type === "Student's Place")?.price_per_hour.toString() || "",
+                online: locations?.find(l => l.location_type === "Online")?.price_per_hour.toString() || "",
+              },
+            }));
           }
         } catch (error) {
           console.error('Error loading profile:', error);
