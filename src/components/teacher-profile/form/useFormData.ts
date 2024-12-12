@@ -99,7 +99,7 @@ export const useFormData = (userId?: string) => {
                     name_lb
                   )
                 `)
-                .eq('teacher_id', userId) as Promise<PostgrestResponse<TeacherSubject>>,
+                .eq('teacher_id', userId),
               supabase
                 .from('teacher_school_levels')
                 .select('school_level')
