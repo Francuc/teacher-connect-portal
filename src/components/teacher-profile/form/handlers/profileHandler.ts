@@ -21,6 +21,20 @@ export const handleProfileUpdate = async (
       }
     }
 
+    // Verify if the city exists before proceeding
+    if (formData.cityId) {
+      const { data: cityExists, error: cityError } = await supabase
+        .from('cities')
+        .select('id')
+        .eq('id', formData.cityId)
+        .single();
+
+      if (cityError || !cityExists) {
+        console.error('Invalid city_id:', formData.cityId);
+        return { error: new Error('Invalid city selected') };
+      }
+    }
+
     // Prepare profile data
     const profileData = {
       user_id: userId,
@@ -33,9 +47,9 @@ export const handleProfileUpdate = async (
       show_phone: formData.showPhone,
       show_facebook: formData.showFacebook,
       bio: formData.bio,
-      city_id: formData.cityId || null,
+      city_id: formData.cityId,
       updated_at: new Date().toISOString(),
-      profile_picture_url: profilePictureUrl
+      profile_picture_url: profilePictureUrl || undefined
     };
 
     if (isNewProfile) {
