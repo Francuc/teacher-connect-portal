@@ -1,9 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Create a single service role client instance
+// Create a single service role client instance with explicit configuration
 const serviceRoleClient = createClient(
   'https://qhqtflpajutstecqajbl.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k'
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFocXRmbHBhanV0c3RlY3FhamJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzk2MTQ5OCwiZXhwIjoyMDQ5NTM3NDk4fQ.qNnjcPx2LJENXn-Ow_vPRUpyGl-CJLRFxUUXhrj_K3k',
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
 );
 
 const getRandomProfilePicture = async (userId: string): Promise<string> => {
@@ -14,14 +20,16 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
       throw new Error('Failed to fetch random image');
     }
 
-    const arrayBuffer = await response.arrayBuffer();
+    // Get the image data as a buffer
+    const buffer = await response.arrayBuffer();
     const fileName = `${userId}-${Math.random()}.jpg`;
 
-    // Upload the image buffer directly
-    const { error: uploadError, data } = await serviceRoleClient.storage
+    // Upload the buffer directly to Supabase storage
+    const { error: uploadError } = await serviceRoleClient.storage
       .from('profile-pictures')
-      .upload(fileName, arrayBuffer, {
+      .upload(fileName, buffer, {
         contentType: 'image/jpeg',
+        duplex: 'half',
         upsert: true
       });
 
@@ -30,7 +38,7 @@ const getRandomProfilePicture = async (userId: string): Promise<string> => {
       throw uploadError;
     }
 
-    // Get the public URL
+    // Get the public URL after successful upload
     const { data: { publicUrl } } = serviceRoleClient.storage
       .from('profile-pictures')
       .getPublicUrl(fileName);
