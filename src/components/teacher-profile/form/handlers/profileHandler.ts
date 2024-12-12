@@ -6,9 +6,11 @@ import { TeacherProfileData } from "../types/profileTypes";
 export const handleProfileUpdate = async (
   formData: FormData,
   userId: string,
-  existingProfile: boolean
+  isNewProfile: boolean
 ): Promise<{ error?: Error }> => {
   try {
+    console.log('Starting profile update for user:', userId);
+    
     // Upload profile picture if exists
     let profilePictureUrl = null;
     if (formData.profilePicture) {
@@ -32,7 +34,7 @@ export const handleProfileUpdate = async (
       show_phone: formData.showPhone,
       show_facebook: formData.showFacebook,
       bio: formData.bio,
-      city_id: formData.cityId,
+      city_id: formData.cityId || null,
       updated_at: new Date().toISOString(),
     };
 
@@ -42,16 +44,18 @@ export const handleProfileUpdate = async (
     }
 
     let updateError;
-    if (existingProfile) {
+    if (isNewProfile) {
+      console.log('Creating new profile:', profileData);
+      const { error } = await supabase
+        .from('teachers')
+        .insert([profileData]);
+      updateError = error;
+    } else {
+      console.log('Updating existing profile:', profileData);
       const { error } = await supabase
         .from('teachers')
         .update(profileData)
         .eq('user_id', userId);
-      updateError = error;
-    } else {
-      const { error } = await supabase
-        .from('teachers')
-        .insert([profileData]);
       updateError = error;
     }
 
