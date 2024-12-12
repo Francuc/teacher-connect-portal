@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -9,8 +8,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-purple-soft/30">
-      <Navigation />
-      
       <main className="container mx-auto px-4 py-12">
         <div className="flex flex-col items-center text-center space-y-6 max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold text-primary">

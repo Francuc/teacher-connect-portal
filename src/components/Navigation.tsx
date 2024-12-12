@@ -2,10 +2,30 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "./ui/use-toast";
 
 export const Navigation = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleCreateAd = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        title: t("error"),
+        description: t("pleaseLoginFirst"),
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+    
+    navigate("/profile");
+  };
 
   return (
     <nav className="border-b">
@@ -19,12 +39,10 @@ export const Navigation = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/profile/create">
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                {t('createAd')}
-              </Button>
-            </Link>
+            <Button onClick={handleCreateAd} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {t("createAd")}
+            </Button>
             <LanguageSwitcher />
           </div>
         </div>
