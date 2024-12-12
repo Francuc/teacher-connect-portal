@@ -46,11 +46,26 @@ export default function Login() {
               container: 'w-full',
               button: 'w-full px-4 py-2 rounded-md',
               input: 'rounded-md px-4 py-2 border focus:ring-2 focus:ring-purple-vivid focus:border-transparent',
+              label: 'block text-sm font-medium text-gray-700 mb-1',
+              message: 'text-sm text-red-600 mt-1',
             }
           }}
           providers={["google", "facebook"]}
           redirectTo={`${window.location.origin}/`}
-          onlyThirdPartyProviders
+          localization={{
+            variables: {
+              sign_in: {
+                email_label: t("email"),
+                password_label: t("password"),
+                button_label: t("signIn"),
+              },
+              sign_up: {
+                email_label: t("email"),
+                password_label: t("password"),
+                button_label: t("signUp"),
+              },
+            }
+          }}
         />
       </div>
     </div>
