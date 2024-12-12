@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { TeachingLocation } from "@/lib/constants";
+import { PersonalSection } from "./profile-sections/PersonalSection";
+import { LocationsSection } from "./profile-sections/LocationsSection";
+import { SubjectsSection } from "./profile-sections/SubjectsSection";
+import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
+import { BiographySection } from "./profile-sections/BiographySection";
 
 type TeacherProfile = {
   first_name: string;
@@ -34,7 +38,7 @@ type TeacherProfile = {
 };
 
 export const TeacherProfileView = ({ userId }: { userId: string }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [profile, setProfile] = useState<TeacherProfile | null>(null);
 
   useEffect(() => {
@@ -92,112 +96,13 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
     return <div>{t("loading")}</div>;
   }
 
-  const getLocalizedName = (item: any) => {
-    if (!item) return '';
-    switch(language) {
-      case 'fr':
-        return item.name_fr;
-      case 'lb':
-        return item.name_lb;
-      default:
-        return item.name_en;
-    }
-  };
-
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("personalInformation")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div>
-              <h3 className="font-semibold">{t("name")}</h3>
-              <p>{`${profile.first_name} ${profile.last_name}`}</p>
-            </div>
-            {profile.show_email && (
-              <div>
-                <h3 className="font-semibold">{t("email")}</h3>
-                <p>{profile.email}</p>
-              </div>
-            )}
-            {profile.show_phone && profile.phone && (
-              <div>
-                <h3 className="font-semibold">{t("phone")}</h3>
-                <p>{profile.phone}</p>
-              </div>
-            )}
-            {profile.show_facebook && profile.facebook_profile && (
-              <div>
-                <h3 className="font-semibold">{t("facebookProfile")}</h3>
-                <p>{profile.facebook_profile}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("teachingLocations")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {profile.locations.map((location, index) => (
-              <div key={index} className="flex justify-between items-center">
-                <span>{location.location_type}</span>
-                <span className="font-semibold">€{location.price_per_hour}/h</span>
-              </div>
-            ))}
-            {profile.city && (
-              <div>
-                <h3 className="font-semibold">{t("teacherLocation")}</h3>
-                <p>{`${getLocalizedName(profile.city)}, ${getLocalizedName(profile.city.region)}`}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("subjects")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {profile.subjects.map((subject, index) => (
-              <span key={index} className="bg-primary/10 px-2 py-1 rounded">
-                {subject}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("schoolLevels")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {profile.school_levels.map((level, index) => (
-              <span key={index} className="bg-primary/10 px-2 py-1 rounded">
-                {level}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("biography")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="whitespace-pre-wrap">{profile.bio}</p>
-        </CardContent>
-      </Card>
+      <PersonalSection profile={profile} />
+      <LocationsSection locations={profile.locations} city={profile.city} />
+      <SubjectsSection subjects={profile.subjects} />
+      <SchoolLevelsSection schoolLevels={profile.school_levels} />
+      <BiographySection bio={profile.bio} />
     </div>
   );
 };
