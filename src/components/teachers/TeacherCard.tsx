@@ -29,9 +29,10 @@ export const TeacherCard = ({
   );
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 border border-purple.soft rounded-2xl overflow-hidden">
-      <div className="p-8 flex flex-col h-full space-y-6">
-        <div className="flex items-start gap-6">
+    <Card className="group hover:shadow-xl transition-all duration-300 border border-purple.soft rounded-2xl overflow-hidden h-full flex flex-col">
+      <div className="p-8 flex flex-col flex-grow">
+        {/* Header Section */}
+        <div className="flex items-start gap-6 mb-6">
           <Avatar className="w-28 h-28 rounded-2xl border-2 border-primary/20">
             {teacher.profile_picture_url ? (
               <AvatarImage 
@@ -89,7 +90,8 @@ export const TeacherCard = ({
           </div>
         </div>
 
-        <div className="space-y-6">
+        {/* Content Section */}
+        <div className="flex-grow space-y-6">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-base text-muted-foreground">
               <BookOpen className="w-5 h-5" />
@@ -160,7 +162,8 @@ export const TeacherCard = ({
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-6 mt-auto border-t border-purple.soft/30">
+        {/* Footer Section - Always at bottom */}
+        <div className="flex items-center justify-between pt-6 mt-6 border-t border-purple.soft/30">
           {lowestPrice && (
             <div className="flex items-center gap-2 text-base text-muted-foreground">
               <Euro className="w-5 h-5" />
