@@ -5,12 +5,19 @@ import { BiographySection } from "./profile-sections/BiographySection";
 import { SubjectsSection } from "./SubjectsSection";
 import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
 import { LocationsSection } from "./profile-sections/LocationsSection";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TeacherProfileViewProps {
   userId: string;
 }
 
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+  
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
     queryFn: async () => {
@@ -76,7 +83,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       return {
         profile,
         subjects: subjects?.map(s => ({
-          subject: s.subject[0] // Fix: Access first element of subject array
+          subject: s.subject[0]
         })) || [],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
@@ -91,8 +98,21 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
     return null;
   }
 
+  const handleEditClick = () => {
+    navigate(`/profile/edit/${userId}`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleEditClick}
+          className="bg-primary hover:bg-primary/90"
+        >
+          <Pencil className="w-4 h-4 mr-2" />
+          {t("editProfile")}
+        </Button>
+      </div>
       <PersonalSection profile={teacherData.profile} />
       <BiographySection bio={teacherData.profile.bio} />
       <SubjectsSection subjects={teacherData.subjects} />
