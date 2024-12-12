@@ -15,15 +15,29 @@ export const validateForm = (formData: FormData, t: (key: string) => string) => 
     errors.push(t("teacherCity"));
   }
 
-  // Check if at least one teaching location has a price
+  // Check if at least one teaching location has a valid price
   const hasValidPrice = formData.teachingLocations.some(location => {
-    const price = formData.pricePerHour[
-      location.toLowerCase().replace("'s", "").split(" ")[0] as keyof typeof formData.pricePerHour
-    ];
+    let priceKey: keyof typeof formData.pricePerHour;
+    
+    switch (location) {
+      case "Teacher's Place":
+        priceKey = "teacherPlace";
+        break;
+      case "Student's Place":
+        priceKey = "studentPlace";
+        break;
+      case "Online":
+        priceKey = "online";
+        break;
+      default:
+        return false;
+    }
+
+    const price = formData.pricePerHour[priceKey];
     return price && parseFloat(price) > 0;
   });
 
-  if (!hasValidPrice) {
+  if (!hasValidPrice && formData.teachingLocations.length > 0) {
     errors.push(t("pricePerHour"));
   }
 
