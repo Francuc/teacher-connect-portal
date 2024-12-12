@@ -8,7 +8,6 @@ export const useFormData = (userId?: string) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -33,15 +32,6 @@ export const useFormData = (userId?: string) => {
       online: "",
     },
   });
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id || null);
-    };
-
-    checkAuth();
-  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -148,5 +138,5 @@ export const useFormData = (userId?: string) => {
     }
   }, [userId, t, toast]);
 
-  return { formData, setFormData, isLoading, setIsLoading, currentUserId };
+  return { formData, setFormData, isLoading, setIsLoading };
 };
