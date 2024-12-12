@@ -27,22 +27,29 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
   const [open, setOpen] = React.useState(false)
   const { language, t } = useLanguage()
 
-  const { data: cities = [], isLoading } = useQuery({
+  const { data: cities = [], isLoading, error } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities')
-        .select('*')
-      if (error) {
-        console.error('Error fetching cities:', error);
-        throw error;
+      try {
+        const { data, error } = await supabase
+          .from('cities')
+          .select('*')
+        
+        if (error) {
+          console.error('Error fetching cities:', error)
+          throw error
+        }
+        
+        return data || []
+      } catch (error) {
+        console.error('Error in cities query:', error)
+        return []
       }
-      console.log('Fetched cities for autocomplete:', data);
-      return data || [];
     }
   })
 
   const getLocalizedName = (city: any) => {
+    if (!city) return ''
     switch(language) {
       case 'fr':
         return city.name_fr
@@ -51,6 +58,15 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
       default:
         return city.name_en
     }
+  }
+
+  if (error) {
+    console.error('Error in CityAutocomplete:', error)
+    return (
+      <Button variant="outline" className="w-full justify-between">
+        {t("errorLoadingCities")}
+      </Button>
+    )
   }
 
   return (
@@ -77,7 +93,7 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
           <CommandGroup>
             {isLoading ? (
               <CommandItem disabled>{t("loading")}</CommandItem>
-            ) : (
+            ) : cities && cities.length > 0 ? (
               cities.map((city) => (
                 <CommandItem
                   key={city.id}
@@ -96,6 +112,8 @@ export function CityAutocomplete({ value, onChange }: CityAutocompleteProps) {
                   {getLocalizedName(city)}
                 </CommandItem>
               ))
+            ) : (
+              <CommandItem disabled>{t("noCitiesAvailable")}</CommandItem>
             )}
           </CommandGroup>
         </Command>

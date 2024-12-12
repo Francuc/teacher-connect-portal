@@ -1,9 +1,9 @@
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { type TeachingLocation } from "@/lib/constants";
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/lib/supabase"
+import { type TeachingLocation } from "@/lib/constants"
 
 type CitiesListProps = {
   formData: {
@@ -21,66 +21,86 @@ type CitiesListProps = {
 };
 
 export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
-  const { t, language } = useLanguage();
+  const { t, language } = useLanguage()
 
   const { data: regions = [] } = useQuery({
     queryKey: ['regions'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('regions')
-        .select('*');
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('regions')
+          .select('*')
+        if (error) throw error
+        return data
+      } catch (error) {
+        console.error('Error fetching regions:', error)
+        return []
+      }
     }
-  });
+  })
 
   const { data: cities = [], isLoading } = useQuery({
     queryKey: ['cities', formData.studentRegions],
     queryFn: async () => {
-      if (formData.studentRegions.length === 0) return [];
+      if (formData.studentRegions.length === 0) return []
 
-      // Get the region IDs for the selected region names
-      const selectedRegionIds = regions
-        .filter(region => 
-          formData.studentRegions.includes(
-            language === 'fr' ? region.name_fr : 
-            language === 'lb' ? region.name_lb : 
-            region.name_en
+      try {
+        // Get the region IDs for the selected region names
+        const selectedRegionIds = regions
+          .filter(region => 
+            formData.studentRegions.includes(
+              language === 'fr' ? region.name_fr : 
+              language === 'lb' ? region.name_lb : 
+              region.name_en
+            )
           )
-        )
-        .map(region => region.id);
+          .map(region => region.id)
 
-      console.log('Selected region IDs:', selectedRegionIds);
+        if (selectedRegionIds.length === 0) {
+          console.log('No matching region IDs found')
+          return []
+        }
 
-      const { data, error } = await supabase
-        .from('cities')
-        .select('*')
-        .in('region_id', selectedRegionIds);
+        console.log('Selected region IDs:', selectedRegionIds)
 
-      if (error) {
-        console.error('Error fetching cities:', error);
-        throw error;
+        const { data, error } = await supabase
+          .from('cities')
+          .select('*')
+          .in('region_id', selectedRegionIds)
+
+        if (error) {
+          console.error('Error fetching cities:', error)
+          throw error
+        }
+
+        console.log('Fetched cities:', data)
+        return data || []
+      } catch (error) {
+        console.error('Error in cities query:', error)
+        return []
       }
-
-      console.log('Fetched cities:', data);
-      return data || [];
     },
     enabled: formData.studentRegions.length > 0 && regions.length > 0
-  });
+  })
 
   const getLocalizedName = (item: any) => {
+    if (!item) return ''
     switch(language) {
       case 'fr':
-        return item.name_fr;
+        return item.name_fr
       case 'lb':
-        return item.name_lb;
+        return item.name_lb
       default:
-        return item.name_en;
+        return item.name_en
     }
-  };
+  }
 
   if (isLoading) {
-    return <div>{t("loading")}</div>;
+    return <div className="text-sm text-muted-foreground">{t("loading")}</div>
+  }
+
+  if (!cities || cities.length === 0) {
+    return <div className="text-sm text-muted-foreground">{t("noCitiesAvailable")}</div>
   }
 
   return (
@@ -108,5 +128,5 @@ export const CitiesList = ({ formData, setFormData }: CitiesListProps) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
