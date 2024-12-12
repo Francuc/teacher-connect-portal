@@ -4,6 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { PersonalInfoSection } from "../PersonalInfoSection";
 import { LocationSection } from "../LocationSection";
 import { BiographySection } from "../BiographySection";
+import { SubjectsSection } from "../SubjectsSection";
+import { SchoolLevelsSection } from "../SchoolLevelsSection";
 import { type FormData } from "./types";
 
 interface FormSectionsProps {
@@ -27,6 +29,16 @@ export const FormSections = ({
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
       <PersonalInfoSection formData={formData} setFormData={setFormData} />
       <BiographySection formData={formData} setFormData={setFormData} />
+      <SubjectsSection 
+        subjects={formData.subjects} 
+        onSubjectsChange={(subjects) => setFormData({ ...formData, subjects })}
+        isEditing={true}
+      />
+      <SchoolLevelsSection 
+        schoolLevels={formData.schoolLevels}
+        onSchoolLevelsChange={(schoolLevels) => setFormData({ ...formData, schoolLevels })}
+        isEditing={true}
+      />
       <LocationSection formData={formData} setFormData={setFormData} />
       
       <div className="flex justify-end">
