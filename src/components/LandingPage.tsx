@@ -7,6 +7,8 @@ export const LandingPage = () => {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
 
+  console.log('Rendering LandingPage component'); // Debug log
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
       <main>

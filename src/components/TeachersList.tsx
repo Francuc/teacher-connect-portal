@@ -18,15 +18,17 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
-  // Add debug log for query execution
-  console.log('Executing teachers query...');
+  console.log('TeachersList: Starting data fetch...'); // Debug log
+
+  const { data: teachers = [], isLoading: isLoadingTeachers, error: teachersError } = useTeachersData();
   
-  const { data: teachers = [], isLoading: isLoadingTeachers } = useTeachersData();
+  console.log('TeachersList: Teachers data received:', { 
+    teachersCount: teachers?.length,
+    isLoading: isLoadingTeachers,
+    error: teachersError
+  }); // Debug log
 
-  // Add debug log for received data
-  console.log('Teachers data received:', teachers);
-
-  const { data: subjects = [] } = useQuery({
+  const { data: subjects = [], isLoading: isLoadingSubjects } = useQuery({
     queryKey: ['subjects'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -34,12 +36,15 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         .select('*')
         .order('name_en');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching subjects:', error);
+        throw error;
+      }
       return data || [];
     },
   });
 
-  const { data: schoolLevels = [] } = useQuery({
+  const { data: schoolLevels = [], isLoading: isLoadingLevels } = useQuery({
     queryKey: ['school_levels'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -47,12 +52,15 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         .select('*')
         .order('name_en');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching school levels:', error);
+        throw error;
+      }
       return data || [];
     },
   });
 
-  const getLowestPrice = (locations: any[]) => {
+  const getLowestPrice = (locations: any[] = []) => {
     if (!locations || locations.length === 0) return null;
     const prices = locations.map(loc => loc.price_per_hour);
     return Math.min(...prices);
@@ -68,6 +76,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   };
 
   const filteredTeachers = teachers?.filter(teacher => {
+    if (!teacher) return false;
+
     const teacherSubjects = teacher.teacher_subjects?.map(s => getLocalizedName(s.subject, language)) || [];
     const teacherLevels = teacher.teacher_school_levels?.map(l => l.school_level) || [];
     
@@ -85,8 +95,26 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     return matchesSubject && matchesLevel && matchesSearch;
   }) || [];
 
-  // Add debug log for filtered results
-  console.log('Filtered Teachers:', filteredTeachers);
+  console.log('TeachersList: Filtered teachers:', {
+    totalTeachers: teachers?.length,
+    filteredCount: filteredTeachers.length,
+    filters: {
+      subject: selectedSubject,
+      level: selectedLevel,
+      search: searchQuery
+    }
+  }); // Debug log
+
+  if (teachersError) {
+    console.error('Error in TeachersList:', teachersError);
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <p className="text-red-500">Error loading teachers. Please try again later.</p>
+      </div>
+    );
+  }
+
+  const isLoading = isLoadingTeachers || isLoadingSubjects || isLoadingLevels;
 
   return (
     <div className="container mx-auto px-4 space-y-8">
@@ -105,7 +133,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
 
       <TeachersGrid
         teachers={filteredTeachers}
-        isLoading={isLoadingTeachers}
+        isLoading={isLoading}
         getLocalizedName={(item) => getLocalizedName(item, language)}
         getTeacherLocation={(teacher) => getTeacherLocation(teacher, language)}
         getLowestPrice={getLowestPrice}
