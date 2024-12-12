@@ -33,7 +33,9 @@ export const SubjectsSection = ({
     },
   });
 
-  const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string }) => {
+  const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string } | null | undefined) => {
+    if (!subject) return '';
+    
     switch(language) {
       case 'fr':
         return subject.name_fr;
