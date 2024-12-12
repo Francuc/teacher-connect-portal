@@ -1,6 +1,7 @@
 import { FormData } from "../types";
 import { supabase } from "@/lib/supabase";
-import { uploadProfilePicture } from "../profilePictureUpload";
+import { uploadProfilePicture } from "../../profilePictureUpload";
+import { TeacherProfileData } from "../types/profileTypes";
 
 export const handleProfileUpdate = async (
   formData: FormData,
@@ -20,7 +21,7 @@ export const handleProfileUpdate = async (
     }
 
     // Prepare profile data
-    const profileData = {
+    const profileData: Partial<TeacherProfileData> = {
       user_id: userId,
       first_name: formData.firstName,
       last_name: formData.lastName,
@@ -35,7 +36,7 @@ export const handleProfileUpdate = async (
       updated_at: new Date().toISOString(),
     };
 
-    // Only update profile_picture_url if a new picture was uploaded
+    // Only add profile_picture_url if a new picture was uploaded
     if (profilePictureUrl) {
       profileData.profile_picture_url = profilePictureUrl;
     }
