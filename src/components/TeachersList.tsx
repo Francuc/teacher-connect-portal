@@ -18,8 +18,13 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
-  // ⚠️ CRITICAL: Do not modify these queries without explicit permission
+  // Add debug log for query execution
+  console.log('Executing teachers query...');
+  
   const { data: teachers = [], isLoading: isLoadingTeachers } = useTeachersData();
+
+  // Add debug log for received data
+  console.log('Teachers data received:', teachers);
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
@@ -46,7 +51,6 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
       return data || [];
     },
   });
-  // End of critical section ⚠️
 
   const getLowestPrice = (locations: any[]) => {
     if (!locations || locations.length === 0) return null;
@@ -81,7 +85,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     return matchesSubject && matchesLevel && matchesSearch;
   });
 
-  // Add console log to debug the data flow
+  // Add debug log for filtered results
   console.log('Filtered Teachers:', filteredTeachers);
 
   return (

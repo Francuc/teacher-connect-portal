@@ -1,7 +1,5 @@
 import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
 
 interface TeacherLocationsProps {
   teacher: any;
@@ -11,34 +9,16 @@ interface TeacherLocationsProps {
 export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocationsProps) => {
   const { t } = useLanguage();
 
-  const { data: cities = [] } = useQuery({
-    queryKey: ['cities'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities')
-        .select('*, region:regions(*)');
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const getTranslatedCityName = (cityName: string) => {
-    const city = cities.find(c => c.name_en === cityName);
-    if (city) {
-      return getLocalizedName(city);
-    }
-    return cityName;
-  };
+  // Add null check for teacher_student_cities
+  const studentCities = teacher.teacher_student_cities || [];
+  const hasStudentCities = studentCities.length > 0;
 
   // Add null check for teacher_locations
   const studentPlaceLocation = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
 
-  // Add null check for teacher_student_cities
-  const studentCities = teacher.teacher_student_cities || [];
-
-  if (!studentPlaceLocation || studentCities.length === 0) return null;
+  if (!studentPlaceLocation || !hasStudentCities) return null;
 
   return (
     <div className="space-y-2">
@@ -52,7 +32,7 @@ export const TeacherLocations = ({ teacher, getLocalizedName }: TeacherLocations
             key={cityData.id}
             className="text-xs px-3 py-1 rounded-full bg-primary/5 text-primary/90 font-medium"
           >
-            {getTranslatedCityName(cityData.city_name)}
+            {cityData.city_name}
           </span>
         ))}
       </div>
