@@ -1,7 +1,14 @@
 import { createRandomTeachers } from "./createRandomTeachers";
 
 // Expose the function to the window object for testing
-(window as any).createRandomTeachers = async () => {
+declare global {
+  interface Window {
+    createRandomTeachers: () => Promise<void>;
+  }
+}
+
+// Expose the function to the window object for testing
+window.createRandomTeachers = async () => {
   try {
     const result = await createRandomTeachers();
     console.log('Random teachers created successfully:', result);
