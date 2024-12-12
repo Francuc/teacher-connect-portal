@@ -8,6 +8,8 @@ export const useTeacherData = (userId: string | undefined) => {
     queryFn: async () => {
       if (!userId) return null;
 
+      console.log('Fetching teacher data for userId:', userId);
+
       const [
         { data: existingProfile },
         { data: locations },
@@ -50,6 +52,8 @@ export const useTeacherData = (userId: string | undefined) => {
           .select('city_name')
           .eq('teacher_id', userId)
       ]);
+
+      console.log('Teacher subjects data:', teacherSubjects);
 
       return {
         profile: existingProfile,
