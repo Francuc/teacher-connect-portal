@@ -11,7 +11,7 @@ export const useTeacherData = (userId: string | undefined) => {
       console.log('Fetching teacher data for userId:', userId);
 
       const [
-        { data: existingProfile },
+        { data: profile },
         { data: locations },
         { data: teacherSubjects },
         { data: schoolLevels },
@@ -56,7 +56,7 @@ export const useTeacherData = (userId: string | undefined) => {
       console.log('Teacher subjects data:', teacherSubjects);
 
       return {
-        profile: existingProfile,
+        profile,
         locations: locations || [],
         subjects: (teacherSubjects || []) as TeacherSubject[],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],

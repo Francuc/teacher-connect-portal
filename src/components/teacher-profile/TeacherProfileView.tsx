@@ -45,7 +45,7 @@ type TeacherProfile = {
 };
 
 export const TeacherProfileView = ({ userId }: { userId: string }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<TeacherProfile | null>(null);
@@ -59,7 +59,6 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
 
     checkAuth();
 
-    // Subscribe to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session);
     });
@@ -107,9 +106,17 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
           .select('*')
           .eq('teacher_id', userId);
 
-        const { data: subjects } = await supabase
+        const { data: teacherSubjects } = await supabase
           .from('teacher_subjects')
-          .select('subject')
+          .select(`
+            subject_id,
+            subject:subjects (
+              id,
+              name_en,
+              name_fr,
+              name_lb
+            )
+          `)
           .eq('teacher_id', userId);
 
         const { data: schoolLevels } = await supabase
@@ -127,10 +134,16 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
           .select('city_name')
           .eq('teacher_id', userId);
 
+        const subjectNames = teacherSubjects?.map(ts => 
+          language === 'fr' ? ts.subject.name_fr :
+          language === 'lb' ? ts.subject.name_lb :
+          ts.subject.name_en
+        ) || [];
+
         setProfile({
           ...teacherData,
           locations: locations || [],
-          subjects: subjects?.map(s => s.subject) || [],
+          subjects: subjectNames,
           school_levels: schoolLevels?.map(l => l.school_level) || [],
           student_regions: studentRegions?.map(r => r.region_name) || [],
           student_cities: studentCities?.map(c => c.city_name) || []
@@ -146,7 +159,7 @@ export const TeacherProfileView = ({ userId }: { userId: string }) => {
     };
 
     fetchProfile();
-  }, [userId, t, toast]);
+  }, [userId, t, toast, language]);
 
   if (!profile) {
     return (
