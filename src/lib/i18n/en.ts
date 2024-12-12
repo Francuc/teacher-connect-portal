@@ -1,73 +1,76 @@
 export const en = {
-  // General
-  welcome: "Welcome",
-  goodbye: "Goodbye",
-  loading: "Loading...",
-  error: "Error",
-  success: "Success",
-
-  // Landing Page
-  landingDescription: "Find qualified teachers for private lessons in Luxembourg",
-  findTeacher: "Find your perfect teacher",
-  
-  // Navigation
-  createAd: "Create Ad",
-  selectProfile: "Select Profile",
-  
-  // Footer
-  allRights: "All rights reserved",
-  mathematics: "Mathematics",
-  physics: "Physics",
-  languages: "Languages",
-  getStarted: "Get Started",
-  createProfile: "Create Profile",
-
-  // Personal Information
-  personalInfo: "Personal Information",
-  personalInformation: "Personal Information",
-  firstName: "First Name",
-  lastName: "Last Name",
-  name: "Name",
+  // Auth
+  signIn: "Sign in",
+  signUp: "Sign up",
+  signOut: "Sign out",
   email: "Email",
-  phone: "Phone",
-  facebookProfile: "Facebook Profile",
-  showInProfile: "Show in Profile",
-  contactInformation: "Contact Information",
+  password: "Password",
+  confirmPassword: "Confirm password",
+  forgotPassword: "Forgot password?",
+  resetPassword: "Reset password",
+  noAccount: "Don't have an account?",
+  hasAccount: "Already have an account?",
+
+  // Navigation
+  home: "Home",
+  profile: "Profile",
+  settings: "Settings",
+  teachers: "Teachers",
+  students: "Students",
 
   // Profile
-  bio: "Biography",
-  biography: "Biography",
-  subjects: "Subjects",
-  allSubjects: "All Subjects",
-  schoolLevels: "School Levels",
-  allLevels: "All Levels",
-  teachingLocations: "Teaching Locations",
   editProfile: "Edit Profile",
-  viewProfile: "View Profile",
-  updateProfile: "Update Profile",
-  pleaseLoginFirst: "Please log in first",
-  profileSaved: "Profile saved successfully",
-
-  // Search
-  search: "Search",
-  searchPlaceholder: "Search by name or location",
-  startingFrom: "Starting from",
-
-  // Location
-  cities: "Cities",
-  regions: "Regions",
-  selectedLocation: "Selected Location",
+  firstName: "First Name",
+  lastName: "Last Name",
+  phone: "Phone",
+  bio: "Bio",
+  subjects: "Subjects",
+  schoolLevels: "School Levels",
+  teachingLocations: "Teaching Locations",
+  price: "Price",
   pricePerHour: "Price per hour",
-  searchCity: "Search city",
+  regions: "Regions",
+  cities: "Cities",
   selectCity: "Select a city",
+  searchCity: "Search city...",
   noCityFound: "No city found",
-  noCitiesAvailable: "No cities available",
+  loading: "Loading...",
   errorLoadingCities: "Error loading cities",
+  noCitiesAvailable: "No cities available",
+  success: "Success!",
+  error: "Error",
+  save: "Save",
+  cancel: "Cancel",
+  delete: "Delete",
+  
+  // Form validation
+  required: "This field is required",
+  invalidEmail: "Invalid email address",
+  passwordMismatch: "Passwords do not match",
+  passwordMinLength: "Password must be at least 8 characters",
+  selectAtLeastOneSubject: "Please select at least one subject",
+  selectAtLeastOneLevel: "Please select at least one school level",
+  selectAtLeastOneLocation: "Please select at least one teaching location",
+  validPriceRequiredForTeacherPlace: "Please set a valid price (greater than 0) for teaching at your place",
+  validPriceRequiredForStudentPlace: "Please set a valid price (greater than 0) for teaching at student's place",
+  validPriceRequiredForOnline: "Please set a valid price (greater than 0) for online teaching",
+  selectAtLeastOneRegionOrCity: "Please select at least one region or city for teaching at student's place",
+  teacherCityRequired: "Please select your city when teaching at your place",
 
-  // Form Messages
-  errorLoadingProfile: "Error loading profile",
-  errorSavingProfile: "Error saving profile",
-  saveProfile: "Save Profile",
-  emailAlreadyExists: "A profile with this email already exists",
-  profileAlreadyExists: "You already have a teacher profile",
-} as const;
+  // Social
+  facebookProfile: "Facebook Profile",
+  showEmail: "Show email to students",
+  showPhone: "Show phone to students",
+  showFacebook: "Show Facebook profile to students",
+
+  // Misc
+  or: "or",
+  and: "and",
+  welcome: "Welcome",
+  loading: "Loading...",
+  somethingWentWrong: "Something went wrong",
+  tryAgain: "Please try again",
+  saveChanges: "Save Changes",
+  updateProfile: "Update Profile",
+  saveProfile: "Save Profile"
+};
