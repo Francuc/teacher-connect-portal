@@ -47,7 +47,6 @@ export const Navigation = () => {
         return teacher;
       }));
       
-      console.log('Profiles with URLs:', profilesWithUrls);
       return profilesWithUrls || [];
     }
   });
