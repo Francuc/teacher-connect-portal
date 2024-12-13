@@ -3,7 +3,6 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
 import { Plus, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -13,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
 export const Navigation = () => {
   const { t } = useLanguage();
@@ -23,23 +22,6 @@ export const Navigation = () => {
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    // Set up the initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
@@ -67,31 +49,8 @@ export const Navigation = () => {
     }
   });
 
-  // Reset image errors when profiles change
-  useEffect(() => {
-    setImageErrors({});
-  }, [profiles]);
-
-  const handleProfileAction = async () => {
-    if (!session) {
-      // If not logged in, redirect to auth page
-      navigate("/auth");
-    } else {
-      // Check if user has a teacher profile
-      const { data: teacherProfile } = await supabase
-        .from('teachers')
-        .select('user_id')
-        .eq('user_id', session.user.id)
-        .single();
-
-      if (teacherProfile) {
-        // If profile exists, go to edit page
-        navigate(`/profile/edit/${session.user.id}`);
-      } else {
-        // If no profile, go to create new profile page
-        navigate("/profile/new");
-      }
-    }
+  const handleProfileAction = () => {
+    navigate("/profile/new");
   };
 
   const handleProfileChange = (value: string) => {
@@ -175,7 +134,7 @@ export const Navigation = () => {
             )}
             <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
               <Plus className="h-5 w-5" />
-              {session ? t("myProfile") : t("createAd")}
+              {t("createAd")}
             </Button>
             <LanguageSwitcher />
           </div>
