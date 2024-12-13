@@ -56,8 +56,8 @@ export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
       <main>
-        {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-primary/95 to-secondary/95 py-24">
+        {/* Hero Section with animated gradient background */}
+        <div className="relative py-24 overflow-hidden bg-gradient-to-r from-primary/95 to-secondary/95 before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)] before:animate-[pulse_4s_ease-in-out_infinite]">
           <div className="absolute inset-0 bg-purple.dark/5 pattern-grid-lg opacity-10"></div>
           <div className="container mx-auto px-4">
             <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
@@ -78,24 +78,21 @@ export const LandingPage = () => {
         <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
           {/* Filters Section */}
           <div className="container mx-auto px-4 mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {/* Subject Filter */}
-              <div className="space-y-3">
-                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  {t("filterBySubject")}
-                </h2>
+              <div className="relative">
                 <Select
                   value={selectedSubject}
                   onValueChange={setSelectedSubject}
                 >
                   <SelectTrigger 
-                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl"
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
                   >
+                    <BookOpen className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
                     <SelectValue placeholder={t("selectSubject")} />
                   </SelectTrigger>
                   <SelectContent 
-                    className="bg-white max-h-[400px]"
+                    className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
                     align="center"
                   >
                     <div className="p-4">
@@ -112,7 +109,7 @@ export const LandingPage = () => {
                           <SelectItem 
                             key={subject.id} 
                             value={subject.id}
-                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
+                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
                           >
                             {getLocalizedName(subject)}
                           </SelectItem>
@@ -124,22 +121,19 @@ export const LandingPage = () => {
               </div>
 
               {/* City Filter */}
-              <div className="space-y-3">
-                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  {t("filterByCity")}
-                </h2>
+              <div className="relative">
                 <Select
                   value={selectedCity}
                   onValueChange={setSelectedCity}
                 >
                   <SelectTrigger 
-                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl"
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
                   >
+                    <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
                     <SelectValue placeholder={t("selectCity")} />
                   </SelectTrigger>
                   <SelectContent 
-                    className="bg-white max-h-[400px]"
+                    className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
                     align="center"
                   >
                     <div className="p-4">
@@ -156,7 +150,7 @@ export const LandingPage = () => {
                           <SelectItem 
                             key={city.id} 
                             value={city.id}
-                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
+                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
                           >
                             {getLocalizedName(city)}
                           </SelectItem>
@@ -165,20 +159,6 @@ export const LandingPage = () => {
                     </div>
                   </SelectContent>
                 </Select>
-              </div>
-
-              {/* Two empty columns to complete the 4-column layout */}
-              <div className="space-y-3">
-                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2 opacity-0">
-                  Placeholder
-                </h2>
-                <div className="h-14"></div>
-              </div>
-              <div className="space-y-3">
-                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2 opacity-0">
-                  Placeholder
-                </h2>
-                <div className="h-14"></div>
               </div>
             </div>
           </div>
