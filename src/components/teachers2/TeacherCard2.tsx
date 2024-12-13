@@ -95,7 +95,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   return (
     <Card className="p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       {/* Header Section */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-4 mb-4">
         <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
@@ -135,71 +135,73 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
 
       <Separator className="my-4" />
 
-      {/* Teaching Locations Section */}
-      {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
-        <div className="mb-4">
-          <TeacherLocations locations={teacher.teacher_locations} />
-        </div>
-      )}
-
-      {/* Subjects Section */}
-      <div className="space-y-2 mb-4">
-        <h4 className="font-semibold flex items-center gap-2">
-          <Book className="w-4 h-4" />
-          {t("subjects")}
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {teacher.teacher_subjects?.map((subjectData: any) => (
-            <Badge
-              key={subjectData.subject.id}
-              variant="outline"
-              className="bg-primary/10 text-primary border-none"
-            >
-              {getLocalizedName(subjectData.subject)}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      {/* School Levels Section */}
-      <div className="space-y-2 mb-4">
-        <h4 className="font-semibold flex items-center gap-2">
-          <GraduationCap className="w-4 h-4" />
-          {t("schoolLevels")}
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {teacher.teacher_school_levels?.map((level: any, index: number) => (
-            <Badge
-              key={index}
-              variant="outline"
-              className="bg-accent/10 text-accent border-none"
-            >
-              {getTranslatedLevel(level.school_level)}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      {/* Student Cities Section */}
-      {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="font-semibold flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            {t("availableIn")}
+      <div className="grid grid-cols-1 gap-6 flex-1">
+        {/* Subjects Section */}
+        <div className="bg-purple-soft/10 p-4 rounded-lg">
+          <h4 className="font-semibold flex items-center gap-2 mb-3">
+            <Book className="w-4 h-4" />
+            {t("subjects")}
           </h4>
           <div className="flex flex-wrap gap-2">
-            {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
+            {teacher.teacher_subjects?.map((subjectData: any) => (
               <Badge
-                key={index}
+                key={subjectData.subject.id}
                 variant="outline"
-                className="bg-purple-soft text-purple-vivid border-none"
+                className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
               >
-                {getTranslatedCityName(cityData.city_name)}
+                {getLocalizedName(subjectData.subject)}
               </Badge>
             ))}
           </div>
         </div>
-      )}
+
+        {/* School Levels Section */}
+        <div className="bg-purple-soft/10 p-4 rounded-lg">
+          <h4 className="font-semibold flex items-center gap-2 mb-3">
+            <GraduationCap className="w-4 h-4" />
+            {t("schoolLevels")}
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {teacher.teacher_school_levels?.map((level: any, index: number) => (
+              <Badge
+                key={index}
+                variant="outline"
+                className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
+              >
+                {getTranslatedLevel(level.school_level)}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        {/* Student Cities Section */}
+        {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+          <div className="bg-purple-soft/10 p-4 rounded-lg">
+            <h4 className="font-semibold flex items-center gap-2 mb-3">
+              <MapPin className="w-4 h-4" />
+              {t("availableIn")}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
+                >
+                  {getTranslatedCityName(cityData.city_name)}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Teaching Locations Section */}
+        {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
+          <div className="bg-purple-soft/10 p-4 rounded-lg mt-auto">
+            <TeacherLocations locations={teacher.teacher_locations} />
+          </div>
+        )}
+      </div>
     </Card>
   );
 };

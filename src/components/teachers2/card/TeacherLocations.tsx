@@ -37,7 +37,7 @@ export const TeacherLocations = ({ locations }: TeacherLocationsProps) => {
 
   return (
     <div className="space-y-2">
-      <h4 className="font-semibold flex items-center gap-2">
+      <h4 className="font-semibold flex items-center gap-2 mb-3">
         <MapPin className="w-4 h-4" />
         {t("teachingLocations")}
       </h4>
@@ -45,9 +45,9 @@ export const TeacherLocations = ({ locations }: TeacherLocationsProps) => {
         {locations.map((location, index) => (
           <div 
             key={index}
-            className="flex justify-between items-center p-2 rounded-lg bg-purple-soft/50"
+            className="flex justify-between items-center p-2 rounded-lg bg-primary/10"
           >
-            <span className="text-purple-dark">
+            <span className="text-primary">
               {getLocationTypeTranslation(location.location_type)}
             </span>
             <Badge
