@@ -15,7 +15,13 @@ const AuthPage = () => {
   useEffect(() => {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
-        navigate("/");
+        // If the user just signed up, redirect to profile edit
+        if (session?.user?.app_metadata?.provider === 'email' && session?.user?.created_at === session?.user?.last_sign_in_at) {
+          navigate(`/profile/edit/${session.user.id}`);
+        } else {
+          // Otherwise, redirect to home
+          navigate("/");
+        }
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
       }
