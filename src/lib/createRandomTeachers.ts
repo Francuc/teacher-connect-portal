@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { supabase } from "./supabase";
 import { uploadProfilePicture } from "./teachers/avatarUtils";
 import { getRandomCity, getRandomSubjects, getRandomSchoolLevels } from "./teachers/databaseUtils";
@@ -20,6 +21,7 @@ const createRandomTeacher = async () => {
         user_id: userId,
         city_id: cityId,
         profile_picture_url: profilePicture,
+        subscription_status: 'active', // Set status to active by default
       })
       .select()
       .single();
