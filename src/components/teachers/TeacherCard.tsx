@@ -46,10 +46,7 @@ export const TeacherCard = ({
                 src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
-                onError={() => {
-                  console.error('Error loading image:', teacher.profile_picture_url);
-                  setImageError(true);
-                }}
+                onError={() => setImageError(true)}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
