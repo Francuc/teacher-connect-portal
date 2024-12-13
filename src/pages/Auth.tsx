@@ -18,14 +18,6 @@ const AuthPage = () => {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
-      } else if (event === 'USER_DELETED') {
-        // Handle invalid credentials by showing a toast and switching to sign up
-        setView("sign_up");
-        toast({
-          title: "Account not found",
-          description: "This account doesn't exist. Please sign up instead.",
-          variant: "destructive",
-        });
       }
     });
 
@@ -78,6 +70,16 @@ const AuthPage = () => {
               loading_button_label: 'Signing up ...',
             },
           },
+        }}
+        onError={(error) => {
+          if (error.message === "Invalid login credentials") {
+            setView("sign_up");
+            toast({
+              title: "Account not found",
+              description: "This account doesn't exist. Please sign up instead.",
+              variant: "destructive",
+            });
+          }
         }}
       />
     </div>
