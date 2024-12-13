@@ -77,10 +77,18 @@ export const useFormData = (userId: string | null) => {
 
         const { locationTypes, prices } = processLocations(locations);
 
-        // Map subject IDs to full subject objects
+        // Map subject IDs to full subject objects with correct TeacherSubject structure
         const subjects = teacherSubjects?.data?.map(ts => {
           const subject = allSubjects?.find(s => s.id === ts.subject_id);
-          return subject ? { subject } : null;
+          return subject ? {
+            subject_id: ts.subject_id,
+            subject: {
+              id: subject.id,
+              name_en: subject.name_en,
+              name_fr: subject.name_fr,
+              name_lb: subject.name_lb
+            }
+          } : null;
         }).filter(Boolean) || [];
 
         setFormData({
