@@ -15,11 +15,15 @@ const AuthPage = () => {
   useEffect(() => {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
-        // If the user just signed up, redirect to profile edit
-        if (session?.user?.app_metadata?.provider === 'email' && session?.user?.created_at === session?.user?.last_sign_in_at) {
+        // Get timestamps
+        const createdAt = new Date(session?.user?.created_at || '').getTime();
+        const signInTime = new Date(session?.user?.last_sign_in_at || '').getTime();
+        const timeDifference = Math.abs(signInTime - createdAt);
+        
+        // If sign in happened within 10 seconds of account creation, consider it a new signup
+        if (timeDifference <= 10000) {
           navigate(`/profile/edit/${session.user.id}`);
         } else {
-          // Otherwise, redirect to home
           navigate("/");
         }
       } else if (event === 'SIGNED_OUT') {
