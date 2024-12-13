@@ -120,7 +120,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
-        studentCities: studentCities?.map(c => c.city.name_en) || [], // Map to string array as expected by LocationsSection
+        studentCities: studentCities?.map(c => c.city.name_en) || [],
       };
     },
   });
