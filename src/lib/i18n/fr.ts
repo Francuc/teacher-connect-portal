@@ -68,6 +68,7 @@ export const fr: Translation = {
   landingDescription: "Connectez-vous avec des professeurs expérimentés pour un apprentissage personnalisé",
   selectProfile: "Sélectionner un Profil",
   createAd: "Créer une Annonce",
+  myProfile: "Mon Profil",
   errorLoadingCities: "Erreur lors du chargement des villes",
   noCitiesAvailable: "Aucune ville disponible",
   searchCity: "Rechercher une ville...",
@@ -82,3 +83,4 @@ export const fr: Translation = {
   allLevels: "Tous les Niveaux",
   availableIn: "Disponible à",
 };
+

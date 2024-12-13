@@ -68,6 +68,7 @@ export const lb: Translation = {
   landingDescription: "Verbannt Iech mat erfuerene Professere fir personaliséiert Léieren",
   selectProfile: "Profil auswielen",
   createAd: "Annonce erstellen",
+  myProfile: "Mäi Profil",
   errorLoadingCities: "Feeler beim Lueden vun de Stied",
   noCitiesAvailable: "Keng Stied verfügbar",
   searchCity: "Stad sichen...",
@@ -82,3 +83,4 @@ export const lb: Translation = {
   allLevels: "All Niveauen",
   availableIn: "Verfügbar an",
 };
+

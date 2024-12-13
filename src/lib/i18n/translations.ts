@@ -72,6 +72,7 @@ export type Translation = {
   landingDescription: string;
   selectProfile: string;
   createAd: string;
+  myProfile: string;
   errorLoadingCities: string;
   noCitiesAvailable: string;
   searchCity: string;

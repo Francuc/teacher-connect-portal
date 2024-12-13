@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Session } from "@supabase/supabase-js";
 
 export const Navigation = () => {
   const { t } = useLanguage();
@@ -22,6 +23,23 @@ export const Navigation = () => {
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Set up the initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['teachers'],
@@ -54,8 +72,26 @@ export const Navigation = () => {
     setImageErrors({});
   }, [profiles]);
 
-  const handleCreateAd = async () => {
-    navigate("/profile/new");
+  const handleProfileAction = async () => {
+    if (!session) {
+      // If not logged in, redirect to auth page
+      navigate("/auth");
+    } else {
+      // Check if user has a teacher profile
+      const { data: teacherProfile } = await supabase
+        .from('teachers')
+        .select('user_id')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (teacherProfile) {
+        // If profile exists, go to edit page
+        navigate(`/profile/edit/${session.user.id}`);
+      } else {
+        // If no profile, go to create new profile page
+        navigate("/profile/new");
+      }
+    }
   };
 
   const handleProfileChange = (value: string) => {
@@ -137,9 +173,9 @@ export const Navigation = () => {
                 )}
               </div>
             )}
-            <Button onClick={handleCreateAd} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
+            <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
               <Plus className="h-5 w-5" />
-              {t("createAd")}
+              {session ? t("myProfile") : t("createAd")}
             </Button>
             <LanguageSwitcher />
           </div>
