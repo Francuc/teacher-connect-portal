@@ -40,20 +40,20 @@ export const TeacherLocations = ({ locations }: TeacherLocationsProps) => {
   return (
     <Section>
       <SectionHeader icon={MapPin} title={t("teachingLocations")} />
-      <div className="flex flex-col gap-2 mt-3">
+      <div className="grid grid-cols-2 gap-1.5 mt-1">
         {locations.map((location, index) => (
           <div 
             key={index}
-            className="flex justify-between items-center p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-all duration-200"
+            className="flex justify-between items-center p-1.5 rounded-lg bg-primary/5 text-xs"
           >
-            <span className="text-primary">
+            <span className="text-primary truncate mr-1">
               {getLocationTypeTranslation(location.location_type)}
             </span>
             <Badge
               variant="outline"
-              className="bg-primary text-white border-none flex items-center gap-1 hover:bg-primary/90"
+              className="bg-primary text-white border-none flex items-center gap-0.5 text-[10px] py-0.5 px-1.5"
             >
-              <Euro className="w-3 h-3" />
+              <Euro className="w-2.5 h-2.5" />
               {formatPrice(location.price_per_hour)}
             </Badge>
           </div>
