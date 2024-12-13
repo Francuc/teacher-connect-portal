@@ -6,6 +6,8 @@ import { LocationSection } from "../LocationSection";
 import { BiographySection } from "../BiographySection";
 import { SubjectsSection } from "../SubjectsSection";
 import { SchoolLevelsSection } from "../SchoolLevelsSection";
+import { SubscriptionSection } from "../SubscriptionSection";
+import { useAuth } from "@/hooks/useAuth";
 import { type FormData } from "./types";
 
 interface FormSectionsProps {
@@ -24,6 +26,7 @@ export const FormSections = ({
   isUpdate
 }: FormSectionsProps) => {
   const { t } = useLanguage();
+  const { session } = useAuth();
 
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
@@ -41,6 +44,13 @@ export const FormSections = ({
       />
       <LocationSection formData={formData} setFormData={setFormData} />
       
+      {isUpdate && session?.user && (
+        <SubscriptionSection 
+          profile={formData} 
+          isOwnProfile={true}
+        />
+      )}
+      
       <div className="flex justify-end">
         <Button 
           type="submit" 
@@ -48,7 +58,7 @@ export const FormSections = ({
           disabled={isLoading}
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isUpdate ? "Update Profile" : "Save Profile"}
+          {isUpdate ? t("updateProfile") : t("saveProfile")}
         </Button>
       </div>
     </form>

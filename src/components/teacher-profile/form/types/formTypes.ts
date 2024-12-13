@@ -1,16 +1,4 @@
-import { TeachingLocation } from "@/lib/constants";
-
-export interface TeacherSubject {
-  subject_id: string;
-  subject: {
-    id: string;
-    name_en: string;
-    name_fr: string;
-    name_lb: string;
-  };
-}
-
-export interface FormData {
+export type FormData = {
   firstName: string;
   lastName: string;
   email: string;
@@ -22,9 +10,15 @@ export interface FormData {
   bio: string;
   profilePicture: File | null;
   profilePictureUrl?: string;
-  subjects: TeacherSubject[];
+  subjects: Array<{
+    subject_id: string;
+    subject?: any;
+  }>;
   schoolLevels: string[];
-  teachingLocations: TeachingLocation[];
+  teachingLocations: Array<{
+    location_type: string;
+    price_per_hour: string;
+  }>;
   cityId: string | null;
   studentRegions: string[];
   studentCities: string[];
@@ -33,4 +27,9 @@ export interface FormData {
     studentPlace: string;
     online: string;
   };
-}
+  user_id?: string;
+  subscription_status?: string;
+  subscription_type?: string;
+  subscription_end_date?: string;
+  promo_code?: string;
+};
