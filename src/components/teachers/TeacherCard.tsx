@@ -29,6 +29,8 @@ export const TeacherCard = ({
   const [imageError, setImageError] = useState(false);
   const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
 
+  console.log("Teacher data in card:", teacher);
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-6">

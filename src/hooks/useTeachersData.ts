@@ -11,34 +11,32 @@ export const useTeachersData = () => {
         .from("teachers")
         .select(`
           *,
-          teacher_subjects!inner(
-            id,
-            subject:subjects!inner(
+          teacher_subjects!inner (
+            subject:subjects (
               id,
               name_en,
               name_fr,
               name_lb
             )
           ),
-          teacher_school_levels!inner(
-            id,
+          teacher_school_levels!inner (
             school_level
           ),
-          teacher_locations!inner(
+          teacher_locations!inner (
             id,
             location_type,
             price_per_hour
           ),
-          teacher_student_cities(
+          teacher_student_cities (
             id,
             city_name
           ),
-          city:cities(
+          city:cities (
             id,
             name_en,
             name_fr,
             name_lb,
-            region:regions(
+            region:regions (
               id,
               name_en,
               name_fr,
@@ -52,6 +50,8 @@ export const useTeachersData = () => {
         console.error("Error fetching teachers:", error);
         throw error;
       }
+
+      console.log("Teachers data fetched:", teachers);
 
       if (!teachers) {
         console.log("No teachers found");
