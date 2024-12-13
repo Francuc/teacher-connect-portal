@@ -35,7 +35,7 @@ export const RandomTeachersButton = () => {
   return (
     <Button 
       onClick={handleCreateRandomTeachers}
-      className="mb-4"
+      className="h-12 px-6 text-base"
     >
       Create Random Teachers
     </Button>

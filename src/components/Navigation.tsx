@@ -31,7 +31,7 @@ export const Navigation = () => {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="text-2xl font-bold text-purple.dark hover:text-primary transition-colors">
-                Nohëllef.lu
+                MengNohëllef.lu
               </Link>
             </div>
           </div>
