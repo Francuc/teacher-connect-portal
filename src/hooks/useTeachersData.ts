@@ -1,62 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
-interface Teacher {
-  id: string;
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  facebook_profile?: string;
-  show_email: boolean;
-  show_phone: boolean;
-  show_facebook: boolean;
-  bio: string;
-  profile_picture_url?: string;
-  city_id?: string;
-  created_at: string;
-  updated_at: string;
-  teacher_subjects: Array<{
-    id: string;
-    subject: {
-      id: string;
-      name_en: string;
-      name_fr: string;
-      name_lb: string;
-    };
-  }>;
-  teacher_school_levels: Array<{
-    id: string;
-    school_level: string;
-  }>;
-  teacher_locations: Array<{
-    id: string;
-    location_type: string;
-    price_per_hour: number;
-  }>;
-  teacher_student_cities: Array<{
-    id: string;
-    city_name: string;
-  }>;
-  city?: {
-    id: string;
-    name_en: string;
-    name_fr: string;
-    name_lb: string;
-    region?: {
-      id: string;
-      name_en: string;
-      name_fr: string;
-      name_lb: string;
-    };
-  };
-}
-
 export const useTeachersData = () => {
   return useQuery({
     queryKey: ["teachers"],
-    queryFn: async (): Promise<Teacher[]> => {
+    queryFn: async () => {
       console.log("Fetching teachers data...");
 
       const { data: teachers, error } = await supabase
