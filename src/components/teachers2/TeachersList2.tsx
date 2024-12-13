@@ -18,24 +18,32 @@ export const TeachersList2 = () => {
       
       console.log("Total teachers in database:", totalTeachers);
       
+      // Debug query to see raw teachers data
+      const { data: rawTeachers, error: rawError } = await supabase
+        .from('teachers')
+        .select('*');
+      
+      console.log("Raw teachers count:", rawTeachers?.length);
+
+      // Main query with all relations
       const { data, error } = await supabase
         .from('teachers')
         .select(`
           *,
-          city:cities (*,
-            region:regions (*)
+          city:cities!left (*,
+            region:regions!left (*)
           ),
-          teacher_subjects:teacher_subjects (
-            subject:subjects (*)
+          teacher_subjects!left (
+            subject:subjects!left (*)
           ),
-          teacher_school_levels:teacher_school_levels (
+          teacher_school_levels!left (
             school_level
           ),
-          teacher_locations:teacher_locations (
+          teacher_locations!left (
             location_type,
             price_per_hour
           ),
-          teacher_student_cities:teacher_student_cities (
+          teacher_student_cities!left (
             city_name
           )
         `)
