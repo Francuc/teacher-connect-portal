@@ -71,7 +71,7 @@ const AuthPage = () => {
             },
           },
         }}
-        onError={(error) => {
+        onAuthError={(error) => {
           if (error.message === "Invalid login credentials") {
             setView("sign_up");
             toast({
