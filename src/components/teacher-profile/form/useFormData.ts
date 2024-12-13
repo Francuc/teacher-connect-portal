@@ -212,7 +212,12 @@ export const useFormData = (userId?: string) => {
             profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject
+              subject: {
+                id: s.subject[0].id,
+                name_en: s.subject[0].name_en,
+                name_fr: s.subject[0].name_fr,
+                name_lb: s.subject[0].name_lb
+              }
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
