@@ -68,8 +68,8 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   const getTeacherLocation = () => {
     if (!teacher.city) return '';
     const cityName = getLocalizedName(teacher.city);
-    const regionName = getLocalizedName(teacher.city.region);
-    return `${cityName}, ${regionName}`;
+    const regionName = teacher.city.region ? getLocalizedName(teacher.city.region) : '';
+    return regionName ? `${cityName}, ${regionName}` : cityName;
   };
 
   const getTranslatedLevel = (levelName: string) => {
@@ -150,42 +150,50 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
 
       <div className="grid grid-cols-1 gap-3 flex-1">
         {/* Subjects Section */}
-        <Section>
-          <SectionHeader icon={Book} title={t("subjects")} />
-          <div className="flex flex-wrap gap-1 mt-1">
-            {teacher.teacher_subjects?.map((subjectData: any) => (
-              <Badge
-                key={subjectData.subject.id}
-                variant="outline"
-                className="bg-primary/10 text-primary border-none text-xs py-0"
-              >
-                {getLocalizedName(subjectData.subject)}
-              </Badge>
-            ))}
-          </div>
-        </Section>
+        {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
+          <Section>
+            <SectionHeader icon={Book} title={t("subjects")} />
+            <div className="flex flex-wrap gap-1 mt-1">
+              {teacher.teacher_subjects.map((subjectData: any) => (
+                subjectData.subject && (
+                  <Badge
+                    key={subjectData.subject.id}
+                    variant="outline"
+                    className="bg-primary/10 text-primary border-none text-xs py-0"
+                  >
+                    {getLocalizedName(subjectData.subject)}
+                  </Badge>
+                )
+              ))}
+            </div>
+          </Section>
+        )}
 
         {/* School Levels Section */}
-        <Section>
-          <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
-          <div className="flex flex-wrap gap-1 mt-1">
-            {teacher.teacher_school_levels?.map((level: any, index: number) => (
-              <Badge
-                key={index}
-                variant="outline"
-                className="bg-primary/10 text-primary border-none text-xs py-0"
-              >
-                {getTranslatedLevel(level.school_level)}
-              </Badge>
-            ))}
-          </div>
-        </Section>
+        {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
+          <Section>
+            <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
+            <div className="flex flex-wrap gap-1 mt-1">
+              {teacher.teacher_school_levels.map((level: any, index: number) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-none text-xs py-0"
+                >
+                  {getTranslatedLevel(level.school_level)}
+                </Badge>
+              ))}
+            </div>
+          </Section>
+        )}
 
         {/* Student Cities Section */}
-        <TeacherCities 
-          cities={teacher.teacher_student_cities} 
-          getTranslatedCityName={getTranslatedCityName}
-        />
+        {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+          <TeacherCities 
+            cities={teacher.teacher_student_cities} 
+            getTranslatedCityName={getTranslatedCityName}
+          />
+        )}
 
         {/* Teaching Locations Section */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
