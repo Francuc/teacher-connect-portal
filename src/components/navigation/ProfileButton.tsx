@@ -3,7 +3,6 @@ import { Button } from "../ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 
 interface ProfileButtonProps {
   session: Session | null;
@@ -19,8 +18,8 @@ export const ProfileButton = ({ session }: ProfileButtonProps) => {
       return;
     }
 
-    // If user is logged in, redirect directly to their edit profile page
-    navigate(`/profile/edit/${session.user.id}`);
+    // If user is logged in, redirect directly to their profile page
+    navigate(`/profile/${session.user.id}`);
   };
 
   return (
