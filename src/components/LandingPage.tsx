@@ -105,7 +105,7 @@ export const LandingPage = () => {
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-1 gap-3">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {subjects
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((subject) => (
@@ -149,7 +149,7 @@ export const LandingPage = () => {
                       >
                         {t("allCities")}
                       </SelectItem>
-                      <div className="grid grid-cols-1 gap-3">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {cities
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((city) => (
