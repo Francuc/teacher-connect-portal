@@ -50,6 +50,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
               region_name
             ),
             teacher_student_cities!left(
+              city_id,
               cities!left(
                 id,
                 name_en,
@@ -120,7 +121,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           teachingLocations: profile.teacher_locations?.map((l: any) => l.location_type) || [],
           cityId: profile.city_id || null,
           studentRegions: profile.teacher_student_regions?.map((r: any) => r.region_name) || [],
-          studentCities: profile.teacher_student_cities?.map((c: any) => c.cities.id) || [],
+          studentCities: profile.teacher_student_cities?.map((c: any) => c.city_id) || [],
           pricePerHour
         });
 
