@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, Book, GraduationCap, Euro } from "lucide-react";
 import { TeacherCard2 } from "./TeacherCard2";
 
 interface TeachersGrid2Props {

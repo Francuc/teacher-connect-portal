@@ -15,21 +15,21 @@ export const TeachersList2 = () => {
         .from('teachers')
         .select(`
           *,
-          city:cities!inner (
+          city:cities (
             *,
-            region:regions!inner (*)
+            region:regions (*)
           ),
-          teacher_subjects!inner (
-            subject:subjects!inner (*)
+          teacher_subjects (
+            subject:subjects (*)
           ),
-          teacher_school_levels!inner (
+          teacher_school_levels (
             school_level
           ),
-          teacher_locations!inner (
+          teacher_locations (
             location_type,
             price_per_hour
           ),
-          teacher_student_cities!inner (
+          teacher_student_cities (
             city_name
           )
         `);
@@ -40,7 +40,7 @@ export const TeachersList2 = () => {
       }
 
       console.log("Teachers data fetched:", data?.length);
-      return data;
+      return data || [];
     }
   });
 
