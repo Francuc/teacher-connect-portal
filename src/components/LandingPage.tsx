@@ -34,14 +34,7 @@ export const LandingPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('cities')
-        .select(`
-          *,
-          region:regions (
-            name_en,
-            name_fr,
-            name_lb
-          )
-        `)
+        .select('*')
         .order('name_en');
       if (error) throw error;
       return data;
@@ -58,11 +51,6 @@ export const LandingPage = () => {
       default:
         return item.name_en;
     }
-  };
-
-  const getCityWithRegion = (city: any) => {
-    if (!city || !city.region) return getLocalizedName(city);
-    return `${getLocalizedName(city)}, ${getLocalizedName(city.region)}`;
   };
 
   return (
@@ -90,7 +78,7 @@ export const LandingPage = () => {
         <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
           {/* Filters Section */}
           <div className="container mx-auto px-4 mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {/* Subject Filter */}
               <div className="space-y-3">
                 <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2">
@@ -117,7 +105,7 @@ export const LandingPage = () => {
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3">
                         {subjects
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((subject) => (
@@ -161,7 +149,7 @@ export const LandingPage = () => {
                       >
                         {t("allCities")}
                       </SelectItem>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3">
                         {cities
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((city) => (
@@ -170,13 +158,27 @@ export const LandingPage = () => {
                             value={city.id}
                             className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
                           >
-                            {getCityWithRegion(city)}
+                            {getLocalizedName(city)}
                           </SelectItem>
                         ))}
                       </div>
                     </div>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Two empty columns to complete the 4-column layout */}
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2 opacity-0">
+                  Placeholder
+                </h2>
+                <div className="h-14"></div>
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2 opacity-0">
+                  Placeholder
+                </h2>
+                <div className="h-14"></div>
               </div>
             </div>
           </div>
