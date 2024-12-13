@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
@@ -51,8 +51,8 @@ const AuthPage = () => {
         if (error?.message?.includes("Invalid login credentials")) {
           setView("sign_up");
           toast({
-            title: "Account not found",
-            description: "This account doesn't exist. Please sign up instead.",
+            title: t("error"),
+            description: t("noAccount"),
             variant: "destructive",
           });
         }
@@ -62,24 +62,24 @@ const AuthPage = () => {
     };
 
     handleError();
-  }, [toast]);
+  }, [toast, t]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-soft via-background to-purple-light dark:from-purple-dark dark:via-background dark:to-purple-vivid flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
-            Welcome
+            Nohëllef.lu
           </h1>
           <p className="text-muted-foreground mt-2">
-            Sign in to your account or create a new one
+            {view === "sign_in" ? t("hasAccount") : t("noAccount")}
           </p>
         </div>
         
         <Card className="backdrop-blur-sm bg-white/50 dark:bg-gray-900/50 border-primary/10">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-semibold text-primary">
-              {view === "sign_in" ? "Sign In" : "Sign Up"}
+              {view === "sign_in" ? t("signIn") : t("signUp")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -124,20 +124,22 @@ const AuthPage = () => {
               localization={{
                 variables: {
                   sign_in: {
-                    email_label: 'Email',
-                    password_label: 'Password',
-                    email_input_placeholder: 'Your email address',
-                    password_input_placeholder: 'Your password',
-                    button_label: 'Sign in',
-                    loading_button_label: 'Signing in ...',
+                    email_label: t("email"),
+                    password_label: t("password"),
+                    email_input_placeholder: t("email"),
+                    password_input_placeholder: t("password"),
+                    button_label: t("signIn"),
+                    loading_button_label: t("loading"),
+                    link_text: t("noAccount"),
                   },
                   sign_up: {
-                    email_label: 'Email',
-                    password_label: 'Password',
-                    email_input_placeholder: 'Your email address',
-                    password_input_placeholder: 'Your password',
-                    button_label: 'Sign up',
-                    loading_button_label: 'Signing up ...',
+                    email_label: t("email"),
+                    password_label: t("password"),
+                    email_input_placeholder: t("email"),
+                    password_input_placeholder: t("password"),
+                    button_label: t("signUp"),
+                    loading_button_label: t("loading"),
+                    link_text: t("hasAccount"),
                   },
                 },
               }}
