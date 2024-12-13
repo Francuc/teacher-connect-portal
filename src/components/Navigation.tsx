@@ -182,7 +182,7 @@ export const Navigation = () => {
                 )}
               </div>
             )}
-            <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
+            <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base rounded-md">
               <Plus className="h-5 w-5" />
               {session ? t("myProfile") : t("createAd")}
             </Button>
@@ -191,6 +191,7 @@ export const Navigation = () => {
               size="icon"
               onClick={handleAuthAction}
               className="h-10 w-10"
+              title={session ? t("signOut") : t("signIn")}
             >
               {session ? (
                 <LogOut className="h-5 w-5" />

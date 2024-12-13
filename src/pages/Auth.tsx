@@ -55,14 +55,20 @@ const AuthPage = () => {
               variables: {
                 default: {
                   colors: {
-                    brand: 'rgb(var(--primary))',
-                    brandAccent: 'rgb(var(--primary))',
+                    brand: '#9b87f5',
+                    brandAccent: '#7E69AB',
+                    brandButtonText: 'white',
+                  },
+                  radii: {
+                    borderRadiusButton: '6px',
+                    buttonBorderRadius: '6px',
+                    inputBorderRadius: '6px',
                   },
                 },
               },
               className: {
                 container: 'w-full',
-                button: 'w-full bg-primary text-white hover:bg-primary/90',
+                button: 'w-full bg-primary text-white hover:bg-primary/90 rounded-md',
                 input: 'rounded-md',
               },
             }}
