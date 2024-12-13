@@ -86,6 +86,9 @@ export type Translation = {
   allSubjects: string;
   allLevels: string;
   availableIn: string;
+  logout: string;
+  logoutSuccess: string;
+  logoutError: string;
   promoCodeApplied: string;
   invalidPromoCode: string;
   confirmDeleteProfile: string;
