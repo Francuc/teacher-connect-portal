@@ -23,4 +23,6 @@ export const lb = {
   selectAtLeastOneRegionOrCity: "Wielt mindestens eng Regioun oder Stad",
   validPriceRequiredForOnline: "Gülteg Präis erfuerderlech fir Online",
   emailAlreadyExists: "Dës E-Mail ass schon registréiert. Mellt Iech w.e.g. un.",
+  signOut: "Ofmellen",
+  signIn: "Umellen",
 };

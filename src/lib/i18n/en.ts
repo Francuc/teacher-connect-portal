@@ -21,4 +21,6 @@ export const en = {
   selectAtLeastOneRegionOrCity: "Please select at least one region or city",
   errorLoadingProfile: "Error loading profile",
   emailAlreadyExists: "This email is already registered. Please login instead.",
+  signOut: "Sign Out",
+  signIn: "Sign In",
 };

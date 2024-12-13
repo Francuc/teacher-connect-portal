@@ -22,4 +22,6 @@ export const fr = {
   validPriceRequiredForOnline: "Un prix valide est requis pour les cours en ligne.",
   selectAtLeastOneRegionOrCity: "Veuillez sélectionner au moins une région ou une ville.",
   emailAlreadyExists: "Cet e-mail est déjà enregistré. Veuillez vous connecter.",
+  signOut: "Se déconnecter",
+  signIn: "Se connecter",
 };

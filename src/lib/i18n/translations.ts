@@ -56,6 +56,7 @@ export type Translation = {
   signUp: string;
   emailAlreadyExists: string;
   errorLoadingProfile: string;
+  signOut: string;
 };
 
 export type TranslationKey = keyof Translation;
