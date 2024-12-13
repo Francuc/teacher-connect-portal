@@ -1,9 +1,44 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BookOpen } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const LandingPage = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [selectedSubject, setSelectedSubject] = useState<string>("all");
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subjects')
+        .select('*')
+        .order('name_en');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getLocalizedName = (item: any) => {
+    if (!item) return '';
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
@@ -22,13 +57,31 @@ export const LandingPage = () => {
               <p className="text-xl md:text-2xl text-white/90 max-w-2xl">
                 {t("landingDescription")}
               </p>
+              <div className="w-full max-w-xs">
+                <Select
+                  value={selectedSubject}
+                  onValueChange={setSelectedSubject}
+                >
+                  <SelectTrigger className="w-full bg-white/10 border-white/20 text-white">
+                    <SelectValue placeholder={t("selectSubject")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("allSubjects")}</SelectItem>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id}>
+                        {getLocalizedName(subject)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Teachers List Section */}
         <div className="py-16 bg-gradient-to-b from-white to-purple.soft/20">
-          <TeachersList2 />
+          <TeachersList2 selectedSubject={selectedSubject} />
         </div>
       </main>
     </div>
