@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { BookOpen } from "lucide-react";
+import { BookOpen, MapPin } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -15,6 +15,7 @@ import {
 export const LandingPage = () => {
   const { t, language } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
+  const [selectedCity, setSelectedCity] = useState<string>("all");
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
@@ -22,6 +23,25 @@ export const LandingPage = () => {
       const { data, error } = await supabase
         .from('subjects')
         .select('*')
+        .order('name_en');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: cities = [] } = useQuery({
+    queryKey: ['cities'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select(`
+          *,
+          region:regions (
+            name_en,
+            name_fr,
+            name_lb
+          )
+        `)
         .order('name_en');
       if (error) throw error;
       return data;
@@ -38,6 +58,11 @@ export const LandingPage = () => {
       default:
         return item.name_en;
     }
+  };
+
+  const getCityWithRegion = (city: any) => {
+    if (!city || !city.region) return getLocalizedName(city);
+    return `${getLocalizedName(city)}, ${getLocalizedName(city.region)}`;
   };
 
   return (
@@ -57,10 +82,19 @@ export const LandingPage = () => {
               <p className="text-lg md:text-xl text-white/90 max-w-2xl">
                 {t("landingDescription")}
               </p>
-              
-              {/* Subject Filter Section */}
-              <div className="w-full max-w-lg mt-8">
-                <h2 className="text-xl font-semibold text-white mb-4">
+            </div>
+          </div>
+        </div>
+
+        {/* Teachers List Section */}
+        <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
+          {/* Filters Section */}
+          <div className="container mx-auto px-4 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {/* Subject Filter */}
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2">
+                  <BookOpen className="w-5 h-5" />
                   {t("filterBySubject")}
                 </h2>
                 <Select
@@ -68,7 +102,7 @@ export const LandingPage = () => {
                   onValueChange={setSelectedSubject}
                 >
                   <SelectTrigger 
-                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-white/30 focus:ring-2 focus:ring-white/30 focus:border-white rounded-xl"
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl"
                   >
                     <SelectValue placeholder={t("selectSubject")} />
                   </SelectTrigger>
@@ -83,8 +117,10 @@ export const LandingPage = () => {
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        {subjects.map((subject) => (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {subjects
+                          .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                          .map((subject) => (
                           <SelectItem 
                             key={subject.id} 
                             value={subject.id}
@@ -98,13 +134,57 @@ export const LandingPage = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* City Filter */}
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold text-purple.dark flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  {t("filterByCity")}
+                </h2>
+                <Select
+                  value={selectedCity}
+                  onValueChange={setSelectedCity}
+                >
+                  <SelectTrigger 
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl"
+                  >
+                    <SelectValue placeholder={t("selectCity")} />
+                  </SelectTrigger>
+                  <SelectContent 
+                    className="bg-white max-h-[400px]"
+                    align="center"
+                  >
+                    <div className="p-4">
+                      <SelectItem 
+                        value="all"
+                        className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                      >
+                        {t("allCities")}
+                      </SelectItem>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {cities
+                          .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                          .map((city) => (
+                          <SelectItem 
+                            key={city.id} 
+                            value={city.id}
+                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
+                          >
+                            {getCityWithRegion(city)}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Teachers List Section */}
-        <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
-          <TeachersList2 selectedSubject={selectedSubject} />
+          <TeachersList2 
+            selectedSubject={selectedSubject} 
+            selectedCity={selectedCity}
+          />
         </div>
       </main>
     </div>
