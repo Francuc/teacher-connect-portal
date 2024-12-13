@@ -72,5 +72,10 @@ export const useTeachersData = () => {
       console.log('Processed teachers data:', processedTeachers);
       return processedTeachers;
     },
+    staleTime: Infinity, // Prevent automatic refetching
+    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false, // Prevent refetch on window focus
+    refetchOnMount: false, // Prevent refetch on mount
+    retry: 2, // Retry failed requests twice
   });
 };
