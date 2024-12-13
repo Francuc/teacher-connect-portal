@@ -3,14 +3,18 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (event === 'SIGNED_IN') {
         navigate("/");
+      } else if (event === 'SIGNED_OUT') {
+        navigate("/auth");
       }
     });
 
@@ -18,12 +22,30 @@ const AuthPage = () => {
   }, [navigate]);
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6">
+    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-center mb-6">Welcome</h1>
       <Auth
         supabaseClient={supabase}
-        appearance={{ theme: ThemeSupa }}
+        appearance={{ 
+          theme: ThemeSupa,
+          variables: {
+            default: {
+              colors: {
+                brand: '#2563eb',
+                brandAccent: '#1d4ed8',
+              },
+            },
+          },
+        }}
         theme="light"
         providers={[]}
+        onError={(error) => {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message,
+          });
+        }}
       />
     </div>
   );
