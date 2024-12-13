@@ -5,8 +5,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { FormData } from "../types/formTypes";
 
 export const useTeacherData = (userId: string | undefined, setFormData: (data: FormData) => void) => {
-  const { t } = useLanguage();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!userId) return;
@@ -130,5 +130,5 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
     };
 
     fetchTeacherData();
-  }, [userId, t, toast, setFormData]);
+  }, [userId, setFormData, toast, t]);
 };
