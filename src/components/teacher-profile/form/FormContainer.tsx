@@ -23,30 +23,37 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
   const { session } = useAuth();
   const { t } = useLanguage();
 
+  console.log('FormContainer - subscription data:', {
+    status: formData.subscription_status,
+    type: formData.subscription_type,
+    endDate: formData.subscription_end_date,
+    promoCode: formData.promo_code
+  });
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       {userId && session?.user && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Your Current Subscription Status</CardTitle>
+            <CardTitle>{t("subscriptionStatus")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="font-medium">Status:</span>
+                <span className="font-medium">{t("status")}:</span>
                 <Badge variant={formData.subscription_status === 'active' ? 'default' : 'secondary'}>
                   {formData.subscription_status || 'inactive'}
                 </Badge>
               </div>
               {formData.subscription_type && (
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">Type:</span>
+                  <span className="font-medium">{t("type")}:</span>
                   <Badge variant="outline">{formData.subscription_type}</Badge>
                 </div>
               )}
               {formData.subscription_end_date && (
                 <div>
-                  <span className="font-medium">Valid until:</span>
+                  <span className="font-medium">{t("validUntil")}:</span>
                   <p className="text-sm text-muted-foreground">
                     {new Date(formData.subscription_end_date).toLocaleDateString()}
                   </p>
@@ -54,7 +61,7 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
               )}
               {formData.promo_code && (
                 <div>
-                  <span className="font-medium">Promo code:</span>
+                  <span className="font-medium">{t("promoCode")}:</span>
                   <p className="font-mono bg-purple-50 px-2 py-1 rounded inline-block ml-2">
                     {formData.promo_code}
                   </p>
