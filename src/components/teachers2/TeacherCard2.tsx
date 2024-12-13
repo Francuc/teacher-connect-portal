@@ -11,6 +11,7 @@ import { TeacherContactInfo } from "./card/TeacherContactInfo";
 import { Section } from "./card/Section";
 import { SectionHeader } from "./card/SectionHeader";
 import { TeacherCities } from "./card/TeacherCities";
+import { TeacherAvailableCities } from "./card/TeacherAvailableCities";
 import { useNavigate } from "react-router-dom";
 
 interface TeacherCard2Props {
@@ -32,26 +33,6 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
       if (error) throw error;
       return data;
     }
-  });
-
-  const { data: cities = [] } = useQuery({
-    queryKey: ['teacherCities', teacher.teacher_student_cities],
-    queryFn: async () => {
-      if (!teacher.teacher_student_cities?.length) return [];
-      
-      const cityNames = teacher.teacher_student_cities.map((c: any) => c.city_name);
-      const { data, error } = await supabase
-        .from('cities')
-        .select(`
-          *,
-          region:regions(*)
-        `)
-        .in('name_en', cityNames);
-      
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!teacher.teacher_student_cities?.length
   });
 
   const getLocalizedName = (item: any) => {
@@ -79,14 +60,6 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
       return getLocalizedName(level);
     }
     return levelName;
-  };
-
-  const getTranslatedCityName = (cityName: string) => {
-    const city = cities.find(c => c.name_en === cityName);
-    if (city) {
-      return getLocalizedName(city);
-    }
-    return cityName;
   };
 
   const getProfilePictureUrl = () => {
@@ -190,11 +163,11 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
           </Section>
         )}
 
-        {/* Student Cities Section */}
+        {/* Available Cities Section */}
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-          <TeacherCities 
-            cities={teacher.teacher_student_cities} 
-            getTranslatedCityName={getTranslatedCityName}
+          <TeacherAvailableCities 
+            cities={teacher.teacher_student_cities}
+            getLocalizedName={getLocalizedName}
           />
         )}
 
