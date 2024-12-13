@@ -39,7 +39,6 @@ export const TeachersGrid2 = ({ teachers, isLoading, language }: TeachersGrid2Pr
         <TeacherCard2
           key={teacher.id}
           teacher={teacher}
-          language={language}
         />
       ))}
     </div>
