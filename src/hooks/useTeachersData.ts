@@ -10,37 +10,37 @@ export const useTeachersData = () => {
         .from('teachers')
         .select(`
           *,
-          city:cities!inner(
+          city:cities(
             id,
             name_en,
             name_fr,
             name_lb,
-            region:regions!inner(
+            region:regions(
               id,
               name_en,
               name_fr,
               name_lb
             )
           ),
-          teacher_subjects!inner(
+          teacher_subjects(
             id,
-            subject:subjects!inner(
+            subject:subjects(
               id,
               name_en,
               name_fr,
               name_lb
             )
           ),
-          teacher_school_levels!inner(
+          teacher_school_levels(
             id,
             school_level
           ),
-          teacher_locations!inner(
+          teacher_locations(
             id,
             location_type,
             price_per_hour
           ),
-          teacher_student_cities!inner(
+          teacher_student_cities(
             id,
             city_name
           )
