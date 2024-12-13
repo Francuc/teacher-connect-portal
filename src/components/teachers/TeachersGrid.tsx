@@ -4,8 +4,6 @@ interface TeachersGridProps {
   teachers: any[];
   isLoading: boolean;
   getLocalizedName: (item: any) => string;
-  getTeacherLocation: (teacher: any) => string;
-  getLowestPrice: (locations: any[]) => number | null;
   formatPrice: (price: number) => string;
 }
 
@@ -13,8 +11,6 @@ export const TeachersGrid = ({
   teachers,
   isLoading,
   getLocalizedName,
-  getTeacherLocation,
-  getLowestPrice,
   formatPrice,
 }: TeachersGridProps) => {
   if (isLoading) {
@@ -34,8 +30,6 @@ export const TeachersGrid = ({
           key={teacher.id}
           teacher={teacher}
           getLocalizedName={getLocalizedName}
-          getTeacherLocation={getTeacherLocation}
-          getLowestPrice={getLowestPrice}
           formatPrice={formatPrice}
         />
       ))}
