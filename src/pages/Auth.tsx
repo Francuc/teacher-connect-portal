@@ -32,6 +32,30 @@ const AuthPage = () => {
     };
   }, [navigate, toast]);
 
+  // Add event listener for auth error
+  useEffect(() => {
+    const handleAuthError = (error: any) => {
+      if (error.message?.includes("Invalid login credentials")) {
+        setView("sign_up");
+        toast({
+          title: "Account not found",
+          description: "This account doesn't exist. Please sign up instead.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session, error) => {
+      if (error) {
+        handleAuthError(error);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
+
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
       <h1 className="text-2xl font-bold text-center mb-6">Welcome</h1>
