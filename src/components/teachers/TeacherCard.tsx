@@ -4,8 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 
 interface TeacherCardProps {
   teacher: any;
@@ -24,41 +23,8 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
-
-  useEffect(() => {
-    const loadProfilePicture = async () => {
-      if (teacher.profile_picture_url) {
-        try {
-          const { data } = supabase
-            .storage
-            .from('profile-pictures')
-            .getPublicUrl(teacher.profile_picture_url);
-          
-          console.log('Profile picture URL:', data.publicUrl);
-          setProfilePictureUrl(data.publicUrl);
-          setImageError(false);
-        } catch (error) {
-          console.error('Error loading profile picture:', error);
-          setImageError(true);
-        }
-      }
-    };
-
-    loadProfilePicture();
-  }, [teacher.profile_picture_url]);
-
-  // Get teacher's place location
-  const teacherPlace = teacher.teacher_locations?.find(
-    (loc: any) => loc.location_type === "Teacher's Place"
-  );
-
-  // Get student's place location
-  const studentPlace = teacher.teacher_locations?.find(
-    (loc: any) => loc.location_type === "Student's Place"
-  );
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -66,9 +32,9 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {profilePictureUrl && !imageError ? (
+            {teacher.profile_picture_url && !imageError ? (
               <AvatarImage 
-                src={profilePictureUrl}
+                src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
                 onError={() => setImageError(true)}
@@ -135,20 +101,20 @@ export const TeacherCard = ({
         {/* Teaching Locations Section */}
         <div className="space-y-4">
           {/* Teacher's Place */}
-          {teacherPlace && (
+          {teacher.city && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />
                 <span>{t("teacherPlace")}</span>
               </div>
               <div className="text-sm text-purple-dark">
-                {getLocalizedName(teacher.city)}
+                {getTeacherLocation(teacher)}
               </div>
             </div>
           )}
 
           {/* Student's Place */}
-          {studentPlace && teacher.teacher_student_cities?.length > 0 && (
+          {teacher.teacher_student_cities?.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />

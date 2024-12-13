@@ -52,19 +52,18 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
+      console.log('Fetched teachers data:', teachersData);
+
       // Process profile picture URLs
       const processedTeachers = teachersData.map(teacher => {
-        const profilePictureUrl = teacher.profile_picture_url
-          ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-          : null;
+        if (!teacher.profile_picture_url) return teacher;
 
         return {
           ...teacher,
-          profile_picture_url: profilePictureUrl
+          profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
         };
       });
 
-      console.log('Processed teachers data:', processedTeachers);
       return processedTeachers;
     },
   });
