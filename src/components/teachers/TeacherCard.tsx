@@ -65,14 +65,19 @@ export const TeacherCard = ({
         {/* Subjects Section */}
         {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
           <TeacherSubjects 
-            subjects={teacher.teacher_subjects}
+            subjects={teacher.teacher_subjects.map((ts: any) => ({
+              ...ts.subject,
+              id: ts.subject.id
+            }))}
             getLocalizedName={getLocalizedName}
           />
         )}
 
         {/* School Levels Section */}
         {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
-          <TeacherLevels levels={teacher.teacher_school_levels} />
+          <TeacherLevels 
+            levels={teacher.teacher_school_levels}
+          />
         )}
 
         {/* Teaching Locations Section */}
