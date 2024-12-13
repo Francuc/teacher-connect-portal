@@ -73,7 +73,7 @@ export const useTeachersData = () => {
       return processedTeachers;
     },
     staleTime: Infinity, // Prevent automatic refetching
-    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes (renamed from cacheTime)
     refetchOnWindowFocus: false, // Prevent refetch on window focus
     refetchOnMount: false, // Prevent refetch on mount
     retry: 2, // Retry failed requests twice
