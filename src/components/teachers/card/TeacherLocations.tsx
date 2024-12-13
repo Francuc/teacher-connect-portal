@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin } from "lucide-react";
+import { MapPin, Euro } from "lucide-react";
+import { TranslationKey } from "@/lib/i18n/translations";
 
 interface TeacherLocationsProps {
   locations: Array<{
-    location_type: string;
+    location_type: TranslationKey;
     price_per_hour: number;
   }>;
   getLocalizedName: (item: any) => string;
@@ -31,8 +32,9 @@ export const TeacherLocations = ({
             variant="outline"
             className="bg-primary/10 text-primary border-none flex items-center gap-2"
           >
-            <span>{t(location.location_type)}</span>
-            <span className="font-semibold">
+            <span>{t(location.location_type as TranslationKey)}</span>
+            <span className="font-semibold flex items-center">
+              <Euro className="w-3 h-3 mr-1" />
               {formatPrice(location.price_per_hour)}
             </span>
           </Badge>
