@@ -19,7 +19,7 @@ interface TeacherProfileViewProps {
 
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   
   useEffect(() => {
@@ -33,6 +33,18 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const getLocalizedName = (item: any) => {
+    if (!item) return '';
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
   
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
@@ -126,7 +138,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
-        studentCities: studentCities?.map(c => c.cities) || [],
+        studentCities: studentCities?.map(c => getLocalizedName(c.cities)) || [],
       };
     },
   });
