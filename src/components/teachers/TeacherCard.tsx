@@ -25,19 +25,15 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  const profilePictureUrl = teacher.profile_picture_url 
-    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-    : null;
-
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-4">
         {/* Header Section with Profile Picture and Basic Info */}
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
-            {profilePictureUrl ? (
+            {teacher.profile_picture_url ? (
               <AvatarImage 
-                src={profilePictureUrl} 
+                src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="aspect-square h-full w-full object-cover"
               />
@@ -56,29 +52,42 @@ export const TeacherCard = ({
             {teacher.city && (
               <div className="flex items-center gap-2 mt-1 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
-                <span>{getLocalizedName(teacher.city)}, {getLocalizedName(teacher.city.region)}</span>
+                <span>
+                  {getLocalizedName(teacher.city)}, {getLocalizedName(teacher.city.region)}
+                </span>
               </div>
             )}
             
             {/* Contact Information */}
             <div className="mt-2 space-y-1">
               {teacher.show_email && teacher.email && (
-                <p className="text-sm flex items-center gap-2 text-muted-foreground">
+                <a 
+                  href={`mailto:${teacher.email}`}
+                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
+                >
                   <Mail className="w-4 h-4" />
                   {teacher.email}
-                </p>
+                </a>
               )}
               {teacher.show_phone && teacher.phone && (
-                <p className="text-sm flex items-center gap-2 text-muted-foreground">
+                <a 
+                  href={`tel:${teacher.phone}`}
+                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
+                >
                   <Phone className="w-4 h-4" />
                   {teacher.phone}
-                </p>
+                </a>
               )}
               {teacher.show_facebook && teacher.facebook_profile && (
-                <p className="text-sm flex items-center gap-2 text-muted-foreground">
+                <a 
+                  href={teacher.facebook_profile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
+                >
                   <Facebook className="w-4 h-4" />
-                  {teacher.facebook_profile}
-                </p>
+                  {t("facebookProfile")}
+                </a>
               )}
             </div>
           </div>
