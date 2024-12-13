@@ -1,6 +1,7 @@
 import { FormSections } from "./FormSections";
 import { useFormData } from "./useFormData";
 import { useFormSubmit } from "./useFormSubmit";
+import { FormData } from "./types";
 
 type FormContainerProps = {
   userId?: string;
@@ -9,7 +10,7 @@ type FormContainerProps = {
 export const FormContainer = ({ userId }: FormContainerProps) => {
   const { formData, setFormData, isLoading, setIsLoading } = useFormData(userId);
   const { handleSubmit } = useFormSubmit(
-    formData,
+    formData as FormData,
     isLoading,
     setIsLoading,
     userId || crypto.randomUUID(),
@@ -18,7 +19,7 @@ export const FormContainer = ({ userId }: FormContainerProps) => {
 
   return (
     <FormSections 
-      formData={formData}
+      formData={formData as FormData}
       setFormData={setFormData}
       isLoading={isLoading}
       onSubmit={handleSubmit}

@@ -33,4 +33,9 @@ export interface FormData {
     studentPlace: string;
     online: string;
   };
+  user_id?: string;
+  subscription_status?: string;
+  subscription_type?: string;
+  subscription_end_date?: string;
+  promo_code?: string;
 }

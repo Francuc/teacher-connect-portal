@@ -58,7 +58,7 @@ export const FormSections = ({
           disabled={isLoading}
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isUpdate ? t("updateProfile") : t("saveProfile")}
+          {isUpdate ? t("update_profile") : t("save_profile")}
         </Button>
       </div>
     </form>
