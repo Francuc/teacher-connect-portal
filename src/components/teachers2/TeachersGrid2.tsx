@@ -14,11 +14,11 @@ export const TeachersGrid2 = ({ teachers, isLoading, language }: TeachersGrid2Pr
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {[...Array(8)].map((_, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, index) => (
           <Card
             key={index}
-            className="h-[600px] animate-pulse bg-muted"
+            className="h-[400px] animate-pulse bg-muted"
           />
         ))}
       </div>
@@ -34,7 +34,7 @@ export const TeachersGrid2 = ({ teachers, isLoading, language }: TeachersGrid2Pr
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {teachers.map((teacher) => (
         <TeacherCard2
           key={teacher.id}

@@ -6,7 +6,7 @@ interface SectionProps {
 
 export const Section = ({ children }: SectionProps) => {
   return (
-    <div className="bg-purple-soft/5 p-2 rounded-lg">
+    <div className="bg-purple-soft/10 p-3 rounded-lg">
       {children}
     </div>
   );
