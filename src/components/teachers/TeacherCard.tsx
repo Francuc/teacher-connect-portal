@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Euro, MapPin, User, GraduationCap, BookOpen } from "lucide-react";
+import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -23,6 +23,16 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
+
+  // Get teacher's place location
+  const teacherPlace = teacher.teacher_locations?.find(
+    (loc: any) => loc.location_type === "Teacher's Place"
+  );
+
+  // Get student's place location
+  const studentPlace = teacher.teacher_locations?.find(
+    (loc: any) => loc.location_type === "Student's Place"
+  );
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -46,10 +56,6 @@ export const TeacherCard = ({
             <h3 className="text-xl font-bold text-purple-dark">
               {teacher.first_name} {teacher.last_name}
             </h3>
-            <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-              <MapPin className="w-4 h-4" />
-              {getTeacherLocation(teacher)}
-            </p>
           </div>
         </div>
 
@@ -100,40 +106,43 @@ export const TeacherCard = ({
         </div>
 
         {/* Teaching Locations Section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4" />
-            <span>{t("teachingLocations")}</span>
-          </div>
-          <div className="space-y-2">
-            {teacher.teacher_locations?.slice(0, 2).map((location: any) => (
-              <div 
-                key={location.id} 
-                className="flex justify-between items-center text-sm p-2 bg-accent/5 rounded-lg"
-              >
-                <span>{location.location_type}</span>
-                <span className="font-medium flex items-center gap-1">
-                  <Euro className="w-4 h-4" />
-                  {formatPrice(location.price_per_hour)}
-                </span>
+        <div className="space-y-4">
+          {/* Teacher's Place */}
+          {teacherPlace && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>{t("teacherPlace")}</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer with Price and Action Button */}
-        <div className="mt-auto pt-4 border-t flex items-center justify-between">
-          {lowestPrice && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Euro className="w-4 h-4" />
-              <span>
-                {t("startingFrom")} 
-                <span className="font-semibold text-purple-dark ml-1">
-                  {formatPrice(lowestPrice)}
-                </span>
-              </span>
+              <div className="text-sm text-purple-dark">
+                {getLocalizedName(teacher.city)}
+              </div>
             </div>
           )}
+
+          {/* Student's Place */}
+          {studentPlace && teacher.teacher_student_cities?.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>{t("studentPlace")}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {teacher.teacher_student_cities.map((cityData: any, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                  >
+                    {cityData.city_name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer with Action Button */}
+        <div className="mt-auto pt-4 border-t flex justify-end">
           <Button 
             onClick={() => navigate(`/profile/${teacher.user_id}`)}
             className="bg-purple-vivid hover:bg-purple-vivid/90 text-white"
