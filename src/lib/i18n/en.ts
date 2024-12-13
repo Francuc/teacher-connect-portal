@@ -82,4 +82,5 @@ export const en: Translation = {
   allSubjects: "All Subjects",
   allLevels: "All Levels",
   availableIn: "Available in",
+  signInOrSignUp: "Sign In or Sign Up",
 };

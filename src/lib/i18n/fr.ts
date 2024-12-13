@@ -82,5 +82,5 @@ export const fr: Translation = {
   allSubjects: "Toutes les Matières",
   allLevels: "Tous les Niveaux",
   availableIn: "Disponible à",
+  signInOrSignUp: "Se connecter ou s'inscrire",
 };
-
