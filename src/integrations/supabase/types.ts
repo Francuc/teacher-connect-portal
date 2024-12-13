@@ -194,24 +194,31 @@ export type Database = {
       }
       teacher_student_cities: {
         Row: {
-          city_name: string
+          city_id: string
           created_at: string
           id: string
           teacher_id: string
         }
         Insert: {
-          city_name: string
+          city_id: string
           created_at?: string
           id?: string
           teacher_id: string
         }
         Update: {
-          city_name?: string
+          city_id?: string
           created_at?: string
           id?: string
           teacher_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "teacher_student_cities_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "teacher_student_cities_teacher_id_fkey"
             columns: ["teacher_id"]

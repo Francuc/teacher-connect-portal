@@ -39,8 +39,8 @@ export const TeachersList2 = ({
             price_per_hour
           ),
           teacher_student_cities!left (
-            city_name,
-            cities!inner (
+            city_id,
+            cities:cities!left (
               id,
               name_en,
               name_fr,
@@ -85,14 +85,14 @@ export const TeachersList2 = ({
             // Check if teacher is in the selected city or serves students there
             const isInCity = teacher.city?.id === selectedCity;
             const servesCity = teacher.teacher_student_cities?.some(
-              (sc: any) => sc.cities?.id === selectedCity
+              (sc: any) => sc.city_id === selectedCity
             );
             console.log(`Teacher ${teacher.first_name} ${teacher.last_name}:`, {
               isInCity,
               servesCity,
               selectedCity,
               teacherCity: teacher.city?.id,
-              studentCities: teacher.teacher_student_cities?.map((sc: any) => sc.cities?.id)
+              studentCities: teacher.teacher_student_cities?.map((sc: any) => sc.city_id)
             });
             return isInCity || servesCity;
           }
@@ -101,7 +101,7 @@ export const TeachersList2 = ({
           if (selectedCity !== "all" && showOnlineOnly && hasOnlineTeaching) {
             const isInCity = teacher.city?.id === selectedCity;
             const servesCity = teacher.teacher_student_cities?.some(
-              (sc: any) => sc.cities?.id === selectedCity
+              (sc: any) => sc.city_id === selectedCity
             );
             return isInCity || servesCity || hasOnlineTeaching;
           }
