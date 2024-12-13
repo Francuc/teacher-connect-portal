@@ -112,6 +112,7 @@ export type Translation = {
   profileDeactivated: string;
   profileActivated: string;
   selectSubject: string;
+  filterBySubject: string;
 };
 
 export type TranslationKey = keyof Translation;

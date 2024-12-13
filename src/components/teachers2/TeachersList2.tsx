@@ -61,6 +61,7 @@ export const TeachersList2 = ({ selectedSubject = "all" }: TeachersList2Props) =
         teachers={teachers}
         isLoading={isLoading}
         language={language}
+        selectedSubject={selectedSubject}
       />
     </div>
   );

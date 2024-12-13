@@ -104,8 +104,9 @@ export const lb: Translation = {
   yearly: "Järlech",
   promoSubscription: "Promotioun",
   deactivateProfile: "Profil deaktivéieren",
-  activateProfile: "Profil aktivéieren",
+  activateProfile: "Aktivéieren",
   profileDeactivated: "Profil désaktivéiert",
   profileActivated: "Profil aktivéiert",
   selectSubject: "Wielt e Fach",
+  filterBySubject: "Filter no Fach",
 };
