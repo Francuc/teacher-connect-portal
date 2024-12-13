@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { FormData } from "./types";
+import { useTeacherProfile } from "./hooks/useTeacherProfile";
+import { useTeacherSubjects } from "./hooks/useTeacherSubjects";
+import { useTeacherLocations } from "./hooks/useTeacherLocations";
+import { useTeacherRegions } from "./hooks/useTeacherRegions";
+import { useTeacherCities } from "./hooks/useTeacherCities";
 import { supabase } from "@/lib/supabase";
-import { TeachingLocation } from "@/lib/constants";
-import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useFormData = (userId: string | null) => {
   const [formData, setFormData] = useState<FormData>({
@@ -31,8 +33,12 @@ export const useFormData = (userId: string | null) => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const { t } = useLanguage();
+  
+  const { fetchTeacherProfile } = useTeacherProfile(userId);
+  const { fetchTeacherSubjects } = useTeacherSubjects();
+  const { fetchTeacherLocations, processLocations } = useTeacherLocations();
+  const { fetchTeacherRegions } = useTeacherRegions();
+  const { fetchTeacherCities } = useTeacherCities();
 
   useEffect(() => {
     const loadTeacherData = async () => {
@@ -43,46 +49,22 @@ export const useFormData = (userId: string | null) => {
         console.log('Loading teacher data for userId:', userId);
 
         const [
-          { data: profile },
-          { data: locations },
-          { data: subjects },
-          { data: schoolLevels },
-          { data: studentRegions },
-          { data: studentCities }
+          profile,
+          locations,
+          subjects,
+          schoolLevels,
+          studentRegions,
+          studentCities
         ] = await Promise.all([
-          supabase
-            .from('teachers')
-            .select('*')
-            .eq('user_id', userId)
-            .single(),
-          supabase
-            .from('teacher_locations')
-            .select('*')
-            .eq('teacher_id', userId),
-          supabase
-            .from('teacher_subjects')
-            .select(`
-              subject_id,
-              subject:subjects (
-                id,
-                name_en,
-                name_fr,
-                name_lb
-              )
-            `)
-            .eq('teacher_id', userId),
+          fetchTeacherProfile(),
+          fetchTeacherLocations(userId),
+          fetchTeacherSubjects(userId),
           supabase
             .from('teacher_school_levels')
             .select('school_level')
             .eq('teacher_id', userId),
-          supabase
-            .from('teacher_student_regions')
-            .select('region_name')
-            .eq('teacher_id', userId),
-          supabase
-            .from('teacher_student_cities')
-            .select('city_name')
-            .eq('teacher_id', userId)
+          fetchTeacherRegions(userId),
+          fetchTeacherCities(userId),
         ]);
 
         if (!profile) {
@@ -90,37 +72,7 @@ export const useFormData = (userId: string | null) => {
           return;
         }
 
-        console.log('Teacher data loaded:', {
-          profile,
-          locations,
-          subjects,
-          schoolLevels,
-          studentRegions,
-          studentCities
-        });
-
-        // Process locations and prices
-        const locationTypes: TeachingLocation[] = [];
-        const prices = {
-          teacherPlace: "",
-          studentPlace: "",
-          online: "",
-        };
-
-        locations?.forEach(location => {
-          locationTypes.push(location.location_type as TeachingLocation);
-          switch (location.location_type) {
-            case "Teacher's Place":
-              prices.teacherPlace = location.price_per_hour.toString();
-              break;
-            case "Student's Place":
-              prices.studentPlace = location.price_per_hour.toString();
-              break;
-            case "Online":
-              prices.online = location.price_per_hour.toString();
-              break;
-          }
-        });
+        const { locationTypes, prices } = processLocations(locations);
 
         setFormData({
           firstName: profile.first_name || "",
@@ -134,37 +86,24 @@ export const useFormData = (userId: string | null) => {
           bio: profile.bio || "",
           profilePicture: null,
           profilePictureUrl: profile.profile_picture_url || "",
-          subjects: subjects?.map(s => ({
-            subject_id: s.subject_id,
-            subject: {
-              id: s.subject[0].id,
-              name_en: s.subject[0].name_en,
-              name_fr: s.subject[0].name_fr,
-              name_lb: s.subject[0].name_lb
-            }
-          })) || [],
-          schoolLevels: schoolLevels?.map(l => l.school_level) || [],
+          subjects: subjects || [],
+          schoolLevels: schoolLevels?.data?.map(l => l.school_level) || [],
           teachingLocations: locationTypes,
           cityId: profile.city_id || "",
-          studentRegions: studentRegions?.map(r => r.region_name) || [],
-          studentCities: studentCities?.map(c => c.city_name) || [],
+          studentRegions: studentRegions,
+          studentCities: studentCities,
           pricePerHour: prices,
         });
 
       } catch (error) {
         console.error('Error loading teacher data:', error);
-        toast({
-          title: t("error"),
-          description: t("errorLoadingProfile"),
-          variant: "destructive",
-        });
       } finally {
         setIsLoading(false);
       }
     };
 
     loadTeacherData();
-  }, [userId, toast, t]);
+  }, [userId]);
 
   return {
     formData,
