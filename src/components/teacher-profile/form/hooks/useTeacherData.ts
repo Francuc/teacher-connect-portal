@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FormData } from "../types/formTypes";
+import { FormData } from "../types";
 
 export const useTeacherData = (userId: string | undefined, setFormData: (data: FormData) => void) => {
   const { toast } = useToast();

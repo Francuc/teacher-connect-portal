@@ -21,7 +21,6 @@ export const en = {
   filterBySubject: "Filter by Subject",
   filterByCity: "Filter by City",
   allCities: "All Cities",
-  // Add missing required keys
   required: "Required",
   signIn: "Sign In",
   signUp: "Sign Up",
@@ -112,5 +111,7 @@ export const en = {
   deactivateProfile: "Deactivate Profile",
   activateProfile: "Activate Profile",
   profileDeactivated: "Profile Deactivated",
-  profileActivated: "Profile Activated"
+  profileActivated: "Profile Activated",
+  update_profile: "Update Profile",
+  save_profile: "Save Profile"
 } as const;

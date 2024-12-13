@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormData } from "./types/formTypes";
+import { FormData } from "./types";
 import { useDefaultCity } from "./hooks/useDefaultCity";
 import { useTeacherData } from "./hooks/useTeacherData";
 
