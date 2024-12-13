@@ -57,6 +57,47 @@ export const LandingPage = () => {
               <p className="text-lg md:text-xl text-white/90 max-w-2xl">
                 {t("landingDescription")}
               </p>
+              
+              {/* Subject Filter Section */}
+              <div className="w-full max-w-lg mt-8">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  {t("filterBySubject")}
+                </h2>
+                <Select
+                  value={selectedSubject}
+                  onValueChange={setSelectedSubject}
+                >
+                  <SelectTrigger 
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-white/30 focus:ring-2 focus:ring-white/30 focus:border-white rounded-xl"
+                  >
+                    <SelectValue placeholder={t("selectSubject")} />
+                  </SelectTrigger>
+                  <SelectContent 
+                    className="bg-white max-h-[400px]"
+                    align="center"
+                  >
+                    <div className="p-4">
+                      <SelectItem 
+                        value="all"
+                        className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                      >
+                        {t("allSubjects")}
+                      </SelectItem>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {subjects.map((subject) => (
+                          <SelectItem 
+                            key={subject.id} 
+                            value={subject.id}
+                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
+                          >
+                            {getLocalizedName(subject)}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </div>
@@ -64,49 +105,6 @@ export const LandingPage = () => {
         {/* Teachers List Section */}
         <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
           <TeachersList2 selectedSubject={selectedSubject} />
-        </div>
-
-        {/* Subject Filter Section - Moved to bottom */}
-        <div className="container mx-auto px-4 py-12 bg-white/80 backdrop-blur-sm border-t border-purple.soft/30">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-semibold text-purple.dark text-center mb-6">
-              {t("filterBySubject")}
-            </h2>
-            <Select
-              value={selectedSubject}
-              onValueChange={setSelectedSubject}
-            >
-              <SelectTrigger 
-                className="w-full h-16 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl"
-              >
-                <SelectValue placeholder={t("selectSubject")} />
-              </SelectTrigger>
-              <SelectContent 
-                className="bg-white max-h-[400px]"
-                align="center"
-              >
-                <div className="p-4">
-                  <SelectItem 
-                    value="all"
-                    className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
-                  >
-                    {t("allSubjects")}
-                  </SelectItem>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {subjects.map((subject) => (
-                      <SelectItem 
-                        key={subject.id} 
-                        value={subject.id}
-                        className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20"
-                      >
-                        {getLocalizedName(subject)}
-                      </SelectItem>
-                    ))}
-                  </div>
-                </div>
-              </SelectContent>
-            </Select>
-          </div>
         </div>
       </main>
     </div>
