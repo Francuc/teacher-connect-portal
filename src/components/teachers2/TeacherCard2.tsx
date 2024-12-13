@@ -8,6 +8,8 @@ import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { TeacherLocations } from "./card/TeacherLocations";
 import { TeacherContactInfo } from "./card/TeacherContactInfo";
+import { Section } from "./card/Section";
+import { SectionHeader } from "./card/SectionHeader";
 
 interface TeacherCard2Props {
   teacher: any;
@@ -93,10 +95,10 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   };
 
   return (
-    <Card className="p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
+    <Card className="p-4 flex flex-col h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       {/* Header Section */}
       <div className="flex items-start gap-4 mb-4">
-        <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
+        <Avatar className="w-20 h-20 rounded-xl border-4 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
               src={getProfilePictureUrl()}
@@ -106,7 +108,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
           ) : (
             <AvatarFallback className="bg-primary/5">
               <User 
-                className="w-12 h-12 text-primary/50"
+                className="w-10 h-10 text-primary/50"
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -133,16 +135,13 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         </div>
       </div>
 
-      <Separator className="my-4" />
+      <Separator className="my-3" />
 
-      <div className="grid grid-cols-1 gap-6 flex-1">
+      <div className="grid grid-cols-1 gap-3 flex-1">
         {/* Subjects Section */}
-        <div className="bg-purple-soft/10 p-4 rounded-lg">
-          <h4 className="font-semibold flex items-center gap-2 mb-3">
-            <Book className="w-4 h-4" />
-            {t("subjects")}
-          </h4>
-          <div className="flex flex-wrap gap-2">
+        <Section>
+          <SectionHeader icon={Book} title={t("subjects")} />
+          <div className="flex flex-wrap gap-2 mt-3">
             {teacher.teacher_subjects?.map((subjectData: any) => (
               <Badge
                 key={subjectData.subject.id}
@@ -153,15 +152,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
               </Badge>
             ))}
           </div>
-        </div>
+        </Section>
 
         {/* School Levels Section */}
-        <div className="bg-purple-soft/10 p-4 rounded-lg">
-          <h4 className="font-semibold flex items-center gap-2 mb-3">
-            <GraduationCap className="w-4 h-4" />
-            {t("schoolLevels")}
-          </h4>
-          <div className="flex flex-wrap gap-2">
+        <Section>
+          <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
+          <div className="flex flex-wrap gap-2 mt-3">
             {teacher.teacher_school_levels?.map((level: any, index: number) => (
               <Badge
                 key={index}
@@ -172,16 +168,13 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
               </Badge>
             ))}
           </div>
-        </div>
+        </Section>
 
         {/* Student Cities Section */}
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-          <div className="bg-purple-soft/10 p-4 rounded-lg">
-            <h4 className="font-semibold flex items-center gap-2 mb-3">
-              <MapPin className="w-4 h-4" />
-              {t("availableIn")}
-            </h4>
-            <div className="flex flex-wrap gap-2">
+          <Section>
+            <SectionHeader icon={MapPin} title={t("availableIn")} />
+            <div className="flex flex-wrap gap-2 mt-3">
               {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
                 <Badge
                   key={index}
@@ -192,12 +185,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
                 </Badge>
               ))}
             </div>
-          </div>
+          </Section>
         )}
 
         {/* Teaching Locations Section */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
-          <div className="bg-purple-soft/10 p-4 rounded-lg mt-auto">
+          <div className="mt-auto">
             <TeacherLocations locations={teacher.teacher_locations} />
           </div>
         )}
