@@ -18,7 +18,7 @@ export const TeacherContactInfo = ({
   facebookProfile,
 }: TeacherContactInfoProps) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1 mt-2">
       {showEmail && email && (
         <a 
           href={`mailto:${email}`}

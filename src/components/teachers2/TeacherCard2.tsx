@@ -95,9 +95,9 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   };
 
   return (
-    <Card className="p-4 flex flex-col h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      {/* Header Section */}
-      <div className="flex items-start gap-4 mb-4">
+    <Card className="p-4 flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
+      {/* Header Section with fixed height */}
+      <div className="h-[140px] flex items-start gap-4 mb-4">
         <Avatar className="w-20 h-20 rounded-xl border-4 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
@@ -141,12 +141,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {/* Subjects Section */}
         <Section>
           <SectionHeader icon={Book} title={t("subjects")} />
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
             {teacher.teacher_subjects?.map((subjectData: any) => (
               <Badge
                 key={subjectData.subject.id}
                 variant="outline"
-                className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
+                className="bg-primary/10 text-primary border-none"
               >
                 {getLocalizedName(subjectData.subject)}
               </Badge>
@@ -157,12 +157,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {/* School Levels Section */}
         <Section>
           <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
             {teacher.teacher_school_levels?.map((level: any, index: number) => (
               <Badge
                 key={index}
                 variant="outline"
-                className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
+                className="bg-primary/10 text-primary border-none"
               >
                 {getTranslatedLevel(level.school_level)}
               </Badge>
@@ -174,12 +174,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
           <Section>
             <SectionHeader icon={MapPin} title={t("availableIn")} />
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
               {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
                 <Badge
                   key={index}
                   variant="outline"
-                  className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none"
+                  className="bg-primary/10 text-primary border-none"
                 >
                   {getTranslatedCityName(cityData.city_name)}
                 </Badge>
