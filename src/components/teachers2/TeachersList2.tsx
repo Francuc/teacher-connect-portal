@@ -41,6 +41,7 @@ export const TeachersList2 = () => {
       }
 
       console.log("Teachers data fetched:", data?.length);
+      console.log("Teachers data details:", data);
       return data || [];
     }
   });
