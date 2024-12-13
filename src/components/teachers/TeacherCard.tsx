@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User, BookOpen, GraduationCap } from "lucide-react";
+import { MapPin, User, BookOpen, GraduationCap, Euro } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeacherContact } from "./card/TeacherContact";
@@ -88,7 +88,8 @@ export const TeacherCard = ({
                   className="bg-primary/10 text-primary border-none flex items-center gap-2"
                 >
                   <span>{location.location_type}</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold flex items-center">
+                    <Euro className="w-3 h-3 mr-1" />
                     {formatPrice(location.price_per_hour)}
                   </span>
                 </Badge>
@@ -133,6 +134,27 @@ export const TeacherCard = ({
                   className="bg-secondary/10 text-secondary border-none"
                 >
                   {level.school_level}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Student Cities */}
+        {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="font-semibold flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {t("availableIn")}
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {teacher.teacher_student_cities.map((cityData: any, index: number) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="bg-purple-soft text-purple-vivid border-none"
+                >
+                  {cityData.city_name}
                 </Badge>
               ))}
             </div>
