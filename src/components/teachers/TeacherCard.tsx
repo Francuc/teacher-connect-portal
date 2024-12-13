@@ -7,6 +7,7 @@ import { TeacherHeader } from "./card/TeacherHeader";
 import { TeacherSubjects } from "./card/TeacherSubjects";
 import { TeacherLevels } from "./card/TeacherLevels";
 import { TeacherLocations } from "./card/TeacherLocations";
+import { TeacherDetails } from "./card/TeacherDetails";
 
 interface TeacherCardProps {
   teacher: any;
@@ -48,6 +49,12 @@ export const TeacherCard = ({
           <TeacherLocations 
             teacher={teacher}
             getLocalizedName={getLocalizedName}
+          />
+
+          <TeacherDetails
+            teacher={teacher}
+            getLocalizedName={getLocalizedName}
+            formatPrice={formatPrice}
           />
         </div>
 
