@@ -18,6 +18,31 @@ export const getRandomCity = async () => {
   return cities[Math.floor(Math.random() * cities.length)].id;
 };
 
+export const getRandomCities = async () => {
+  const { data: cities, error } = await supabase
+    .from('cities')
+    .select('id')
+    .limit(100);
+
+  if (error) {
+    console.error('Error fetching cities:', error);
+    throw error;
+  }
+
+  if (!cities || cities.length === 0) {
+    throw new Error('No cities found in the database');
+  }
+
+  // Randomly decide how many cities to select (0-6)
+  const numCities = Math.floor(Math.random() * 7); // 0 to 6
+  
+  // Shuffle and slice the array to get random cities
+  return cities
+    .sort(() => 0.5 - Math.random())
+    .slice(0, numCities)
+    .map(city => city.id);
+};
+
 export const getRandomSubjects = async (count: number = 2) => {
   const { data: subjects, error } = await supabase
     .from('subjects')

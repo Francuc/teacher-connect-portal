@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { supabase } from "./supabase";
 import { uploadProfilePicture } from "./teachers/avatarUtils";
-import { getRandomCity, getRandomSubjects, getRandomSchoolLevels } from "./teachers/databaseUtils";
+import { getRandomCity, getRandomSubjects, getRandomSchoolLevels, getRandomCities } from "./teachers/databaseUtils";
 import { getRandomPrice, generateTeacherData } from "./teachers/teacherUtils";
 
 const createRandomTeacher = async () => {
@@ -12,6 +12,10 @@ const createRandomTeacher = async () => {
     const subjectIds = await getRandomSubjects();
     const schoolLevels = await getRandomSchoolLevels();
     const teacherData = generateTeacherData();
+    
+    // Get random number of cities (0-6)
+    const studentCities = await getRandomCities();
+    const hasStudentCities = studentCities.length > 0;
 
     // Create teacher profile
     const { data: teacher, error: teacherError } = await supabase
@@ -53,9 +57,10 @@ const createRandomTeacher = async () => {
     if (levelsError) throw levelsError;
 
     // Add teaching locations with prices
+    // Only include "Student's Place" if there are student cities
     const locations = [
       { type: "Teacher's Place", price: getRandomPrice() },
-      { type: "Student's Place", price: getRandomPrice() },
+      ...(hasStudentCities ? [{ type: "Student's Place", price: getRandomPrice() }] : []),
       { type: "Online", price: getRandomPrice() }
     ];
 
@@ -70,6 +75,20 @@ const createRandomTeacher = async () => {
       );
 
     if (locationsError) throw locationsError;
+
+    // Add student cities if any
+    if (studentCities.length > 0) {
+      const { error: citiesError } = await supabase
+        .from('teacher_student_cities')
+        .insert(
+          studentCities.map(cityId => ({
+            teacher_id: userId,
+            city_id: cityId
+          }))
+        );
+
+      if (citiesError) throw citiesError;
+    }
 
     return teacher;
   } catch (error) {
