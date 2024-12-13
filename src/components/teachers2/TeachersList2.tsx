@@ -9,7 +9,7 @@ export const TeachersList2 = () => {
   const { data: teachers = [], isLoading } = useQuery({
     queryKey: ["teachers2"],
     queryFn: async () => {
-      console.log("Fetching teachers data with all relations...");
+      console.log("Fetching all teachers data without limits...");
       
       const { data, error } = await supabase
         .from('teachers')
@@ -32,7 +32,8 @@ export const TeachersList2 = () => {
           teacher_student_cities (
             city_name
           )
-        `);
+        `)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error("Error fetching teachers:", error);
