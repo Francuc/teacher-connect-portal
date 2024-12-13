@@ -5,6 +5,7 @@ import { MapPin, User, GraduationCap, BookOpen, Euro, Phone, Mail, Facebook } fr
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 interface TeacherCardProps {
   teacher: any;
@@ -24,17 +25,21 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
 
+  const profilePictureUrl = teacher.profile_picture_url 
+    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+    : null;
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-4">
-        {/* Header Section */}
+        {/* Header Section with Profile Picture and Basic Info */}
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
-            {teacher.profile_picture_url ? (
+            {profilePictureUrl ? (
               <AvatarImage 
-                src={teacher.profile_picture_url} 
+                src={profilePictureUrl} 
                 alt={`${teacher.first_name} ${teacher.last_name}`}
-                className="object-cover"
+                className="aspect-square h-full w-full object-cover"
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
@@ -46,11 +51,13 @@ export const TeacherCard = ({
             <h3 className="text-xl font-bold text-purple-dark">
               {teacher.first_name} {teacher.last_name}
             </h3>
+            
+            {/* Location Information */}
             {teacher.city && (
-              <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+              <div className="flex items-center gap-2 mt-1 text-muted-foreground">
                 <MapPin className="w-4 h-4" />
-                {getLocalizedName(teacher.city)}
-              </p>
+                <span>{getLocalizedName(teacher.city)}, {getLocalizedName(teacher.city.region)}</span>
+              </div>
             )}
             
             {/* Contact Information */}
@@ -83,22 +90,25 @@ export const TeacherCard = ({
         {teacher.bio && (
           <div>
             <h4 className="font-semibold mb-2">{t("biography")}</h4>
-            <p className="text-sm text-muted-foreground">{teacher.bio}</p>
+            <p className="text-sm text-muted-foreground line-clamp-3">{teacher.bio}</p>
           </div>
         )}
 
         {/* Teaching Locations and Prices */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
           <div>
-            <h4 className="font-semibold mb-2">{t("teachingLocations")}</h4>
+            <h4 className="font-semibold mb-2 flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              {t("teachingLocations")}
+            </h4>
             <div className="space-y-2">
               {teacher.teacher_locations.map((location: any) => (
                 <div key={location.id} className="flex justify-between items-center text-sm">
                   <span>{location.location_type}</span>
-                  <div className="flex items-center gap-1 text-purple-vivid">
-                    <Euro className="w-4 h-4" />
-                    <span>{formatPrice(location.price_per_hour)}</span>
-                  </div>
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <Euro className="w-3 h-3" />
+                    {formatPrice(location.price_per_hour)}
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -114,12 +124,13 @@ export const TeacherCard = ({
             </h4>
             <div className="flex flex-wrap gap-2">
               {teacher.teacher_subjects.map((subjectData: any) => (
-                <span
+                <Badge
                   key={subjectData.subject.id}
-                  className="px-3 py-1 bg-purple-soft text-purple-vivid rounded-full text-sm font-medium"
+                  variant="outline"
+                  className="bg-purple-soft/50 text-purple-vivid border-none"
                 >
                   {getLocalizedName(subjectData.subject)}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
@@ -134,12 +145,13 @@ export const TeacherCard = ({
             </h4>
             <div className="flex flex-wrap gap-2">
               {teacher.teacher_school_levels.map((level: any) => (
-                <span
+                <Badge
                   key={level.id}
-                  className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                  variant="outline"
+                  className="bg-accent/10 text-accent border-none"
                 >
                   {level.school_level}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
@@ -154,12 +166,13 @@ export const TeacherCard = ({
             </h4>
             <div className="flex flex-wrap gap-2">
               {teacher.teacher_student_cities.map((cityData: any) => (
-                <span
+                <Badge
                   key={cityData.id}
-                  className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-none"
                 >
                   {cityData.city_name}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
