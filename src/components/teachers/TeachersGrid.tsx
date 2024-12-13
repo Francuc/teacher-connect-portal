@@ -1,3 +1,5 @@
+import { TeacherCard } from "./TeacherCard";
+
 interface TeachersGridProps {
   teachers: any[];
   isLoading: boolean;
