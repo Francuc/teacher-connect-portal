@@ -15,6 +15,9 @@ interface TeachersListProps {
 export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => {
   const { language } = useLanguage();
   const { data: teachers = [], isLoading: isLoadingTeachers } = useTeachersData();
+  
+  console.log('TeachersList - Current teachers data:', teachers);
+
   const {
     selectedSubject,
     setSelectedSubject,
@@ -79,6 +82,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     getTeacherLocationWithLanguage,
     getCityTranslation
   );
+
+  console.log('TeachersList - Filtered teachers:', filteredTeachers);
 
   return (
     <div className="container mx-auto px-4 space-y-8">

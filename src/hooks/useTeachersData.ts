@@ -5,7 +5,7 @@ export const useTeachersData = () => {
   return useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
-      console.log('Fetching teachers data with all relations...');
+      console.log('Fetching teachers data...');
       const { data: teachersData, error: teachersError } = await supabase
         .from('teachers')
         .select(`
@@ -49,6 +49,8 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
+      console.log('Teachers data received:', teachersData);
+
       // Process profile pictures
       const processedTeachers = teachersData.map(teacher => {
         if (!teacher.profile_picture_url) {
@@ -61,6 +63,7 @@ export const useTeachersData = () => {
         };
       });
 
+      console.log('Processed teachers data:', processedTeachers);
       return processedTeachers;
     },
   });
