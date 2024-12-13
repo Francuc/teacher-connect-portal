@@ -23,7 +23,7 @@ export const useTeachersData = () => {
             )
           ),
           teacher_subjects(
-            id,
+            subject_id,
             subject:subjects(
               id,
               name_en,
@@ -60,12 +60,9 @@ export const useTeachersData = () => {
           return teacher;
         }
 
-        const profilePictureUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`;
-        console.log(`Generated profile picture URL for teacher ${teacher.id}:`, profilePictureUrl);
-
         return {
           ...teacher,
-          profile_picture_url: profilePictureUrl
+          profile_picture_url: teacher.profile_picture_url
         };
       });
 
