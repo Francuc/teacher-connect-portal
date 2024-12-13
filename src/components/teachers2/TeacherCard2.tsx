@@ -10,6 +10,7 @@ import { TeacherLocations } from "./card/TeacherLocations";
 import { TeacherContactInfo } from "./card/TeacherContactInfo";
 import { Section } from "./card/Section";
 import { SectionHeader } from "./card/SectionHeader";
+import { useNavigate } from "react-router-dom";
 
 interface TeacherCard2Props {
   teacher: any;
@@ -17,6 +18,7 @@ interface TeacherCard2Props {
 
 export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
 
   const { data: schoolLevels = [] } = useQuery({
     queryKey: ['schoolLevels'],
@@ -94,8 +96,15 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
     return publicUrl;
   };
 
+  const handleCardClick = () => {
+    navigate(`/profile/${teacher.user_id}`);
+  };
+
   return (
-    <Card className="p-3 flex flex-col h-[472px]">
+    <Card 
+      className="p-3 flex flex-col h-[472px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50"
+      onClick={handleCardClick}
+    >
       {/* Header Section with increased height by 5% */}
       <div className="h-[89px] flex items-start gap-3 mb-2">
         <Avatar className="w-[100px] h-[100px] rounded-xl border-2 border-purple-soft">
