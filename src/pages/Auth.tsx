@@ -13,11 +13,18 @@ const AuthPage = () => {
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
+      } else if (event === 'USER_NOT_FOUND') {
+        setView("sign_up");
+        toast({
+          title: "Account not found",
+          description: "This account doesn't exist. Please sign up instead.",
+          variant: "destructive",
+        });
       }
     });
 
@@ -30,7 +37,18 @@ const AuthPage = () => {
     return () => {
       authSubscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, toast]);
+
+  const handleError = (error: Error) => {
+    if (error.message.includes('body stream already read')) {
+      setView("sign_up");
+      toast({
+        title: "Account not found",
+        description: "This account doesn't exist. Please sign up instead.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
@@ -51,6 +69,7 @@ const AuthPage = () => {
         }}
         theme="light"
         providers={[]}
+        onError={handleError}
         localization={{
           variables: {
             sign_in: {
