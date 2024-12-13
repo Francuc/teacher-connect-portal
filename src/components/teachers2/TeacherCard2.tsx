@@ -15,9 +15,10 @@ import { useNavigate } from "react-router-dom";
 
 interface TeacherCard2Props {
   teacher: any;
+  isDisabled?: boolean;
 }
 
-export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
+export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props) => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
 
@@ -104,8 +105,10 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
 
   return (
     <Card 
-      className="p-3 flex flex-col h-[472px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50"
-      onClick={handleCardClick}
+      className={`p-3 flex flex-col h-[472px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50 ${
+        isDisabled ? 'opacity-50 pointer-events-none grayscale' : 'cursor-pointer'
+      }`}
+      onClick={isDisabled ? undefined : handleCardClick}
     >
       {/* Header Section */}
       <div className="h-[89px] flex items-start gap-3 mb-2">

@@ -6,9 +6,15 @@ interface TeachersGrid2Props {
   teachers: any[];
   isLoading: boolean;
   language: string;
+  selectedSubject: string;
 }
 
-export const TeachersGrid2 = ({ teachers, isLoading, language }: TeachersGrid2Props) => {
+export const TeachersGrid2 = ({ 
+  teachers, 
+  isLoading, 
+  language,
+  selectedSubject 
+}: TeachersGrid2Props) => {
   const { t } = useLanguage();
 
   if (isLoading) {
@@ -34,12 +40,18 @@ export const TeachersGrid2 = ({ teachers, isLoading, language }: TeachersGrid2Pr
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {teachers.map((teacher) => (
-        <TeacherCard2
-          key={teacher.id}
-          teacher={teacher}
-        />
-      ))}
+      {teachers.map((teacher) => {
+        const isDisabled = selectedSubject !== "all" && 
+          !teacher.teacher_subjects?.some((s: any) => s.subject?.id === selectedSubject);
+        
+        return (
+          <TeacherCard2
+            key={teacher.id}
+            teacher={teacher}
+            isDisabled={isDisabled}
+          />
+        );
+      })}
     </div>
   );
 };
