@@ -71,16 +71,6 @@ const AuthPage = () => {
             },
           },
         }}
-        onAuthError={(error) => {
-          if (error.message === "Invalid login credentials") {
-            setView("sign_up");
-            toast({
-              title: "Account not found",
-              description: "This account doesn't exist. Please sign up instead.",
-              variant: "destructive",
-            });
-          }
-        }}
       />
     </div>
   );
