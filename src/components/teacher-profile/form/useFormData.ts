@@ -10,27 +10,27 @@ export const useFormData = (userId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+352 123 456 789",
-    facebookProfile: "https://facebook.com/johndoe",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    facebookProfile: "",
     showEmail: true,
     showPhone: true,
     showFacebook: true,
-    bio: "I am a passionate teacher with experience in multiple subjects. I enjoy helping students reach their full potential through personalized teaching methods.",
+    bio: "",
     profilePicture: null,
     profilePictureUrl: "",
     subjects: [],
-    schoolLevels: ["Primary School", "Middle School"],
-    teachingLocations: ["Teacher's Place", "Student's Place", "Online"],
+    schoolLevels: [],
+    teachingLocations: [],
     cityId: null,
     studentRegions: [],
     studentCities: [],
     pricePerHour: {
-      teacherPlace: "50",
-      studentPlace: "60",
-      online: "45",
+      teacherPlace: "",
+      studentPlace: "",
+      online: "",
     },
   });
 
@@ -98,6 +98,22 @@ export const useFormData = (userId?: string) => {
       fetchDefaultCity();
     }
   }, [userId, t, toast]);
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.email) {
+        setFormData(prev => ({
+          ...prev,
+          email: session.user.email || ""
+        }));
+      }
+    };
+
+    if (!userId) {
+      fetchUserEmail();
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (userId) {
@@ -196,7 +212,7 @@ export const useFormData = (userId?: string) => {
             profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: s.subject[0]
+              subject: s.subject
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],

@@ -10,7 +10,24 @@ const AuthPage = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate("/");
+        // Check if user has a teacher profile
+        const checkProfile = async () => {
+          const { data: teacherProfile } = await supabase
+            .from('teachers')
+            .select('user_id')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (teacherProfile) {
+            // If profile exists, go to edit page
+            navigate(`/profile/edit/${session.user.id}`);
+          } else {
+            // If no profile, go to create new profile page
+            navigate("/profile/new");
+          }
+        };
+        
+        checkProfile();
       }
     });
 
