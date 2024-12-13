@@ -34,7 +34,12 @@ export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
             />
           ) : (
             <AvatarFallback className="bg-primary/5">
-              <User className="w-12 h-12 text-primary/50" />
+              <User 
+                className="w-12 h-12 text-primary/50"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </AvatarFallback>
           )}
         </Avatar>
