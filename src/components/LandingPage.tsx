@@ -1,11 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BookOpen } from "lucide-react";
-import { TeachersList } from "./TeachersList";
-import { useState } from "react";
+import { TeachersList2 } from "./teachers2/TeachersList2";
 
 export const LandingPage = () => {
   const { t } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
@@ -30,7 +28,7 @@ export const LandingPage = () => {
 
         {/* Teachers List Section */}
         <div className="py-16 bg-gradient-to-b from-white to-purple.soft/20">
-          <TeachersList initialSearchQuery={searchQuery} />
+          <TeachersList2 />
         </div>
       </main>
     </div>
