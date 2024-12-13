@@ -40,7 +40,8 @@ export const TeachersList2 = ({ selectedSubject = "all" }: TeachersList2Props) =
         .order('created_at', { ascending: false });
 
       if (selectedSubject !== "all") {
-        query = query.eq('teacher_subjects.subject_id', selectedSubject);
+        // Filter teachers who have the selected subject
+        query = query.eq('teacher_subjects.subject.id', selectedSubject);
       }
 
       const { data, error } = await query;
