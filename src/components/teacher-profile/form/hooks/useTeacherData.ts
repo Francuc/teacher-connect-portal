@@ -16,82 +16,76 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           const { data: teacherExists, error: checkError } = await supabase
             .from('teachers')
             .select('user_id')
-            .eq('user_id', userId);
+            .eq('user_id', userId)
+            .single();
 
-          if (checkError) throw checkError;
-
-          // If no teacher profile exists, don't try to fetch data
-          if (!teacherExists || teacherExists.length === 0) {
+          if (checkError) {
             console.log('No existing teacher profile found for userId:', userId);
             return;
           }
 
-          const [
-            { data: profile },
-            { data: subjects },
-            { data: schoolLevels },
-            { data: locations },
-            { data: studentRegions },
-            { data: studentCities }
-          ] = await Promise.all([
-            supabase
-              .from('teachers')
-              .select(`
-                *,
-                city:cities (
+          // Fetch teacher profile with all related data
+          const { data: profile, error: profileError } = await supabase
+            .from('teachers')
+            .select(`
+              *,
+              city:cities (
+                id,
+                name_en,
+                name_fr,
+                name_lb,
+                region:regions (
                   id,
                   name_en,
                   name_fr,
-                  name_lb,
-                  region:regions (
-                    id,
-                    name_en,
-                    name_fr,
-                    name_lb
-                  )
+                  name_lb
                 )
-              `)
-              .eq('user_id', userId)
-              .single(),
-            supabase
-              .from('teacher_subjects')
-              .select(`
-                subject_id,
+              ),
+              teacher_subjects (
                 subject:subjects (
                   id,
                   name_en,
                   name_fr,
                   name_lb
                 )
-              `)
-              .eq('teacher_id', userId),
-            supabase
-              .from('teacher_school_levels')
-              .select('school_level')
-              .eq('teacher_id', userId),
-            supabase
-              .from('teacher_locations')
-              .select('*')
-              .eq('teacher_id', userId),
-            supabase
-              .from('teacher_student_regions')
-              .select('region_name')
-              .eq('teacher_id', userId),
-            supabase
-              .from('teacher_student_cities')
-              .select('city_name')
-              .eq('teacher_id', userId)
-          ]);
+              ),
+              teacher_school_levels (
+                school_level
+              ),
+              teacher_locations (
+                location_type,
+                price_per_hour
+              ),
+              teacher_student_regions (
+                region_name
+              ),
+              teacher_student_cities (
+                city_name
+              )
+            `)
+            .eq('user_id', userId)
+            .single();
+
+          if (profileError) {
+            console.error('Error fetching teacher profile:', profileError);
+            toast({
+              title: t("error"),
+              description: t("errorLoadingProfile"),
+              variant: "destructive",
+            });
+            return;
+          }
 
           if (!profile) return;
 
+          // Transform the data to match the form structure
           const pricePerHour = {
             teacherPlace: "",
             studentPlace: "",
             online: ""
           };
 
-          locations?.forEach(location => {
+          profile.teacher_locations?.forEach((location: any) => {
             switch (location.location_type) {
               case "Teacher's Place":
                 pricePerHour.teacherPlace = location.price_per_hour.toString();
@@ -105,6 +99,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
             }
           });
 
+          // Map the data to the form structure
           setFormData({
             firstName: profile.first_name,
             lastName: profile.last_name,
@@ -117,19 +112,20 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
             bio: profile.bio,
             profilePicture: null,
             profilePictureUrl: profile.profile_picture_url || "",
-            subjects: subjects?.map(s => ({
-              subject_id: s.subject_id,
-              subject: s.subject[0] // Access the first element of the array
+            subjects: profile.teacher_subjects?.map((s: any) => ({
+              subject_id: s.subject.id,
+              subject: s.subject
             })) || [],
-            schoolLevels: schoolLevels?.map(l => l.school_level) || [],
-            teachingLocations: locations?.map(l => l.location_type) || [],
-            cityId: profile.city_id,
-            studentRegions: studentRegions?.map(r => r.region_name) || [],
-            studentCities: studentCities?.map(c => c.city_name) || [],
+            schoolLevels: profile.teacher_school_levels?.map((l: any) => l.school_level) || [],
+            teachingLocations: profile.teacher_locations?.map((l: any) => l.location_type) || [],
+            cityId: profile.city_id || null,
+            studentRegions: profile.teacher_student_regions?.map((r: any) => r.region_name) || [],
+            studentCities: profile.teacher_student_cities?.map((c: any) => c.city_name) || [],
             pricePerHour
           });
+
         } catch (error) {
-          console.error('Error fetching teacher data:', error);
+          console.error('Error in fetchTeacherData:', error);
           toast({
             title: t("error"),
             description: t("errorLoadingProfile"),
