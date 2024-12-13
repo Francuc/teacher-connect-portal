@@ -10,7 +10,7 @@ export const ProfileButton = () => {
 
   if (session) {
     return (
-      <Link to="/profile">
+      <Link to={`/profile/${session.user.id}`}>
         <Button variant="outline" className="h-12 px-6 text-base">
           {t("myProfile")}
         </Button>
