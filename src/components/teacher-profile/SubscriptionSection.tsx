@@ -164,13 +164,9 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
         )}
 
         <SubscriptionActions 
-          hasValidSubscription={hasValidSubscription}
-          status={profile.subscription_status}
           isLoading={isLoading}
+          onToggleStatus={handleToggleProfileStatus}
           onDelete={handleDeleteProfile}
-          endDate={profile.subscription_end_date}
-          type={profile.subscription_type}
-          promoCode={profile.promo_code}
         />
       </CardContent>
     </Card>
