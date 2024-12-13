@@ -11,7 +11,7 @@ export const TeachersList2 = () => {
     queryFn: async () => {
       console.log("Fetching teachers data with all relations...");
       
-      const { data: teachersData, error: teachersError } = await supabase
+      const { data, error } = await supabase
         .from('teachers')
         .select(`
           *,
@@ -34,44 +34,13 @@ export const TeachersList2 = () => {
           )
         `);
 
-      if (teachersError) {
-        console.error("Error fetching teachers:", teachersError);
-        throw teachersError;
+      if (error) {
+        console.error("Error fetching teachers:", error);
+        throw error;
       }
 
-      // Fetch all users from profiles table
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
-
-      if (profilesError) {
-        console.error("Error fetching profiles:", profilesError);
-        throw profilesError;
-      }
-
-      // Map profiles to teachers or create placeholder teacher objects
-      const allUsers = profilesData.map(profile => {
-        const existingTeacher = teachersData?.find(t => t.user_id === profile.id);
-        if (existingTeacher) {
-          return existingTeacher;
-        }
-        // Return a placeholder teacher object for users without teacher profiles
-        return {
-          id: profile.id,
-          user_id: profile.id,
-          first_name: "New",
-          last_name: "Teacher",
-          email: "",
-          bio: "No teacher profile yet",
-          teacher_subjects: [],
-          teacher_school_levels: [],
-          teacher_locations: [],
-          teacher_student_cities: [],
-        };
-      });
-
-      console.log("All users data fetched:", allUsers?.length);
-      return allUsers;
+      console.log("Teachers data fetched:", data?.length);
+      return data;
     }
   });
 
