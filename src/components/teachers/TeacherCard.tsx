@@ -148,7 +148,7 @@ export const TeacherCard = ({
         <div className="mt-auto pt-4 border-t flex justify-between items-center">
           {lowestPrice && (
             <div className="text-lg font-semibold text-green-600">
-              {t("startingAt")} {formatPrice(lowestPrice)}/h
+              {t("priceStartingAt")} {formatPrice(lowestPrice)}/h
             </div>
           )}
           <Button 
