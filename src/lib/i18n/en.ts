@@ -100,4 +100,7 @@ export const en: Translation = {
   enterPromoCode: "Enter promo code",
   apply: "Apply",
   deleteProfile: "Delete Profile",
+  monthly: "Monthly",
+  yearly: "Yearly",
+  promoSubscription: "Promotional",
 };

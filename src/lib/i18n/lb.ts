@@ -100,4 +100,7 @@ export const lb: Translation = {
   enterPromoCode: "Promo Code aginn",
   apply: "Uwennen",
   deleteProfile: "Profil läschen",
+  monthly: "Méintlech",
+  yearly: "Järlech",
+  promoSubscription: "Promotioun",
 };

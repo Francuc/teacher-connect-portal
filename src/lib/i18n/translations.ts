@@ -104,6 +104,9 @@ export type Translation = {
   enterPromoCode: string;
   apply: string;
   deleteProfile: string;
+  monthly: string;
+  yearly: string;
+  promoSubscription: string;
 };
 
 export type TranslationKey = keyof Translation;
