@@ -18,18 +18,23 @@ const AuthPage = () => {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
-      } else if (event === 'USER_NOT_FOUND') {
-        toast({
-          title: t("error"),
-          description: t("noAccount"),
-          variant: "destructive",
-        });
-        setView("sign_up");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, toast, t]);
+  }, [navigate]);
+
+  // Handle auth errors separately
+  const handleAuthError = async (error: Error) => {
+    if (error.message.includes('Invalid login credentials')) {
+      toast({
+        title: t("error"),
+        description: t("noAccount"),
+        variant: "destructive",
+      });
+      setView("sign_up");
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
@@ -69,16 +74,6 @@ const AuthPage = () => {
               loading_button_label: 'Signing up ...',
             },
           },
-        }}
-        onError={(error) => {
-          if (error.message.includes('Invalid login credentials')) {
-            toast({
-              title: t("error"),
-              description: t("noAccount"),
-              variant: "destructive",
-            });
-            setView("sign_up");
-          }
         }}
       />
     </div>
