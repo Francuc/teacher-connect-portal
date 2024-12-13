@@ -4,18 +4,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface TeachersGridProps {
   teachers: any[];
   isLoading?: boolean;
+  getLocalizedName: (item: any) => string;
+  formatPrice: (price: number) => string;
 }
 
-export const TeachersGrid = ({ teachers, isLoading = false }: TeachersGridProps) => {
-  const { t, language } = useLanguage();
-
-  const getLocalizedName = (item: any) => {
-    return item?.[`name_${language}`] || item?.name_en;
-  };
-
-  const formatPrice = (price: number) => {
-    return `${price}€/h`;
-  };
+export const TeachersGrid = ({ 
+  teachers, 
+  isLoading = false,
+  getLocalizedName,
+  formatPrice
+}: TeachersGridProps) => {
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
