@@ -1,0 +1,181 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import { CreditCard, Gift } from "lucide-react";
+
+interface SubscriptionSectionProps {
+  profile: any;
+  isOwnProfile: boolean;
+}
+
+export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSectionProps) => {
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [promoCode, setPromoCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (priceId: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId }
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: t("error"),
+        description: t("error"),
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePromoCode = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.functions.invoke('check-promo', {
+        body: { promoCode, userId: profile.user_id }
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        toast({
+          title: t("success"),
+          description: t("promoCodeApplied"),
+        });
+        window.location.reload();
+      } else {
+        toast({
+          title: t("error"),
+          description: t("invalidPromoCode"),
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error checking promo code:', error);
+      toast({
+        title: t("error"),
+        description: t("error"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!window.confirm(t("confirmDeleteProfile"))) return;
+
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.functions.invoke('delete-profile', {
+        body: { userId: profile.user_id }
+      });
+
+      if (error) throw error;
+
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      toast({
+        title: t("error"),
+        description: t("error"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isOwnProfile) return null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <CreditCard className="w-5 h-5" />
+          {t("subscription")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-sm font-medium">
+            {t("status")}: {" "}
+            <span className={profile.subscription_status === 'active' ? 'text-green-600' : 'text-red-600'}>
+              {profile.subscription_status === 'active' ? t("active") : t("inactive")}
+            </span>
+          </p>
+          {profile.subscription_end_date && (
+            <p className="text-sm text-muted-foreground">
+              {t("validUntil")}: {new Date(profile.subscription_end_date).toLocaleDateString()}
+            </p>
+          )}
+          {profile.subscription_type && (
+            <p className="text-sm text-muted-foreground">
+              {t("subscriptionType")}: {profile.subscription_type}
+            </p>
+          )}
+          {profile.promo_code && (
+            <p className="text-sm text-muted-foreground">
+              {t("activePromoCode")}: {profile.promo_code}
+            </p>
+          )}
+        </div>
+
+        {profile.subscription_status !== 'active' && (
+          <>
+            <div className="grid gap-4">
+              <Button 
+                onClick={() => handleSubscribe('price_1OvGrKHhUVFUXGBw0Ql6Iqxs')}
+                className="w-full"
+              >
+                {t("subscribeMonthly")} - 19€
+              </Button>
+              <Button 
+                onClick={() => handleSubscribe('price_1OvGrKHhUVFUXGBw7jxVlwxD')}
+                className="w-full"
+              >
+                {t("subscribeYearly")} - 199€
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Gift className="w-4 h-4" />
+              <Input
+                placeholder={t("enterPromoCode")}
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+              />
+              <Button 
+                onClick={handlePromoCode}
+                disabled={isLoading || !promoCode}
+              >
+                {t("apply")}
+              </Button>
+            </div>
+          </>
+        )}
+
+        <div className="pt-4 border-t">
+          <Button
+            variant="destructive"
+            onClick={handleDeleteProfile}
+            disabled={isLoading}
+            className="w-full"
+          >
+            {t("deleteProfile")}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};

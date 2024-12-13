@@ -5,6 +5,7 @@ import { BiographySection } from "./BiographySection";
 import { SubjectsSection } from "./SubjectsSection";
 import { SchoolLevelsSection } from "./SchoolLevelsSection";
 import { LocationsSection } from "./profile-sections/LocationsSection";
+import { SubscriptionSection } from "./SubscriptionSection";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -103,14 +104,12 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .eq('teacher_id', userId)
       ]);
 
-      const subjects = subjectsData?.map(item => ({
-        subject_id: item.subject_id,
-        subject: item.subject[0]
-      })) || [];
-
       return {
         profile,
-        subjects,
+        subjects: subjectsData?.map(item => ({
+          subject_id: item.subject_id,
+          subject: item.subject[0]
+        })) || [],
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
@@ -129,12 +128,14 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
     navigate(`/profile/edit/${userId}`);
   };
 
+  const isOwnProfile = session?.user?.id === userId;
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="grid gap-6">
         <div className="flex justify-between items-start">
           <PersonalSection profile={teacherData.profile} />
-          {session?.user?.id === userId && (
+          {isOwnProfile && (
             <Button 
               onClick={handleEditClick}
               className="bg-primary hover:bg-primary/90 text-white gap-2"
@@ -145,6 +146,10 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           )}
         </div>
         <div className="grid grid-cols-1 gap-6">
+          <SubscriptionSection 
+            profile={teacherData.profile}
+            isOwnProfile={isOwnProfile}
+          />
           <BiographySection bio={teacherData.profile.bio} />
           <SubjectsSection subjects={teacherData.subjects} />
           <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />

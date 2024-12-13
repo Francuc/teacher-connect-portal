@@ -1,4 +1,13 @@
 project_id = "qhqtflpajutstecqajbl"
 
-[functions.create-random-teachers]
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.webhook]
 verify_jwt = false
+
+[functions.check-promo]
+verify_jwt = true
+
+[functions.delete-profile]
+verify_jwt = true
