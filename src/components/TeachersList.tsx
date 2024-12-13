@@ -20,7 +20,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
     queryKey: ['teachers'],
     queryFn: async () => {
       console.log('Fetching teachers data...');
-      const { data, error } = await supabase
+      const { data: teachersData, error: teachersError } = await supabase
         .from('teachers')
         .select(`
           *,
@@ -35,50 +35,94 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
               name_fr,
               name_lb
             )
-          ),
-          teacher_subjects(
-            subject:subjects(
-              id,
-              name_en,
-              name_fr,
-              name_lb
-            )
-          ),
-          teacher_school_levels(
-            school_level
-          ),
-          teacher_locations(
-            id,
-            location_type,
-            price_per_hour
-          ),
-          teacher_student_cities(
-            city_name
-          ),
-          teacher_student_regions(
-            region_name
           )
         `);
-      
-      if (error) {
-        console.error('Error fetching teachers:', error);
-        throw error;
+
+      if (teachersError) {
+        console.error('Error fetching teachers:', teachersError);
+        throw teachersError;
       }
 
-      console.log('Raw teachers data:', data);
+      // Fetch subjects for each teacher
+      const teachersWithSubjects = await Promise.all(
+        teachersData.map(async (teacher) => {
+          const { data: subjectsData, error: subjectsError } = await supabase
+            .from('teacher_subjects')
+            .select(`
+              subject:subjects(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
+            `)
+            .eq('teacher_id', teacher.user_id);
 
-      const teachersWithUrls = data.map(teacher => {
-        if (teacher.profile_picture_url) {
+          if (subjectsError) {
+            console.error('Error fetching subjects:', subjectsError);
+            return teacher;
+          }
+
+          // Fetch school levels
+          const { data: levelsData, error: levelsError } = await supabase
+            .from('teacher_school_levels')
+            .select('*')
+            .eq('teacher_id', teacher.user_id);
+
+          if (levelsError) {
+            console.error('Error fetching levels:', levelsError);
+            return { ...teacher, teacher_subjects: subjectsData };
+          }
+
+          // Fetch locations
+          const { data: locationsData, error: locationsError } = await supabase
+            .from('teacher_locations')
+            .select('*')
+            .eq('teacher_id', teacher.user_id);
+
+          if (locationsError) {
+            console.error('Error fetching locations:', locationsError);
+            return { 
+              ...teacher, 
+              teacher_subjects: subjectsData,
+              teacher_school_levels: levelsData 
+            };
+          }
+
+          // Fetch student cities
+          const { data: studentCitiesData, error: citiesError } = await supabase
+            .from('teacher_student_cities')
+            .select('*')
+            .eq('teacher_id', teacher.user_id);
+
+          if (citiesError) {
+            console.error('Error fetching student cities:', citiesError);
+            return {
+              ...teacher,
+              teacher_subjects: subjectsData,
+              teacher_school_levels: levelsData,
+              teacher_locations: locationsData
+            };
+          }
+
+          // Process profile picture URL
+          const profilePictureUrl = teacher.profile_picture_url
+            ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+            : null;
+
           return {
             ...teacher,
-            profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+            profile_picture_url: profilePictureUrl,
+            teacher_subjects: subjectsData,
+            teacher_school_levels: levelsData,
+            teacher_locations: locationsData,
+            teacher_student_cities: studentCitiesData
           };
-        }
-        return teacher;
-      });
-      
-      console.log('Processed teachers data:', teachersWithUrls);
-      return teachersWithUrls || [];
+        })
+      );
+
+      console.log('Processed teachers data:', teachersWithSubjects);
+      return teachersWithSubjects;
     },
   });
 
