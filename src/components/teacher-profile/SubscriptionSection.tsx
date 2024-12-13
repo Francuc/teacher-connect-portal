@@ -149,6 +149,8 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
           endDate={profile.subscription_end_date}
           type={profile.subscription_type}
           promoCode={profile.promo_code}
+          onToggleStatus={handleToggleProfileStatus}
+          isLoading={isLoading}
         />
 
         {profile.subscription_status !== 'active' && !hasValidSubscription && (
