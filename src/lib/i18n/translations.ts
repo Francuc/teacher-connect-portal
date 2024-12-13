@@ -107,6 +107,10 @@ export type Translation = {
   monthly: string;
   yearly: string;
   promoSubscription: string;
+  deactivateProfile: string;
+  activateProfile: string;
+  profileDeactivated: string;
+  profileActivated: string;
 };
 
 export type TranslationKey = keyof Translation;

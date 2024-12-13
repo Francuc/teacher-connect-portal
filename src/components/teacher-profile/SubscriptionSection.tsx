@@ -12,11 +12,12 @@ interface SubscriptionSectionProps {
   isOwnProfile: boolean;
 }
 
-export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSectionProps) => {
+export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: SubscriptionSectionProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [promoCode, setPromoCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [profile, setProfile] = useState(initialProfile);
 
   const handleSubscribe = async (priceId: string) => {
     try {
@@ -72,6 +73,39 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
     }
   };
 
+  const handleToggleProfileStatus = async () => {
+    try {
+      setIsLoading(true);
+      const newStatus = profile.subscription_status === 'active' ? 'inactive' : 'active';
+      
+      const { error } = await supabase
+        .from('teachers')
+        .update({ subscription_status: newStatus })
+        .eq('user_id', profile.user_id);
+
+      if (error) throw error;
+
+      setProfile(prev => ({
+        ...prev,
+        subscription_status: newStatus
+      }));
+
+      toast({
+        title: t("success"),
+        description: t(newStatus === 'active' ? "profileActivated" : "profileDeactivated"),
+      });
+    } catch (error) {
+      console.error('Error toggling profile status:', error);
+      toast({
+        title: t("error"),
+        description: t("error"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleDeleteProfile = async () => {
     if (!window.confirm(t("confirmDeleteProfile"))) return;
 
@@ -86,38 +120,6 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
       window.location.href = '/';
     } catch (error) {
       console.error('Error deleting profile:', error);
-      toast({
-        title: t("error"),
-        description: t("error"),
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleToggleProfileStatus = async () => {
-    try {
-      setIsLoading(true);
-      const { error } = await supabase
-        .from('teachers')
-        .update({ 
-          subscription_status: profile.subscription_status === 'active' ? 'inactive' : 'active' 
-        })
-        .eq('user_id', profile.user_id);
-
-      if (error) throw error;
-
-      toast({
-        title: t("success"),
-        description: profile.subscription_status === 'active' 
-          ? t("profileDeactivated") 
-          : t("profileActivated"),
-      });
-      
-      window.location.reload();
-    } catch (error) {
-      console.error('Error toggling profile status:', error);
       toast({
         title: t("error"),
         description: t("error"),

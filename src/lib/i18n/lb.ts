@@ -103,4 +103,8 @@ export const lb: Translation = {
   monthly: "Méintlech",
   yearly: "Järlech",
   promoSubscription: "Promotioun",
+  deactivateProfile: "Profil deaktivéieren",
+  activateProfile: "Profil aktivéieren",
+  profileDeactivated: "Profil deaktivéiert",
+  profileActivated: "Profil aktivéiert",
 };

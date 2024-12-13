@@ -103,4 +103,8 @@ export const fr: Translation = {
   monthly: "Mensuel",
   yearly: "Annuel",
   promoSubscription: "Promotionnel",
+  deactivateProfile: "Désactiver le profil",
+  activateProfile: "Activer le profil",
+  profileDeactivated: "Profil désactivé",
+  profileActivated: "Profil activé",
 };
