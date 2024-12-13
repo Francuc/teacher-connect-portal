@@ -1,7 +1,6 @@
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
-import { Power } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 interface SubscriptionStatusProps {
   status: string;
@@ -26,12 +25,21 @@ export const SubscriptionStatus = ({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <p className="text-sm font-medium">
-          {t("status")}: {" "}
-          <span className={status === 'active' ? 'text-green-600' : 'text-red-600'}>
-            {status === 'active' ? t("active") : t("inactive")}
-          </span>
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">
+            {t("status")}: {" "}
+            <span className={status === 'active' ? 'text-green-600' : 'text-red-600'}>
+              {status === 'active' ? t("active") : t("inactive")}
+            </span>
+          </p>
+          {hasValidSubscription && onToggleStatus && (
+            <Switch
+              checked={status === 'active'}
+              onCheckedChange={onToggleStatus}
+              disabled={isLoading}
+            />
+          )}
+        </div>
         {endDate && (
           <p className="text-sm text-muted-foreground">
             {t("validUntil")}: {formatDate(endDate)}
@@ -53,18 +61,6 @@ export const SubscriptionStatus = ({
           </p>
         )}
       </div>
-
-      {hasValidSubscription && onToggleStatus && (
-        <Button
-          onClick={onToggleStatus}
-          variant={status === 'active' ? "destructive" : "default"}
-          className="w-full gap-2"
-          disabled={isLoading}
-        >
-          <Power className="h-4 w-4" />
-          {status === 'active' ? t("deactivateProfile") : t("activateProfile")}
-        </Button>
-      )}
     </div>
   );
 };
