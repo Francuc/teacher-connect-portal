@@ -37,7 +37,8 @@ export const FormSections = ({
             profile={{
               ...formData,
               user_id: session.user.id,
-              subscription_status: formData.subscription_status,
+              id: formData.user_id,
+              subscription_status: formData.subscription_status || 'inactive',
               subscription_type: formData.subscription_type,
               subscription_end_date: formData.subscription_end_date,
               promo_code: formData.promo_code
