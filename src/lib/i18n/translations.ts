@@ -84,7 +84,8 @@ export type Translation = {
   viewProfile: string;
   allSubjects: string;
   allLevels: string;
-  availableIn: string;  // Added this new translation key
+  availableIn: string;
+  priceStartingAt: string;  // Added this new translation key
 };
 
 export type TranslationKey = keyof Translation;

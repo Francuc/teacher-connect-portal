@@ -81,4 +81,5 @@ export const lb: Translation = {
   allSubjects: "All Fächer",
   allLevels: "All Niveauen",
   availableIn: "Verfügbar an",
+  priceStartingAt: "Ab",
 };
