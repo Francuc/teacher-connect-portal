@@ -32,23 +32,32 @@ export const TeacherCard = ({
     const loadProfilePicture = async () => {
       if (teacher.profile_picture_url) {
         try {
+          console.log('Loading profile picture:', teacher.profile_picture_url);
           const { data } = supabase
             .storage
             .from('profile-pictures')
             .getPublicUrl(teacher.profile_picture_url);
           
-          console.log('Profile picture URL:', data.publicUrl);
-          setProfilePictureUrl(data.publicUrl);
-          setImageError(false);
+          if (data?.publicUrl) {
+            console.log('Successfully got public URL:', data.publicUrl);
+            setProfilePictureUrl(data.publicUrl);
+            setImageError(false);
+          } else {
+            console.error('No public URL returned from Supabase');
+            setImageError(true);
+          }
         } catch (error) {
           console.error('Error loading profile picture:', error);
           setImageError(true);
         }
+      } else {
+        console.log('No profile picture URL provided for teacher:', teacher.id);
+        setProfilePictureUrl(null);
       }
     };
 
     loadProfilePicture();
-  }, [teacher.profile_picture_url]);
+  }, [teacher.profile_picture_url, teacher.id]);
 
   // Get teacher's place location
   const teacherPlace = teacher.teacher_locations?.find(
@@ -71,7 +80,10 @@ export const TeacherCard = ({
                 src={profilePictureUrl}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
-                onError={() => setImageError(true)}
+                onError={() => {
+                  console.error('Error loading image:', profilePictureUrl);
+                  setImageError(true);
+                }}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
