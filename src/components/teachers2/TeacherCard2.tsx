@@ -46,6 +46,14 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
     }
   };
 
+  const getTranslatedLevel = (levelName: string) => {
+    const level = schoolLevels.find(l => l.name_en === levelName);
+    if (level) {
+      return getLocalizedName(level);
+    }
+    return levelName;
+  };
+
   const getProfilePictureUrl = () => {
     if (!teacher.profile_picture_url) return null;
     const { data: { publicUrl } } = supabase
