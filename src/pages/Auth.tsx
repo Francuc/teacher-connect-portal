@@ -39,12 +39,21 @@ const AuthPage = () => {
         }}
         theme="light"
         providers={[]}
-        onError={(error) => {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: error.message,
-          });
+        localization={{
+          variables: {
+            sign_in: {
+              email_label: 'Email',
+              password_label: 'Password',
+            },
+          },
+          translations: {
+            sign_in: {
+              email_input_placeholder: 'Your email address',
+              password_input_placeholder: 'Your password',
+              button_label: 'Sign in',
+              loading_button_label: 'Signing in ...',
+            },
+          },
         }}
       />
     </div>
