@@ -85,7 +85,8 @@ export type Translation = {
   allSubjects: string;
   allLevels: string;
   availableIn: string;
-  priceStartingAt: string;  // Added this new translation key
+  priceStartingAt: string;
+  pricing: string;
 };
 
 export type TranslationKey = keyof Translation;

@@ -82,4 +82,5 @@ export const fr: Translation = {
   allLevels: "Tous les Niveaux",
   availableIn: "Disponible à",
   priceStartingAt: "À partir de",
+  pricing: "Tarifs",
 };

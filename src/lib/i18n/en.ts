@@ -82,4 +82,5 @@ export const en: Translation = {
   allLevels: "All Levels",
   availableIn: "Available in",
   priceStartingAt: "Starting at",
+  pricing: "Pricing",
 };
