@@ -62,7 +62,6 @@ export const handleRelationsUpdate = async (
     if (formData.teachingLocations.length > 0) {
       console.log('Processing teaching locations:', formData.teachingLocations);
       
-      // First, create location entries for all selected locations
       const locationData = formData.teachingLocations.map(location => {
         let price = 0;
         
@@ -85,8 +84,6 @@ export const handleRelationsUpdate = async (
       });
 
       console.log('All locations to insert:', locationData);
-
-      // Insert all locations regardless of price
       insertPromises.push(
         supabase
           .from('teacher_locations')
@@ -116,9 +113,9 @@ export const handleRelationsUpdate = async (
         supabase
           .from('teacher_student_cities')
           .insert(
-            formData.studentCities.map(city => ({
+            formData.studentCities.map(cityId => ({
               teacher_id: userId,
-              city_name: city
+              city_id: cityId
             }))
           )
       );
