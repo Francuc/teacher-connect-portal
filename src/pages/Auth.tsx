@@ -19,10 +19,13 @@ export default function Auth() {
       if (event === 'SIGNED_IN') {
         console.log('User signed in, checking redirect...');
         if (targetProfileId) {
-          console.log('Redirecting to profile:', targetProfileId);
+          console.log('Redirecting to specific profile:', targetProfileId);
           navigate(`/profile/${targetProfileId}`);
+        } else if (session?.user) {
+          console.log('Redirecting to user profile:', session.user.id);
+          navigate(`/profile/${session.user.id}`);
         } else {
-          console.log('No redirect parameter, going to home page');
+          console.log('No session available, going to home page');
           navigate('/');
         }
       }
