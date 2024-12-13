@@ -123,11 +123,11 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           studentRegions: profile.teacher_student_regions?.map((r: any) => r.region_name) || [],
           studentCities: profile.teacher_student_cities?.map((c: any) => c.city_id) || [],
           pricePerHour,
-          subscription_status: profile.subscription_status,
+          user_id: profile.user_id,
+          subscription_status: profile.subscription_status || 'inactive',
           subscription_type: profile.subscription_type,
           subscription_end_date: profile.subscription_end_date,
-          promo_code: profile.promo_code,
-          user_id: profile.user_id
+          promo_code: profile.promo_code
         });
 
       } catch (error) {
