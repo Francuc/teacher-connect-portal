@@ -32,7 +32,6 @@ export const useTeachersData = () => {
             )
           ),
           teacher_school_levels(
-            id,
             school_level
           ),
           teacher_locations(
@@ -41,7 +40,6 @@ export const useTeachersData = () => {
             price_per_hour
           ),
           teacher_student_cities(
-            id,
             city_name
           )
         `);
@@ -51,12 +49,9 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
-      console.log('Raw teachers data:', teachersData);
-
-      // Process each teacher's data to include the profile picture URL
+      // Process each teacher's data
       const processedTeachers = teachersData.map(teacher => {
         if (!teacher.profile_picture_url) {
-          console.log(`No profile picture for teacher ${teacher.id}`);
           return teacher;
         }
 
@@ -66,13 +61,7 @@ export const useTeachersData = () => {
         };
       });
 
-      console.log('Processed teachers data:', processedTeachers);
       return processedTeachers;
     },
-    staleTime: Infinity, // Prevent automatic refetching
-    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
-    refetchOnWindowFocus: false, // Prevent refetch on window focus
-    refetchOnMount: false, // Prevent refetch on mount
-    retry: 2, // Retry failed requests twice
   });
 };
