@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { BookOpen, MapPin, Wifi } from "lucide-react";
+import { BookOpen, MapPin, Computer } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -174,7 +174,7 @@ export const LandingPage = () => {
                 className="data-[state=checked]:bg-primary"
               />
               <Label htmlFor="online-mode" className="flex items-center gap-2 cursor-pointer">
-                <Wifi className="w-4 h-4" />
+                <Computer className="w-4 h-4" />
                 {t("onlineOnly")}
               </Label>
             </div>
