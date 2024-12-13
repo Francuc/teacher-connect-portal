@@ -85,7 +85,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
 
           if (!profile) return;
 
-          const pricePerHour: { [key: string]: string } = {
+          const pricePerHour = {
             teacherPlace: "",
             studentPlace: "",
             online: ""

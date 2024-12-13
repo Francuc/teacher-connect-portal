@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { FormData } from "../types/formTypes";
 
-export const useDefaultCity = (userId?: string, formData: any, setFormData: any) => {
+export const useDefaultCity = (
+  formData: FormData,
+  setFormData: (data: FormData) => void,
+  userId?: string
+) => {
   const { t } = useLanguage();
   const { toast } = useToast();
 
