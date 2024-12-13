@@ -10,19 +10,6 @@ export const useTeacherData = (userId: string | undefined) => {
 
       console.log('Fetching teacher data for userId:', userId);
 
-      // First check if teacher exists
-      const { data: teacherExists } = await supabase
-        .from('teachers')
-        .select('user_id')
-        .eq('user_id', userId);
-
-      // If teacher doesn't exist, return null
-      if (!teacherExists || teacherExists.length === 0) {
-        console.log('No teacher found for userId:', userId);
-        return null;
-      }
-
-      // If teacher exists, fetch all related data
       const [
         { data: profile },
         { data: locations },

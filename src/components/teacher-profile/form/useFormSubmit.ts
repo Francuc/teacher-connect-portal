@@ -4,7 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { handleProfileUpdate } from "./handlers/profileHandler";
 import { handleRelationsUpdate } from "./handlers/relationsHandler";
-import { supabase } from "@/lib/supabase";
 
 export const useFormSubmit = (
   formData: FormData,
@@ -24,25 +23,6 @@ export const useFormSubmit = (
     
     try {
       setIsLoading(true);
-      
-      // Check if email already exists for new profiles
-      if (isNewProfile) {
-        const { data: existingTeacher } = await supabase
-          .from('teachers')
-          .select('id')
-          .eq('email', formData.email)
-          .single();
-
-        if (existingTeacher) {
-          toast({
-            title: t("error"),
-            description: t("emailAlreadyExists"),
-            variant: "destructive",
-          });
-          navigate('/auth'); // Redirect to login page
-          return;
-        }
-      }
       
       // Generate a random UUID for new profiles
       const profileId = userId || crypto.randomUUID();

@@ -1,131 +1,223 @@
 import { useState, useEffect } from "react";
 import { FormData } from "./types";
-import { useTeacherProfile } from "./hooks/useTeacherProfile";
-import { useTeacherSubjects } from "./hooks/useTeacherSubjects";
-import { useTeacherLocations } from "./hooks/useTeacherLocations";
-import { useTeacherRegions } from "./hooks/useTeacherRegions";
-import { useTeacherCities } from "./hooks/useTeacherCities";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 
-export const useFormData = (userId: string | null) => {
+export const useFormData = (userId?: string) => {
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    facebookProfile: "",
-    showEmail: false,
-    showPhone: false,
-    showFacebook: false,
-    bio: "",
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phone: "+352 123 456 789",
+    facebookProfile: "https://facebook.com/johndoe",
+    showEmail: true,
+    showPhone: true,
+    showFacebook: true,
+    bio: "I am a passionate teacher with experience in multiple subjects. I enjoy helping students reach their full potential through personalized teaching methods.",
     profilePicture: null,
+    profilePictureUrl: "",
     subjects: [],
-    schoolLevels: [],
-    teachingLocations: [],
-    cityId: "",
+    schoolLevels: ["Primary School", "Middle School"],
+    teachingLocations: ["Teacher's Place", "Student's Place", "Online"],
+    cityId: null,
     studentRegions: [],
     studentCities: [],
     pricePerHour: {
-      teacherPlace: "",
-      studentPlace: "",
-      online: "",
+      teacherPlace: "50",
+      studentPlace: "60",
+      online: "45",
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const { fetchTeacherProfile } = useTeacherProfile(userId);
-  const { data: allSubjects } = useTeacherSubjects();
-  const { fetchTeacherLocations, processLocations } = useTeacherLocations();
-  const { fetchTeacherRegions } = useTeacherRegions();
-  const { fetchTeacherCities } = useTeacherCities();
-
+  // Fetch and set default city
   useEffect(() => {
-    const loadTeacherData = async () => {
-      if (!userId) return;
-
+    const fetchDefaultCity = async () => {
       try {
-        setIsLoading(true);
-        console.log('Loading teacher data for userId:', userId);
+        console.log('Fetching default city...');
+        // First verify if we already have a city set
+        if (formData.cityId) {
+          const { data: cityExists, error: verifyError } = await supabase
+            .from('cities')
+            .select('id')
+            .eq('id', formData.cityId)
+            .single();
 
-        const [
-          profile,
-          locations,
-          teacherSubjects,
-          schoolLevels,
-          studentRegions,
-          studentCities
-        ] = await Promise.all([
-          fetchTeacherProfile(),
-          fetchTeacherLocations(userId),
-          supabase
-            .from('teacher_subjects')
-            .select('subject_id')
-            .eq('teacher_id', userId),
-          supabase
-            .from('teacher_school_levels')
-            .select('school_level')
-            .eq('teacher_id', userId),
-          fetchTeacherRegions(userId),
-          fetchTeacherCities(userId),
-        ]);
+          if (!verifyError && cityExists) {
+            console.log('Current city is valid:', cityExists.id);
+            return;
+          }
+        }
 
-        if (!profile) {
-          console.log('No profile found for userId:', userId);
+        // If no valid city is set, fetch the first available city
+        const { data: cities, error } = await supabase
+          .from('cities')
+          .select('id')
+          .limit(1)
+          .single();
+
+        if (error) {
+          console.error('Error fetching default city:', error);
+          toast({
+            title: t("error"),
+            description: t("error"),
+            variant: "destructive",
+          });
           return;
         }
 
-        const { locationTypes, prices } = processLocations(locations);
-
-        // Map subject IDs to full subject objects with correct TeacherSubject structure
-        const subjects = teacherSubjects?.data?.map(ts => {
-          const subject = allSubjects?.find(s => s.id === ts.subject_id);
-          return subject ? {
-            subject_id: ts.subject_id,
-            subject: {
-              id: subject.id,
-              name_en: subject.name_en,
-              name_fr: subject.name_fr,
-              name_lb: subject.name_lb
-            }
-          } : null;
-        }).filter(Boolean) || [];
-
-        setFormData({
-          firstName: profile.first_name || "",
-          lastName: profile.last_name || "",
-          email: profile.email || "",
-          phone: profile.phone || "",
-          facebookProfile: profile.facebook_profile || "",
-          showEmail: profile.show_email || false,
-          showPhone: profile.show_phone || false,
-          showFacebook: profile.show_facebook || false,
-          bio: profile.bio || "",
-          profilePicture: null,
-          profilePictureUrl: profile.profile_picture_url || "",
-          subjects,
-          schoolLevels: schoolLevels?.data?.map(l => l.school_level) || [],
-          teachingLocations: locationTypes,
-          cityId: profile.city_id || "",
-          studentRegions: studentRegions,
-          studentCities: studentCities,
-          pricePerHour: prices,
-        });
-
+        if (cities) {
+          console.log('Setting default city:', cities.id);
+          setFormData(prev => ({
+            ...prev,
+            cityId: cities.id
+          }));
+        } else {
+          console.error('No cities found in the database');
+          toast({
+            title: t("error"),
+            description: t("noResults"),
+            variant: "destructive",
+          });
+        }
       } catch (error) {
-        console.error('Error loading teacher data:', error);
-      } finally {
-        setIsLoading(false);
+        console.error('Error in fetchDefaultCity:', error);
+        toast({
+          title: t("error"),
+          description: t("error"),
+          variant: "destructive",
+        });
       }
     };
 
-    loadTeacherData();
-  }, [userId, allSubjects]);
+    if (!userId) {
+      fetchDefaultCity();
+    }
+  }, [userId, t, toast]);
 
-  return {
-    formData,
-    setFormData,
-    isLoading,
-    setIsLoading,
-  };
+  useEffect(() => {
+    if (userId) {
+      const fetchTeacherData = async () => {
+        try {
+          const [
+            { data: profile },
+            { data: subjects },
+            { data: schoolLevels },
+            { data: locations },
+            { data: studentRegions },
+            { data: studentCities }
+          ] = await Promise.all([
+            supabase
+              .from('teachers')
+              .select(`
+                *,
+                city:cities (
+                  id,
+                  name_en,
+                  name_fr,
+                  name_lb,
+                  region:regions (
+                    id,
+                    name_en,
+                    name_fr,
+                    name_lb
+                  )
+                )
+              `)
+              .eq('user_id', userId)
+              .single(),
+            supabase
+              .from('teacher_subjects')
+              .select(`
+                subject_id,
+                subject:subjects (
+                  id,
+                  name_en,
+                  name_fr,
+                  name_lb
+                )
+              `)
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_school_levels')
+              .select('school_level')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_locations')
+              .select('*')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_student_regions')
+              .select('region_name')
+              .eq('teacher_id', userId),
+            supabase
+              .from('teacher_student_cities')
+              .select('city_name')
+              .eq('teacher_id', userId)
+          ]);
+
+          if (!profile) throw new Error('Profile not found');
+
+          const pricePerHour: { [key: string]: string } = {
+            teacherPlace: "",
+            studentPlace: "",
+            online: ""
+          };
+
+          locations?.forEach(location => {
+            switch (location.location_type) {
+              case "Teacher's Place":
+                pricePerHour.teacherPlace = location.price_per_hour.toString();
+                break;
+              case "Student's Place":
+                pricePerHour.studentPlace = location.price_per_hour.toString();
+                break;
+              case "Online":
+                pricePerHour.online = location.price_per_hour.toString();
+                break;
+            }
+          });
+
+          setFormData({
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            email: profile.email,
+            phone: profile.phone || "",
+            facebookProfile: profile.facebook_profile || "",
+            showEmail: profile.show_email || false,
+            showPhone: profile.show_phone || false,
+            showFacebook: profile.show_facebook || false,
+            bio: profile.bio,
+            profilePicture: null,
+            profilePictureUrl: profile.profile_picture_url || "",
+            subjects: subjects?.map(s => ({
+              subject_id: s.subject_id,
+              subject: s.subject[0]
+            })) || [],
+            schoolLevels: schoolLevels?.map(l => l.school_level) || [],
+            teachingLocations: locations?.map(l => l.location_type) || [],
+            cityId: profile.city_id,
+            studentRegions: studentRegions?.map(r => r.region_name) || [],
+            studentCities: studentCities?.map(c => c.city_name) || [],
+            pricePerHour: pricePerHour as FormData['pricePerHour'],
+          });
+        } catch (error) {
+          console.error('Error fetching teacher data:', error);
+          toast({
+            title: t("error"),
+            description: t("errorLoadingProfile"),
+            variant: "destructive",
+          });
+        }
+      };
+
+      fetchTeacherData();
+    }
+  }, [userId, t, toast]);
+
+  return { formData, setFormData, isLoading, setIsLoading };
 };

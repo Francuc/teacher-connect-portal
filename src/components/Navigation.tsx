@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
-import { LogIn, LogOut, Plus, User } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
@@ -108,15 +108,6 @@ export const Navigation = () => {
     }));
   };
 
-  const handleAuthAction = async () => {
-    if (session) {
-      await supabase.auth.signOut();
-      navigate('/');
-    } else {
-      navigate('/auth');
-    }
-  };
-
   return (
     <nav className="border-b border-purple.soft/30 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -182,22 +173,9 @@ export const Navigation = () => {
                 )}
               </div>
             )}
-            <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base rounded-md">
+            <Button onClick={handleProfileAction} className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base">
               <Plus className="h-5 w-5" />
               {session ? t("myProfile") : t("createAd")}
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={handleAuthAction}
-              className="h-10 w-10"
-              title={session ? t("signOut") : t("signIn")}
-            >
-              {session ? (
-                <LogOut className="h-5 w-5" />
-              ) : (
-                <LogIn className="h-5 w-5" />
-              )}
             </Button>
             <LanguageSwitcher />
           </div>
