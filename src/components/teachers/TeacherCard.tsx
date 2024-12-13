@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User } from "lucide-react";
+import { MapPin, User, Euro } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { TeacherSubjects } from "./card/TeacherSubjects";
 import { TeacherLevels } from "./card/TeacherLevels";
 import { TeacherLocations } from "./card/TeacherLocations";
+import { TeacherDetails } from "./card/TeacherDetails";
 
 interface TeacherCardProps {
   teacher: any;
@@ -28,8 +29,6 @@ export const TeacherCard = ({
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
-
-  console.log("Teacher data in card:", teacher);
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -55,54 +54,86 @@ export const TeacherCard = ({
               {teacher.first_name} {teacher.last_name}
             </h3>
             {lowestPrice && (
-              <div className="flex items-center gap-1 text-green-600 font-semibold">
-                <span>{formatPrice(lowestPrice)}/h</span>
+              <div className="flex items-center gap-1 text-green-600">
+                <Euro className="w-4 h-4" />
+                <span className="font-semibold">{formatPrice(lowestPrice)}/h</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Subjects Section */}
-        {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
-          <TeacherSubjects 
-            subjects={teacher.teacher_subjects.map((ts: any) => ({
-              ...ts.subject,
-              id: ts.subject.id
-            }))}
-            getLocalizedName={getLocalizedName}
-          />
-        )}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Subjects Section */}
+            {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
+              <TeacherSubjects 
+                subjects={teacher.teacher_subjects.map((ts: any) => ({
+                  ...ts.subject,
+                  id: ts.subject.id
+                }))}
+                getLocalizedName={getLocalizedName}
+              />
+            )}
 
-        {/* School Levels Section */}
-        {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
-          <TeacherLevels 
-            levels={teacher.teacher_school_levels}
-          />
-        )}
+            {/* School Levels Section */}
+            {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
+              <TeacherLevels 
+                levels={teacher.teacher_school_levels}
+              />
+            )}
+          </div>
 
-        {/* Teaching Locations Section */}
-        <div className="space-y-4">
-          {/* Teacher's Place */}
-          {teacher.city && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                <span>{t("teacherPlace")}</span>
-              </div>
-              <div className="text-sm text-purple-dark">
-                {getTeacherLocation(teacher)}
-              </div>
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Teaching Locations Section */}
+            <div className="space-y-4">
+              {/* Teacher's Place */}
+              {teacher.city && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span>{t("teacherPlace")}</span>
+                  </div>
+                  <div className="text-sm text-purple-dark">
+                    {getTeacherLocation(teacher)}
+                  </div>
+                </div>
+              )}
+
+              {/* Student's Place */}
+              {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+                <TeacherLocations 
+                  teacher={teacher}
+                  getLocalizedName={getLocalizedName}
+                />
+              )}
             </div>
-          )}
 
-          {/* Student's Place */}
-          {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-            <TeacherLocations 
-              teacher={teacher}
-              getLocalizedName={getLocalizedName}
-            />
-          )}
+            {/* Pricing Details */}
+            {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-muted-foreground">{t("pricing")}</h4>
+                {teacher.teacher_locations.map((location: any) => (
+                  <div key={location.id} className="flex justify-between items-center text-sm">
+                    <span>{t(location.location_type)}</span>
+                    <span className="font-semibold text-green-600">
+                      {formatPrice(location.price_per_hour)}/h
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Teacher Details Section */}
+        <TeacherDetails 
+          teacher={teacher}
+          getLocalizedName={getLocalizedName}
+          formatPrice={formatPrice}
+        />
 
         {/* Footer with Action Button */}
         <div className="mt-auto pt-4 border-t flex justify-between items-center">
