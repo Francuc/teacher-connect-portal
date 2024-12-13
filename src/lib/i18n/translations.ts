@@ -85,10 +85,22 @@ export type Translation = {
   viewProfile: string;
   allSubjects: string;
   allLevels: string;
-  availableIn: string;  // Added this new translation key
-  logout: string;
-  logoutSuccess: string;
-  logoutError: string;
+  availableIn: string;
+  promoCodeApplied: string;
+  invalidPromoCode: string;
+  confirmDeleteProfile: string;
+  subscription: string;
+  status: string;
+  active: string;
+  inactive: string;
+  validUntil: string;
+  subscriptionType: string;
+  activePromoCode: string;
+  subscribeMonthly: string;
+  subscribeYearly: string;
+  enterPromoCode: string;
+  apply: string;
+  deleteProfile: string;
 };
 
 export type TranslationKey = keyof Translation;
