@@ -39,47 +39,50 @@ export const FormSections = ({
 
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
+      {isUpdate && session?.user && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Your Current Subscription Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">Status:</span>
+                <Badge variant={formData.subscription_status === 'active' ? 'default' : 'secondary'}>
+                  {formData.subscription_status || 'inactive'}
+                </Badge>
+              </div>
+              {formData.subscription_type && (
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">Type:</span>
+                  <Badge variant="outline">{formData.subscription_type}</Badge>
+                </div>
+              )}
+              {formData.subscription_end_date && (
+                <div>
+                  <span className="font-medium">Valid until:</span>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(formData.subscription_end_date).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+              {formData.promo_code && (
+                <div>
+                  <span className="font-medium">Promo code:</span>
+                  <p className="font-mono bg-purple-50 px-2 py-1 rounded inline-block ml-2">
+                    {formData.promo_code}
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PersonalInfoSection formData={formData} setFormData={setFormData} />
         {isUpdate && session?.user && (
           <>
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Subscription Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Status:</span>
-                    <Badge variant={formData.subscription_status === 'active' ? 'default' : 'secondary'}>
-                      {formData.subscription_status || 'inactive'}
-                    </Badge>
-                  </div>
-                  {formData.subscription_type && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Type:</span>
-                      <Badge variant="outline">{formData.subscription_type}</Badge>
-                    </div>
-                  )}
-                  {formData.subscription_end_date && (
-                    <div>
-                      <span className="font-medium">Valid until:</span>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(formData.subscription_end_date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  )}
-                  {formData.promo_code && (
-                    <div>
-                      <span className="font-medium">Promo code:</span>
-                      <p className="font-mono bg-purple-50 px-2 py-1 rounded inline-block ml-2">
-                        {formData.promo_code}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
             <SubscriptionSection 
               profile={{
                 user_id: session.user.id,
