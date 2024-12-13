@@ -2,39 +2,35 @@ import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin } from "lucide-react";
 
-interface TeacherLocationsProps {
-  locations: Array<{
-    location_type: string;
-    price_per_hour: number;
+interface TeacherCitiesProps {
+  studentCities: Array<{
+    city_name: string;
   }>;
   getLocalizedName: (item: any) => string;
-  formatPrice: (price: number) => string;
 }
 
-export const TeacherLocations = ({
-  locations,
+export const TeacherCities = ({
+  studentCities,
   getLocalizedName,
-  formatPrice,
-}: TeacherLocationsProps) => {
+}: TeacherCitiesProps) => {
   const { t } = useLanguage();
+
+  if (!studentCities?.length) return null;
 
   return (
     <div className="space-y-2">
       <h4 className="font-semibold flex items-center gap-2">
         <MapPin className="w-4 h-4" />
-        {t("teachingLocations")}
+        {t("availableIn")}
       </h4>
       <div className="flex flex-wrap gap-2">
-        {locations.map((location, index) => (
+        {studentCities.map((cityData, index) => (
           <Badge
             key={index}
             variant="outline"
-            className="bg-primary/10 text-primary border-none flex items-center gap-2"
+            className="bg-accent/10 text-accent border-none"
           >
-            <span>{location.location_type}</span>
-            <span className="font-semibold">
-              {formatPrice(location.price_per_hour)}
-            </span>
+            {cityData.city_name}
           </Badge>
         ))}
       </div>

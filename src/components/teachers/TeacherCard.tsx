@@ -1,11 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User, GraduationCap, BookOpen, Euro, Phone, Mail, Facebook } from "lucide-react";
+import { MapPin, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { TeacherSubjects } from "./card/TeacherSubjects";
+import { TeacherLevels } from "./card/TeacherLevels";
+import { TeacherContact } from "./card/TeacherContact";
+import { TeacherLocations } from "./card/TeacherLocations";
+import { TeacherCities } from "./card/TeacherCities";
 
 interface TeacherCardProps {
   teacher: any;
@@ -59,37 +63,14 @@ export const TeacherCard = ({
             )}
             
             {/* Contact Information */}
-            <div className="mt-2 space-y-1">
-              {teacher.show_email && teacher.email && (
-                <a 
-                  href={`mailto:${teacher.email}`}
-                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
-                >
-                  <Mail className="w-4 h-4" />
-                  {teacher.email}
-                </a>
-              )}
-              {teacher.show_phone && teacher.phone && (
-                <a 
-                  href={`tel:${teacher.phone}`}
-                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
-                >
-                  <Phone className="w-4 h-4" />
-                  {teacher.phone}
-                </a>
-              )}
-              {teacher.show_facebook && teacher.facebook_profile && (
-                <a 
-                  href={teacher.facebook_profile}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
-                >
-                  <Facebook className="w-4 h-4" />
-                  {t("facebookProfile")}
-                </a>
-              )}
-            </div>
+            <TeacherContact
+              email={teacher.email}
+              phone={teacher.phone}
+              showEmail={teacher.show_email}
+              showPhone={teacher.show_phone}
+              showFacebook={teacher.show_facebook}
+              facebookProfile={teacher.facebook_profile}
+            />
           </div>
         </div>
 
@@ -105,86 +86,34 @@ export const TeacherCard = ({
 
         {/* Teaching Locations and Prices */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
-          <div>
-            <h4 className="font-semibold mb-2 flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              {t("teachingLocations")}
-            </h4>
-            <div className="space-y-2">
-              {teacher.teacher_locations.map((location: any) => (
-                <div key={location.id} className="flex justify-between items-center text-sm">
-                  <span>{location.location_type}</span>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Euro className="w-3 h-3" />
-                    {formatPrice(location.price_per_hour)}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TeacherLocations
+            locations={teacher.teacher_locations}
+            getLocalizedName={getLocalizedName}
+            formatPrice={formatPrice}
+          />
         )}
 
         {/* Subjects Section */}
         {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
-          <div>
-            <h4 className="font-semibold mb-2 flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              {t("subjects")}
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {teacher.teacher_subjects.map((subjectData: any) => (
-                <Badge
-                  key={subjectData.subject.id}
-                  variant="outline"
-                  className="bg-purple-soft/50 text-purple-vivid border-none"
-                >
-                  {getLocalizedName(subjectData.subject)}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <TeacherSubjects
+            subjects={teacher.teacher_subjects}
+            getLocalizedName={getLocalizedName}
+          />
         )}
 
         {/* School Levels Section */}
         {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
-          <div>
-            <h4 className="font-semibold mb-2 flex items-center gap-2">
-              <GraduationCap className="w-4 h-4" />
-              {t("schoolLevels")}
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {teacher.teacher_school_levels.map((level: any) => (
-                <Badge
-                  key={level.id}
-                  variant="outline"
-                  className="bg-accent/10 text-accent border-none"
-                >
-                  {level.school_level}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <TeacherLevels
+            levels={teacher.teacher_school_levels}
+          />
         )}
 
-        {/* Student Cities Section */}
+        {/* Student Cities */}
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-          <div>
-            <h4 className="font-semibold mb-2 flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              {t("availableIn")}
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {teacher.teacher_student_cities.map((cityData: any) => (
-                <Badge
-                  key={cityData.id}
-                  variant="outline"
-                  className="bg-primary/10 text-primary border-none"
-                >
-                  {cityData.city_name}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <TeacherCities
+            studentCities={teacher.teacher_student_cities}
+            getLocalizedName={getLocalizedName}
+          />
         )}
 
         {/* View Profile Button */}
