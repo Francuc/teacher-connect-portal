@@ -39,7 +39,7 @@ export const TeachersList2 = ({ cityFilter, subjectFilter }: TeachersList2Props)
         .order('created_at', { ascending: false });
 
       if (cityFilter) {
-        query = query.eq('city_id', cityFilter);
+        query = query.contains('teacher_student_cities', [{ city_name: cityFilter }]);
       }
 
       if (subjectFilter && subjectFilter !== 'all') {
