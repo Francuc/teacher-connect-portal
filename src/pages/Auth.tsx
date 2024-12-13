@@ -44,10 +44,6 @@ const AuthPage = () => {
             sign_in: {
               email_label: 'Email',
               password_label: 'Password',
-            },
-          },
-          translations: {
-            sign_in: {
               email_input_placeholder: 'Your email address',
               password_input_placeholder: 'Your password',
               button_label: 'Sign in',
