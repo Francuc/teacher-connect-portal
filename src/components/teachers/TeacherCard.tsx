@@ -123,9 +123,9 @@ export const TeacherCard = ({
               {t("schoolLevels")}
             </h4>
             <div className="flex flex-wrap gap-2">
-              {teacher.teacher_school_levels.map((level: any, index: number) => (
+              {teacher.teacher_school_levels.map((level: any) => (
                 <Badge
-                  key={index}
+                  key={level.id}
                   variant="outline"
                   className="bg-secondary/10 text-secondary border-none"
                 >
@@ -144,9 +144,9 @@ export const TeacherCard = ({
               {t("availableIn")}
             </h4>
             <div className="flex flex-wrap gap-2">
-              {teacher.teacher_student_cities.map((cityData: any, index: number) => (
+              {teacher.teacher_student_cities.map((cityData: any) => (
                 <Badge
-                  key={index}
+                  key={cityData.id}
                   variant="outline"
                   className="bg-purple-soft text-purple-vivid border-none"
                 >

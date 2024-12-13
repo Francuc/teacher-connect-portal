@@ -32,7 +32,8 @@ export const useTeachersData = () => {
             )
           ),
           teacher_school_levels(
-            school_level
+            school_level,
+            id
           ),
           teacher_locations(
             id,
@@ -40,9 +41,11 @@ export const useTeachersData = () => {
             price_per_hour
           ),
           teacher_student_cities(
+            id,
             city_name
           )
-        `);
+        `)
+        .order('created_at', { ascending: false });
 
       if (teachersError) {
         console.error('Error fetching teachers:', teachersError);

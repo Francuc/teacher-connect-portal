@@ -15,16 +15,27 @@ export const TeachersGrid = ({
 }: TeachersGridProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-[600px] bg-purple-soft/30 rounded-xl animate-pulse" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[...Array(6)].map((_, index) => (
+          <div
+            key={index}
+            className="h-[400px] rounded-lg bg-muted animate-pulse"
+          />
         ))}
       </div>
     );
   }
 
+  if (teachers.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-muted-foreground">No teachers found</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {teachers.map((teacher) => (
         <TeacherCard
           key={teacher.id}
