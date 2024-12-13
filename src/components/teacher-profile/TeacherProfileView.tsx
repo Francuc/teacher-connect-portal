@@ -100,14 +100,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           .eq('teacher_id', userId),
         supabase
           .from('teacher_student_cities')
-          .select(`
-            city:cities (
-              id,
-              name_en,
-              name_fr,
-              name_lb
-            )
-          `)
+          .select('city_name')
           .eq('teacher_id', userId)
       ]);
 
@@ -120,7 +113,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         schoolLevels: schoolLevels?.map(l => l.school_level) || [],
         locations: locations || [],
         studentRegions: studentRegions?.map(r => r.region_name) || [],
-        studentCities: studentCities?.map(c => c.city.name_en) || [],
+        studentCities: studentCities?.map(c => c.city_name) || [],
       };
     },
   });

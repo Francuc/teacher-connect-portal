@@ -34,6 +34,26 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
     }
   });
 
+  const { data: cities = [] } = useQuery({
+    queryKey: ['teacherCities', teacher.teacher_student_cities],
+    queryFn: async () => {
+      if (!teacher.teacher_student_cities?.length) return [];
+      
+      const cityNames = teacher.teacher_student_cities.map((c: any) => c.city_name);
+      const { data, error } = await supabase
+        .from('cities')
+        .select(`
+          *,
+          region:regions(*)
+        `)
+        .in('name_en', cityNames);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!teacher.teacher_student_cities?.length
+  });
+
   const getLocalizedName = (item: any) => {
     if (!item) return '';
     switch(language) {
@@ -46,12 +66,27 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
     }
   };
 
+  const getTeacherLocation = () => {
+    if (!teacher.city) return '';
+    const cityName = getLocalizedName(teacher.city);
+    const regionName = teacher.city.region ? getLocalizedName(teacher.city.region) : '';
+    return regionName ? `${cityName}, ${regionName}` : cityName;
+  };
+
   const getTranslatedLevel = (levelName: string) => {
     const level = schoolLevels.find(l => l.name_en === levelName);
     if (level) {
       return getLocalizedName(level);
     }
     return levelName;
+  };
+
+  const getTranslatedCityName = (cityName: string) => {
+    const city = cities.find(c => c.name_en === cityName);
+    if (city) {
+      return getLocalizedName(city);
+    }
+    return cityName;
   };
 
   const getProfilePictureUrl = () => {
@@ -101,7 +136,7 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
           </h3>
           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
             <MapPin className="w-3 h-3" />
-            {teacher.city && `${getLocalizedName(teacher.city)}, ${getLocalizedName(teacher.city.region)}`}
+            {getTeacherLocation()}
           </p>
           <TeacherContactInfo
             email={teacher.email}
@@ -158,8 +193,8 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
         {/* Student Cities Section */}
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
           <TeacherCities 
-            studentCities={teacher.teacher_student_cities}
-            getLocalizedName={getLocalizedName}
+            cities={teacher.teacher_student_cities} 
+            getTranslatedCityName={getTranslatedCityName}
           />
         )}
 

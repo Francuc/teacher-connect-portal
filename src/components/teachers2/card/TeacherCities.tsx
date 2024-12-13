@@ -1,44 +1,35 @@
+import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin } from "lucide-react";
+import { Section } from "./Section";
+import { SectionHeader } from "./SectionHeader";
 
 interface TeacherCitiesProps {
-  studentCities: Array<{
-    city: {
-      id: string;
-      name_en: string;
-      name_fr: string;
-      name_lb: string;
-    };
+  cities: Array<{
+    city_name: string;
   }>;
-  getLocalizedName: (item: any) => string;
+  getTranslatedCityName: (cityName: string) => string;
 }
 
-export const TeacherCities = ({
-  studentCities,
-  getLocalizedName,
-}: TeacherCitiesProps) => {
+export const TeacherCities = ({ cities, getTranslatedCityName }: TeacherCitiesProps) => {
   const { t } = useLanguage();
 
-  if (!studentCities?.length) return null;
+  if (!cities || cities.length === 0) return null;
 
   return (
-    <div className="space-y-2">
-      <h4 className="font-semibold flex items-center gap-2">
-        <MapPin className="w-4 h-4" />
-        {t("availableIn")}
-      </h4>
-      <div className="flex flex-wrap gap-2">
-        {studentCities.map((cityData) => (
+    <Section>
+      <SectionHeader icon={MapPin} title={t("availableIn")} />
+      <div className="flex flex-wrap gap-1 mt-1">
+        {cities.map((cityData, index) => (
           <Badge
-            key={cityData.city.id}
+            key={index}
             variant="outline"
-            className="bg-purple-soft text-purple-vivid border-none"
+            className="bg-primary/10 text-primary border-none text-xs py-0"
           >
-            {getLocalizedName(cityData.city)}
+            {getTranslatedCityName(cityData.city_name)}
           </Badge>
         ))}
       </div>
-    </div>
+    </Section>
   );
 };
