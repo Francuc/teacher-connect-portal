@@ -11,25 +11,31 @@ export const TeachersList2 = () => {
     queryFn: async () => {
       console.log("Fetching all teachers data without limits...");
       
+      // First, let's get the total count of teachers
+      const { count: totalTeachers } = await supabase
+        .from('teachers')
+        .select('*', { count: 'exact', head: true });
+      
+      console.log("Total teachers in database:", totalTeachers);
+      
       const { data, error } = await supabase
         .from('teachers')
         .select(`
           *,
-          city:cities (
-            *,
+          city:cities (*,
             region:regions (*)
           ),
-          teacher_subjects (
+          teacher_subjects:teacher_subjects (
             subject:subjects (*)
           ),
-          teacher_school_levels (
+          teacher_school_levels:teacher_school_levels (
             school_level
           ),
-          teacher_locations (
+          teacher_locations:teacher_locations (
             location_type,
             price_per_hour
           ),
-          teacher_student_cities (
+          teacher_student_cities:teacher_student_cities (
             city_name
           )
         `)
