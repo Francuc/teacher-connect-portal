@@ -24,7 +24,22 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-  const lowestPrice = getLowestPrice(teacher.teacher_locations);
+  const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
+
+  // Debug logging
+  console.log('Rendering TeacherCard for teacher:', {
+    id: teacher.id,
+    name: `${teacher.first_name} ${teacher.last_name}`,
+    subjects: teacher.teacher_subjects,
+    schoolLevels: teacher.teacher_school_levels,
+    location: getTeacherLocation(teacher),
+    studentCities: teacher.teacher_student_cities
+  });
+
+  if (!teacher) {
+    console.error('No teacher data provided to TeacherCard');
+    return null;
+  }
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -53,50 +68,54 @@ export const TeacherCard = ({
         </div>
 
         {/* Subjects Section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <BookOpen className="w-4 h-4" />
-            <span>{t("subjects")}</span>
+        {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <BookOpen className="w-4 h-4" />
+              <span>{t("subjects")}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {teacher.teacher_subjects.slice(0, 3).map((subjectData: any) => (
+                <span
+                  key={subjectData.id}
+                  className="px-3 py-1 bg-purple-soft text-purple-vivid rounded-full text-sm font-medium"
+                >
+                  {getLocalizedName(subjectData.subject)}
+                </span>
+              ))}
+              {teacher.teacher_subjects.length > 3 && (
+                <span className="px-3 py-1 bg-purple-soft/50 text-purple-vivid rounded-full text-sm font-medium">
+                  +{teacher.teacher_subjects.length - 3}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {teacher.teacher_subjects?.slice(0, 3).map((subjectData: any) => (
-              <span
-                key={subjectData.subject.id}
-                className="px-3 py-1 bg-purple-soft text-purple-vivid rounded-full text-sm font-medium"
-              >
-                {getLocalizedName(subjectData.subject)}
-              </span>
-            ))}
-            {teacher.teacher_subjects?.length > 3 && (
-              <span className="px-3 py-1 bg-purple-soft/50 text-purple-vivid rounded-full text-sm font-medium">
-                +{teacher.teacher_subjects.length - 3}
-              </span>
-            )}
-          </div>
-        </div>
+        )}
 
         {/* School Levels Section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <GraduationCap className="w-4 h-4" />
-            <span>{t("schoolLevels")}</span>
+        {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <GraduationCap className="w-4 h-4" />
+              <span>{t("schoolLevels")}</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {teacher.teacher_school_levels.slice(0, 3).map((level: any, index: number) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                >
+                  {level.school_level}
+                </span>
+              ))}
+              {teacher.teacher_school_levels.length > 3 && (
+                <span className="px-3 py-1 bg-accent/5 text-accent rounded-full text-sm font-medium">
+                  +{teacher.teacher_school_levels.length - 3}
+                </span>
+              )}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {teacher.teacher_school_levels?.slice(0, 3).map((level: any, index: number) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
-              >
-                {level.school_level}
-              </span>
-            ))}
-            {teacher.teacher_school_levels?.length > 3 && (
-              <span className="px-3 py-1 bg-accent/5 text-accent rounded-full text-sm font-medium">
-                +{teacher.teacher_school_levels.length - 3}
-              </span>
-            )}
-          </div>
-        </div>
+        )}
 
         {/* Teaching Locations Section */}
         <div className="space-y-4">
@@ -114,16 +133,16 @@ export const TeacherCard = ({
           )}
 
           {/* Student's Place */}
-          {teacher.teacher_student_cities?.length > 0 && (
+          {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />
                 <span>{t("studentPlace")}</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {teacher.teacher_student_cities.map((cityData: any, index: number) => (
+                {teacher.teacher_student_cities.map((cityData: any) => (
                   <span
-                    key={index}
+                    key={cityData.id}
                     className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
                   >
                     {cityData.city_name}

@@ -5,7 +5,7 @@ export const useTeachersData = () => {
   return useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
-      console.log('Fetching teachers data with all relationships...');
+      console.log('Starting teacher data fetch...');
       
       const { data: teachersData, error: teachersError } = await supabase
         .from('teachers')
@@ -33,7 +33,6 @@ export const useTeachersData = () => {
             )
           ),
           teacher_school_levels(
-            id,
             school_level
           ),
           teacher_locations(
@@ -52,18 +51,52 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
-      console.log('Fetched teachers data:', teachersData);
+      if (!teachersData || teachersData.length === 0) {
+        console.warn('No teachers data found');
+        return [];
+      }
 
-      // Process profile picture URLs
+      console.log('Raw teachers data:', teachersData);
+
+      // Verify data integrity
+      const verifyTeacherData = (teacher: any) => {
+        const issues = [];
+        if (!teacher.teacher_subjects) issues.push('Missing subjects');
+        if (!teacher.teacher_school_levels) issues.push('Missing school levels');
+        if (!teacher.teacher_locations) issues.push('Missing locations');
+        if (!teacher.city) issues.push('Missing city');
+        
+        if (issues.length > 0) {
+          console.warn(`Data integrity issues for teacher ${teacher.id}:`, issues);
+        }
+        return issues.length === 0;
+      };
+
+      // Process and validate teachers data
       const processedTeachers = teachersData.map(teacher => {
-        if (!teacher.profile_picture_url) return teacher;
+        // Log individual teacher data for debugging
+        console.log(`Processing teacher ${teacher.id}:`, {
+          subjects: teacher.teacher_subjects?.length || 0,
+          schoolLevels: teacher.teacher_school_levels?.length || 0,
+          locations: teacher.teacher_locations?.length || 0,
+          city: teacher.city
+        });
 
-        return {
+        // Process profile picture URL
+        const profilePictureUrl = teacher.profile_picture_url
+          ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+          : null;
+
+        const processedTeacher = {
           ...teacher,
-          profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+          profile_picture_url: profilePictureUrl
         };
+
+        verifyTeacherData(processedTeacher);
+        return processedTeacher;
       });
 
+      console.log('Final processed teachers:', processedTeachers);
       return processedTeachers;
     },
   });
