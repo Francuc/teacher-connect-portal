@@ -4,22 +4,54 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, Book, GraduationCap, Euro } from "lucide-react";
-import { formatPrice, getLocalizedName } from "@/utils/teacherUtils";
+import { formatPrice } from "@/utils/teacherUtils";
 import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
 
 interface TeacherCard2Props {
   teacher: any;
-  language: string;
 }
 
-export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
-  const { t } = useLanguage();
+export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
+  const { t, language } = useLanguage();
+
+  const { data: schoolLevels = [] } = useQuery({
+    queryKey: ['schoolLevels'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('school_levels')
+        .select('*')
+        .order('name_en');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const getLocalizedName = (item: any) => {
+    if (!item) return '';
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
 
   const getTeacherLocation = () => {
     if (!teacher.city) return '';
-    const cityName = getLocalizedName(teacher.city, language);
-    const regionName = getLocalizedName(teacher.city.region, language);
+    const cityName = getLocalizedName(teacher.city);
+    const regionName = getLocalizedName(teacher.city.region);
     return `${cityName}, ${regionName}`;
+  };
+
+  const getTranslatedLevel = (levelName: string) => {
+    const level = schoolLevels.find(l => l.name_en === levelName);
+    if (level) {
+      return getLocalizedName(level);
+    }
+    return levelName;
   };
 
   // Get the full URL for the profile picture
@@ -80,7 +112,7 @@ export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
               variant="outline"
               className="bg-primary/10 text-primary border-none"
             >
-              {getLocalizedName(subjectData.subject, language)}
+              {getLocalizedName(subjectData.subject)}
             </Badge>
           ))}
         </div>
@@ -99,7 +131,7 @@ export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
               variant="outline"
               className="bg-accent/10 text-accent border-none"
             >
-              {level.school_level}
+              {getTranslatedLevel(level.school_level)}
             </Badge>
           ))}
         </div>
