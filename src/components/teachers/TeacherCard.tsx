@@ -24,7 +24,6 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
-  const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
   // Reset image error state when teacher changes
   useEffect(() => {
@@ -49,7 +48,7 @@ export const TeacherCard = ({
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
             {teacher.profile_picture_url && !imageError ? (
               <AvatarImage 
-                src={teacher.profile_picture_url} 
+                src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
                 onError={() => setImageError(true)}
