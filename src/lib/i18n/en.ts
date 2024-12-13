@@ -1,5 +1,6 @@
 export const en = {
   welcome: "Welcome",
+  onlineOnly: "Online courses only",
   findTeacher: "Find Your Perfect Teacher",
   landingDescription: "Connect with experienced teachers who can help you achieve your learning goals. Whether you're looking for in-person or online lessons, we've got you covered.",
   search: "Search",

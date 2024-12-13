@@ -12,4 +12,5 @@ export const lb = {
   errorLoadingCities: "Fehler beim Lueden vun den Stied.",
   noCitiesAvailable: "Keng Stied verfügbar.",
   noResults: "Keng Resultater fonnt.",
+  onlineOnly: "Nëmmen Online Coursen",
 } as const;

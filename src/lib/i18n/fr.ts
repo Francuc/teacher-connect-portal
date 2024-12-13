@@ -69,5 +69,6 @@ export const fr = {
   deleteConfirmation: "Êtes-vous sûr de vouloir supprimer votre compte ?",
   deleteWarning: "Cette action est irréversible",
   yes: "Oui",
-  no: "Non"
+  no: "Non",
+  onlineOnly: "Cours en ligne uniquement"
 } as const;
