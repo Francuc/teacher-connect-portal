@@ -7,8 +7,8 @@ interface SectionHeaderProps {
 
 export const SectionHeader = ({ icon: Icon, title }: SectionHeaderProps) => {
   return (
-    <h4 className="font-semibold flex items-center gap-2 h-8">
-      <Icon className="w-4 h-4" />
+    <h4 className="font-semibold flex items-center gap-1.5 h-6 text-sm">
+      <Icon className="w-3.5 h-3.5" />
       {title}
     </h4>
   );

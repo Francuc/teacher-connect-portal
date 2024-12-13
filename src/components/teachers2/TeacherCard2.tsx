@@ -95,10 +95,10 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   };
 
   return (
-    <Card className="p-4 flex flex-col h-full transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
-      {/* Header Section with fixed height */}
-      <div className="h-[140px] flex items-start gap-4 mb-4">
-        <Avatar className="w-20 h-20 rounded-xl border-4 border-purple-soft">
+    <Card className="p-3 flex flex-col h-[360px]">
+      {/* Header Section with reduced height */}
+      <div className="h-[110px] flex items-start gap-3 mb-2">
+        <Avatar className="w-16 h-16 rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
               src={getProfilePictureUrl()}
@@ -108,7 +108,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
           ) : (
             <AvatarFallback className="bg-primary/5">
               <User 
-                className="w-10 h-10 text-primary/50"
+                className="w-8 h-8 text-primary/50"
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -117,11 +117,11 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
           )}
         </Avatar>
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-purple-dark">
+          <h3 className="text-lg font-semibold text-purple-dark">
             {teacher.first_name} {teacher.last_name}
           </h3>
-          <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-            <MapPin className="w-4 h-4" />
+          <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+            <MapPin className="w-3.5 h-3.5" />
             {getTeacherLocation()}
           </p>
           <TeacherContactInfo
@@ -135,18 +135,18 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         </div>
       </div>
 
-      <Separator className="my-3" />
+      <Separator className="my-2" />
 
-      <div className="grid grid-cols-1 gap-3 flex-1">
+      <div className="grid grid-cols-1 gap-2 flex-1">
         {/* Subjects Section */}
         <Section>
           <SectionHeader icon={Book} title={t("subjects")} />
-          <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
+          <div className="flex flex-wrap gap-1.5 mt-1 min-h-[32px]">
             {teacher.teacher_subjects?.map((subjectData: any) => (
               <Badge
                 key={subjectData.subject.id}
                 variant="outline"
-                className="bg-primary/10 text-primary border-none"
+                className="bg-primary/10 text-primary border-none text-xs py-0.5"
               >
                 {getLocalizedName(subjectData.subject)}
               </Badge>
@@ -157,12 +157,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {/* School Levels Section */}
         <Section>
           <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
-          <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
+          <div className="flex flex-wrap gap-1.5 mt-1 min-h-[32px]">
             {teacher.teacher_school_levels?.map((level: any, index: number) => (
               <Badge
                 key={index}
                 variant="outline"
-                className="bg-primary/10 text-primary border-none"
+                className="bg-primary/10 text-primary border-none text-xs py-0.5"
               >
                 {getTranslatedLevel(level.school_level)}
               </Badge>
@@ -174,12 +174,12 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
           <Section>
             <SectionHeader icon={MapPin} title={t("availableIn")} />
-            <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
+            <div className="flex flex-wrap gap-1.5 mt-1 min-h-[32px]">
               {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
                 <Badge
                   key={index}
                   variant="outline"
-                  className="bg-primary/10 text-primary border-none"
+                  className="bg-primary/10 text-primary border-none text-xs py-0.5"
                 >
                   {getTranslatedCityName(cityData.city_name)}
                 </Badge>
