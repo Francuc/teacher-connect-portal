@@ -13,12 +13,17 @@ const AuthPage = () => {
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event) => {
       if (event === 'SIGNED_IN') {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
         navigate("/auth");
-      } else if (event === 'USER_NOT_FOUND') {
+      }
+    });
+
+    // Handle auth errors through error events
+    const handleAuthError = (event: any) => {
+      if (event.error?.message?.includes('Invalid login credentials')) {
         setView("sign_up");
         toast({
           title: "Account not found",
@@ -26,7 +31,10 @@ const AuthPage = () => {
           variant: "destructive",
         });
       }
-    });
+    };
+
+    // Add error event listener
+    window.addEventListener('supabase.auth.error', handleAuthError);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -36,19 +44,9 @@ const AuthPage = () => {
 
     return () => {
       authSubscription.unsubscribe();
+      window.removeEventListener('supabase.auth.error', handleAuthError);
     };
   }, [navigate, toast]);
-
-  const handleError = (error: Error) => {
-    if (error.message.includes('body stream already read')) {
-      setView("sign_up");
-      toast({
-        title: "Account not found",
-        description: "This account doesn't exist. Please sign up instead.",
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
@@ -69,7 +67,6 @@ const AuthPage = () => {
         }}
         theme="light"
         providers={[]}
-        onError={handleError}
         localization={{
           variables: {
             sign_in: {
