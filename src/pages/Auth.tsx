@@ -71,9 +71,6 @@ const AuthPage = () => {
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
             Nohëllef.lu
           </h1>
-          <p className="text-lg font-medium mt-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600">
-            {t("findTeacher")} ✨
-          </p>
           <p className="text-muted-foreground mt-2">
             {view === "sign_in" ? "Créer nouveau compte" : t("noAccount")}
           </p>
