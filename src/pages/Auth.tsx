@@ -17,10 +17,12 @@ export default function Auth() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
-        console.log('User signed in, redirecting...');
+        console.log('User signed in, checking redirect...');
         if (targetProfileId) {
+          console.log('Redirecting to profile:', targetProfileId);
           navigate(`/profile/${targetProfileId}`);
         } else {
+          console.log('No redirect parameter, going to home page');
           navigate('/');
         }
       }
