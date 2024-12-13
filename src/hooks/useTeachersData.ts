@@ -49,7 +49,7 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
-      // Process each teacher's data
+      // Process profile pictures
       const processedTeachers = teachersData.map(teacher => {
         if (!teacher.profile_picture_url) {
           return teacher;
@@ -57,7 +57,7 @@ export const useTeachersData = () => {
 
         return {
           ...teacher,
-          profile_picture_url: teacher.profile_picture_url
+          profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
         };
       });
 

@@ -22,19 +22,15 @@ export const TeacherCard = ({
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  const profilePictureUrl = teacher.profile_picture_url 
-    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-    : null;
-
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-4">
         {/* Header Section */}
         <div className="flex items-start gap-4">
           <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
-            {profilePictureUrl ? (
+            {teacher.profile_picture_url ? (
               <AvatarImage 
-                src={profilePictureUrl}
+                src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="aspect-square h-full w-full object-cover"
               />
