@@ -4,8 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 
 interface TeacherCardProps {
   teacher: any;
@@ -24,40 +23,7 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
-  const lowestPrice = getLowestPrice(teacher.teacher_locations);
-
-  useEffect(() => {
-    const loadProfilePicture = async () => {
-      if (teacher.profile_picture_url) {
-        try {
-          console.log('Loading profile picture:', teacher.profile_picture_url);
-          const { data } = supabase
-            .storage
-            .from('profile-pictures')
-            .getPublicUrl(teacher.profile_picture_url);
-          
-          if (data?.publicUrl) {
-            console.log('Successfully got public URL:', data.publicUrl);
-            setProfilePictureUrl(data.publicUrl);
-            setImageError(false);
-          } else {
-            console.error('No public URL returned from Supabase');
-            setImageError(true);
-          }
-        } catch (error) {
-          console.error('Error loading profile picture:', error);
-          setImageError(true);
-        }
-      } else {
-        console.log('No profile picture URL provided for teacher:', teacher.id);
-        setProfilePictureUrl(null);
-      }
-    };
-
-    loadProfilePicture();
-  }, [teacher.profile_picture_url, teacher.id]);
 
   // Get teacher's place location
   const teacherPlace = teacher.teacher_locations?.find(
@@ -75,13 +41,13 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {profilePictureUrl && !imageError ? (
+            {teacher.profile_picture_url && !imageError ? (
               <AvatarImage 
-                src={profilePictureUrl}
+                src={teacher.profile_picture_url}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
                 onError={() => {
-                  console.error('Error loading image:', profilePictureUrl);
+                  console.error('Error loading image:', teacher.profile_picture_url);
                   setImageError(true);
                 }}
               />
