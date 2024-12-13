@@ -34,7 +34,7 @@ export const TeacherCard = ({
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
             {teacher.profile_picture_url && !imageError ? (
               <AvatarImage 
-                src={teacher.profile_picture_url}
+                src={`${teacher.profile_picture_url}?v=${Date.now()}`}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
                 onError={() => setImageError(true)}
