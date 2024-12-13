@@ -28,7 +28,12 @@ export const FormSections = ({
   const { t } = useLanguage();
   const { session } = useAuth();
 
-  console.log('FormSections - subscription status:', formData.subscription_status);
+  console.log('FormSections - subscription data:', {
+    status: formData.subscription_status,
+    type: formData.subscription_type,
+    endDate: formData.subscription_end_date,
+    promoCode: formData.promo_code
+  });
 
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">

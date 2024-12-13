@@ -1,10 +1,12 @@
 import { formatDate } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface SubscriptionStatusProps {
   status: string;
-  endDate?: string;
+  endDate?: string | null;
   type?: string;
   promoCode?: string;
   onToggleStatus?: () => Promise<void>;
@@ -23,15 +25,22 @@ export const SubscriptionStatus = ({
   const hasValidSubscription = endDate && new Date(endDate) > new Date();
   
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
+    <Card className="border border-gray-200">
+      <CardContent className="pt-6 space-y-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">
-            {t("status")}: {" "}
-            <span className={status === 'active' ? 'text-green-600' : 'text-red-600'}>
+          <div className="flex items-center gap-2">
+            <Badge variant={status === 'active' ? 'default' : 'secondary'}>
               {status === 'active' ? t("active") : t("inactive")}
-            </span>
-          </p>
+            </Badge>
+            {type && (
+              <Badge variant="outline">
+                {type === 'month' ? t("monthly") : 
+                 type === 'year' ? t("yearly") : 
+                 type === 'promo' ? t("promoSubscription") : 
+                 type}
+              </Badge>
+            )}
+          </div>
           {hasValidSubscription && onToggleStatus && (
             <Switch
               checked={status === 'active'}
@@ -40,27 +49,23 @@ export const SubscriptionStatus = ({
             />
           )}
         </div>
+
         {endDate && (
-          <p className="text-sm text-muted-foreground">
-            {t("validUntil")}: {formatDate(endDate)}
-          </p>
+          <div className="text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">{t("validUntil")}</p>
+            <p>{formatDate(endDate)}</p>
+          </div>
         )}
-        {type && (
-          <p className="text-sm text-muted-foreground">
-            {t("subscriptionType")}: {
-              type === 'month' ? t("monthly") : 
-              type === 'year' ? t("yearly") : 
-              type === 'promo' ? t("promoSubscription") : 
-              type
-            }
-          </p>
-        )}
+
         {promoCode && (
-          <p className="text-sm text-muted-foreground">
-            {t("activePromoCode")}: {promoCode}
-          </p>
+          <div className="text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">{t("activePromoCode")}</p>
+            <p className="font-mono bg-purple-50 px-2 py-1 rounded inline-block">
+              {promoCode}
+            </p>
+          </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
