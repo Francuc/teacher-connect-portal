@@ -111,6 +111,7 @@ export type Translation = {
   activateProfile: string;
   profileDeactivated: string;
   profileActivated: string;
+  selectSubject: string;
 };
 
 export type TranslationKey = keyof Translation;

@@ -105,6 +105,7 @@ export const lb: Translation = {
   promoSubscription: "Promotioun",
   deactivateProfile: "Profil deaktivéieren",
   activateProfile: "Profil aktivéieren",
-  profileDeactivated: "Profil deaktivéiert",
+  profileDeactivated: "Profil désaktivéiert",
   profileActivated: "Profil aktivéiert",
+  selectSubject: "Wielt e Fach",
 };

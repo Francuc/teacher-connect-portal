@@ -107,4 +107,5 @@ export const en: Translation = {
   activateProfile: "Activate Profile",
   profileDeactivated: "Profile deactivated",
   profileActivated: "Profile activated",
+  selectSubject: "Select a Subject",
 };
