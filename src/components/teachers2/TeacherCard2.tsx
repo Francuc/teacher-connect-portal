@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, Book, GraduationCap, Euro } from "lucide-react";
 import { formatPrice, getLocalizedName } from "@/utils/teacherUtils";
+import { supabase } from "@/lib/supabase";
 
 interface TeacherCard2Props {
   teacher: any;
@@ -21,6 +22,16 @@ export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
     return `${cityName}, ${regionName}`;
   };
 
+  // Get the full URL for the profile picture
+  const getProfilePictureUrl = () => {
+    if (!teacher.profile_picture_url) return null;
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('profile-pictures')
+      .getPublicUrl(teacher.profile_picture_url);
+    return publicUrl;
+  };
+
   return (
     <Card className="p-6 flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       {/* Header Section */}
@@ -28,7 +39,7 @@ export const TeacherCard2 = ({ teacher, language }: TeacherCard2Props) => {
         <Avatar className="w-24 h-24 rounded-xl border-4 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
-              src={teacher.profile_picture_url}
+              src={getProfilePictureUrl()}
               alt={`${teacher.first_name} ${teacher.last_name}`}
               className="aspect-square h-full w-full object-cover"
             />
