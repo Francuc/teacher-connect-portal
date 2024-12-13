@@ -4,12 +4,12 @@ import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "@/hooks/use-translation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
@@ -23,18 +23,6 @@ const AuthPage = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-  // Handle auth errors separately
-  const handleAuthError = async (error: Error) => {
-    if (error.message.includes('Invalid login credentials')) {
-      toast({
-        title: t("error"),
-        description: t("noAccount"),
-        variant: "destructive",
-      });
-      setView("sign_up");
-    }
-  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
@@ -74,6 +62,17 @@ const AuthPage = () => {
               loading_button_label: 'Signing up ...',
             },
           },
+        }}
+        onError={(error) => {
+          console.error('Auth error:', error);
+          if (error.message.includes('Invalid login credentials')) {
+            toast({
+              title: t("error"),
+              description: t("noAccount"),
+              variant: "destructive",
+            });
+            setView("sign_up");
+          }
         }}
       />
     </div>
