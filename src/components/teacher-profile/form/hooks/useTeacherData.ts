@@ -19,37 +19,37 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           .from('teachers')
           .select(`
             *,
-            city:cities (
+            city:cities!left (
               id,
               name_en,
               name_fr,
               name_lb,
-              region:regions (
+              region:regions!left (
                 id,
                 name_en,
                 name_fr,
                 name_lb
               )
             ),
-            teacher_subjects (
-              subject:subjects (
+            teacher_subjects!left (
+              subject:subjects!left (
                 id,
                 name_en,
                 name_fr,
                 name_lb
               )
             ),
-            teacher_school_levels (
+            teacher_school_levels!left (
               school_level
             ),
-            teacher_locations (
+            teacher_locations!left (
               location_type,
               price_per_hour
             ),
-            teacher_student_regions (
+            teacher_student_regions!left (
               region_name
             ),
-            teacher_student_cities (
+            teacher_student_cities!left (
               city_name
             )
           `)
