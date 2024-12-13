@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
-import { Plus, User } from "lucide-react";
+import { LogOut, Plus, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -26,15 +26,11 @@ export const Navigation = () => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    // Set up the initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
@@ -67,19 +63,16 @@ export const Navigation = () => {
     }
   });
 
-  // Reset image errors when profiles change
   useEffect(() => {
     setImageErrors({});
   }, [profiles]);
 
   const handleProfileAction = async () => {
     if (!session) {
-      // If not logged in, redirect to auth page
       navigate("/auth");
       return;
     }
 
-    // Check if user has a teacher profile
     const { data: teacherProfile } = await supabase
       .from('teachers')
       .select('user_id')
@@ -87,11 +80,28 @@ export const Navigation = () => {
       .single();
 
     if (teacherProfile) {
-      // If profile exists, go to edit page
       navigate(`/profile/edit/${session.user.id}`);
     } else {
-      // If no profile, go to create new profile page
       navigate("/profile/new");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/auth");
+      toast({
+        title: t("success"),
+        description: t("logoutSuccess"),
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast({
+        title: t("error"),
+        description: t("logoutError"),
+        variant: "destructive",
+      });
     }
   };
 
@@ -178,6 +188,12 @@ export const Navigation = () => {
               <Plus className="h-5 w-5" />
               {session ? t("myProfile") : t("createAd")}
             </Button>
+            {session && (
+              <Button onClick={handleLogout} variant="outline" className="gap-2 h-12 px-6 text-base">
+                <LogOut className="h-5 w-5" />
+                {t("logout")}
+              </Button>
+            )}
             <LanguageSwitcher />
           </div>
         </div>

@@ -21,23 +21,16 @@ const AuthPage = () => {
       }
     });
 
-    const { data: { subscription: errorSubscription } } = supabase.auth.onError((error) => {
-      console.error('Auth error:', error);
-      if (error.message.includes('Invalid login credentials')) {
-        toast({
-          title: t("error"),
-          description: t("noAccount"),
-          variant: "destructive",
-        });
-        setView("sign_up");
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/");
       }
     });
 
     return () => {
       authSubscription.unsubscribe();
-      errorSubscription.unsubscribe();
     };
-  }, [navigate, toast, t]);
+  }, [navigate]);
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
