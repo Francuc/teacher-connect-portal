@@ -133,23 +133,25 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="grid gap-6">
-        <div className="flex justify-between items-start">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr,auto] gap-6">
           <PersonalSection profile={teacherData.profile} />
           {isOwnProfile && (
-            <Button 
-              onClick={handleEditClick}
-              className="bg-primary hover:bg-primary/90 text-white gap-2"
-            >
-              <Pencil className="h-4 w-4" />
-              {t("edit")}
-            </Button>
+            <div className="space-y-4">
+              <Button 
+                onClick={handleEditClick}
+                className="bg-primary hover:bg-primary/90 text-white gap-2"
+              >
+                <Pencil className="h-4 w-4" />
+                {t("edit")}
+              </Button>
+              <SubscriptionSection 
+                profile={teacherData.profile}
+                isOwnProfile={isOwnProfile}
+              />
+            </div>
           )}
         </div>
         <div className="grid grid-cols-1 gap-6">
-          <SubscriptionSection 
-            profile={teacherData.profile}
-            isOwnProfile={isOwnProfile}
-          />
           <BiographySection bio={teacherData.profile.bio} />
           <SubjectsSection subjects={teacherData.subjects} />
           <SchoolLevelsSection schoolLevels={teacherData.schoolLevels} />

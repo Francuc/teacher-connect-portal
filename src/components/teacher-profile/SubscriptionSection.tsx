@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { useState } from "react";
-import { CreditCard, Gift } from "lucide-react";
+import { CreditCard, Gift, Power } from "lucide-react";
 
 interface SubscriptionSectionProps {
   profile: any;
@@ -96,9 +96,43 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
     }
   };
 
+  const handleToggleProfileStatus = async () => {
+    try {
+      setIsLoading(true);
+      const { error } = await supabase
+        .from('teachers')
+        .update({ 
+          subscription_status: profile.subscription_status === 'active' ? 'inactive' : 'active' 
+        })
+        .eq('user_id', profile.user_id);
+
+      if (error) throw error;
+
+      toast({
+        title: t("success"),
+        description: profile.subscription_status === 'active' 
+          ? t("profileDeactivated") 
+          : t("profileActivated"),
+      });
+      
+      window.location.reload();
+    } catch (error) {
+      console.error('Error toggling profile status:', error);
+      toast({
+        title: t("error"),
+        description: t("error"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
+
+  const hasValidSubscription = profile.subscription_end_date && new Date(profile.subscription_end_date) > new Date();
 
   if (!isOwnProfile) return null;
 
@@ -138,7 +172,19 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
           )}
         </div>
 
-        {profile.subscription_status !== 'active' && (
+        {hasValidSubscription && (
+          <Button
+            onClick={handleToggleProfileStatus}
+            variant={profile.subscription_status === 'active' ? "destructive" : "default"}
+            className="w-full gap-2"
+            disabled={isLoading}
+          >
+            <Power className="h-4 w-4" />
+            {profile.subscription_status === 'active' ? t("deactivateProfile") : t("activateProfile")}
+          </Button>
+        )}
+
+        {profile.subscription_status !== 'active' && !hasValidSubscription && (
           <>
             <div className="grid gap-4">
               <Button 
