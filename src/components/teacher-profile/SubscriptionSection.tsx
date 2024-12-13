@@ -96,6 +96,10 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
     }
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
+  };
+
   if (!isOwnProfile) return null;
 
   return (
@@ -114,15 +118,18 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
               {profile.subscription_status === 'active' ? t("active") : t("inactive")}
             </span>
           </p>
-          {profile.subscription_end_date && (
-            <p className="text-sm text-muted-foreground">
-              {t("validUntil")}: {new Date(profile.subscription_end_date).toLocaleDateString()}
-            </p>
-          )}
-          {profile.subscription_type && (
-            <p className="text-sm text-muted-foreground">
-              {t("subscriptionType")}: {profile.subscription_type}
-            </p>
+          {profile.subscription_status === 'active' && (
+            <>
+              <p className="text-sm text-muted-foreground">
+                {t("validUntil")}: {formatDate(profile.subscription_end_date)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t("subscriptionType")}: {profile.subscription_type === 'month' ? t("monthly") : 
+                  profile.subscription_type === 'year' ? t("yearly") : 
+                  profile.subscription_type === 'promo' ? t("promoSubscription") : 
+                  profile.subscription_type}
+              </p>
+            </>
           )}
           {profile.promo_code && (
             <p className="text-sm text-muted-foreground">

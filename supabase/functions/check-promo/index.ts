@@ -7,6 +7,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -14,43 +15,48 @@ serve(async (req) => {
   try {
     const { promoCode, userId } = await req.json()
     
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    )
-
-    const { data: validPromo } = await supabaseClient
-      .from('promo_codes')
-      .select()
-      .eq('code', promoCode)
-      .single()
-
-    if (validPromo) {
-      await supabaseClient
-        .from('teachers')
-        .update({
-          subscription_status: 'active',
-          promo_code: promoCode,
-          subscription_end_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-        })
-        .eq('user_id', userId)
-
+    if (promoCode !== 'PIERE') {
       return new Response(
-        JSON.stringify({ success: true }),
+        JSON.stringify({ success: false }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Calculate end date (1 week from now)
+    const now = new Date()
+    const endDate = new Date(now)
+    endDate.setDate(endDate.getDate() + 7)
+
+    const { error } = await supabaseClient
+      .from('teachers')
+      .update({
+        subscription_status: 'active',
+        subscription_type: 'promo',
+        subscription_end_date: endDate.toISOString(),
+        promo_code: promoCode
+      })
+      .eq('user_id', userId)
+
+    if (error) throw error
+
+    console.log(`Promo code ${promoCode} applied for user ${userId}, subscription active until ${endDate.toISOString()}`)
+
     return new Response(
-      JSON.stringify({ success: false, error: 'Invalid promo code' }),
+      JSON.stringify({ success: true }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
+    console.error('Error in check-promo function:', error)
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ error: error.message }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
   }

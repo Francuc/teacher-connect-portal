@@ -41,14 +41,29 @@ serve(async (req) => {
 
         if (!teachers?.user_id) break
 
+        // Get the subscription interval (month or year)
+        const interval = subscription.items.data[0].price.recurring?.interval
+        
+        // Calculate end date based on subscription type
+        const now = new Date()
+        let endDate = new Date(now)
+        
+        if (interval === 'month') {
+          endDate.setMonth(endDate.getMonth() + 1)
+        } else if (interval === 'year') {
+          endDate.setFullYear(endDate.getFullYear() + 1)
+        }
+
         await supabaseClient
           .from('teachers')
           .update({
             subscription_status: subscription.status,
-            subscription_type: subscription.items.data[0].price.recurring?.interval || null,
-            subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString()
+            subscription_type: interval,
+            subscription_end_date: endDate.toISOString()
           })
           .eq('user_id', teachers.user_id)
+        
+        console.log(`Subscription updated for user ${teachers.user_id}: ${interval}ly subscription until ${endDate.toISOString()}`)
         break
 
       case 'customer.subscription.deleted':
@@ -76,8 +91,14 @@ serve(async (req) => {
         break
     }
 
-    return new Response(JSON.stringify({ received: true }), { status: 200 })
+    return new Response(JSON.stringify({ received: true }), { 
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
   } catch (err) {
+    console.error('Webhook error:', err)
     return new Response(
       `Webhook Error: ${err.message}`,
       { status: 400 }
