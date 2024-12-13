@@ -25,12 +25,10 @@ export const TeacherCard = ({
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
 
-  // Reset image error state when teacher changes
   useEffect(() => {
     setImageError(false);
   }, [teacher]);
 
-  // Get locations by type
   const teacherPlace = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Teacher's Place"
   );
@@ -39,18 +37,27 @@ export const TeacherCard = ({
     (loc: any) => loc.location_type === "Student's Place"
   );
 
+  const profilePictureUrl = teacher.profile_picture_url 
+    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
+    : null;
+
+  console.log('Profile picture URL:', profilePictureUrl); // Debug log
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-6">
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {!imageError && teacher.profile_picture_url ? (
+            {profilePictureUrl && !imageError ? (
               <AvatarImage 
-                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`}
+                src={profilePictureUrl}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
-                onError={() => setImageError(true)}
+                onError={() => {
+                  console.log('Image failed to load:', profilePictureUrl); // Debug log
+                  setImageError(true);
+                }}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
