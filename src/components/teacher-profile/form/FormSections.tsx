@@ -9,6 +9,8 @@ import { SchoolLevelsSection } from "../SchoolLevelsSection";
 import { SubscriptionSection } from "../SubscriptionSection";
 import { useAuth } from "@/hooks/useAuth";
 import { type FormData } from "./types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface FormSectionsProps {
   formData: FormData;
@@ -40,16 +42,55 @@ export const FormSections = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PersonalInfoSection formData={formData} setFormData={setFormData} />
         {isUpdate && session?.user && (
-          <SubscriptionSection 
-            profile={{
-              user_id: session.user.id,
-              subscription_status: formData.subscription_status,
-              subscription_type: formData.subscription_type,
-              subscription_end_date: formData.subscription_end_date,
-              promo_code: formData.promo_code
-            }} 
-            isOwnProfile={true}
-          />
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Current Subscription Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Status:</span>
+                    <Badge variant={formData.subscription_status === 'active' ? 'default' : 'secondary'}>
+                      {formData.subscription_status || 'inactive'}
+                    </Badge>
+                  </div>
+                  {formData.subscription_type && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Type:</span>
+                      <Badge variant="outline">{formData.subscription_type}</Badge>
+                    </div>
+                  )}
+                  {formData.subscription_end_date && (
+                    <div>
+                      <span className="font-medium">Valid until:</span>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(formData.subscription_end_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  )}
+                  {formData.promo_code && (
+                    <div>
+                      <span className="font-medium">Promo code:</span>
+                      <p className="font-mono bg-purple-50 px-2 py-1 rounded inline-block ml-2">
+                        {formData.promo_code}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            <SubscriptionSection 
+              profile={{
+                user_id: session.user.id,
+                subscription_status: formData.subscription_status,
+                subscription_type: formData.subscription_type,
+                subscription_end_date: formData.subscription_end_date,
+                promo_code: formData.promo_code
+              }} 
+              isOwnProfile={true}
+            />
+          </>
         )}
       </div>
       <BiographySection formData={formData} setFormData={setFormData} />
