@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/lib/supabase";
 import { useState } from "react";
-import { CreditCard, Gift, Power } from "lucide-react";
+import { CreditCard } from "lucide-react";
+import { SubscriptionStatus } from "./subscription/SubscriptionStatus";
+import { SubscriptionPlans } from "./subscription/SubscriptionPlans";
+import { SubscriptionActions } from "./subscription/SubscriptionActions";
 
 interface SubscriptionSectionProps {
   profile: any;
@@ -130,10 +131,6 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
   const hasValidSubscription = profile.subscription_end_date && new Date(profile.subscription_end_date) > new Date();
 
   if (!isOwnProfile) return null;
@@ -147,89 +144,30 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <p className="text-sm font-medium">
-            {t("status")}: {" "}
-            <span className={profile.subscription_status === 'active' ? 'text-green-600' : 'text-red-600'}>
-              {profile.subscription_status === 'active' ? t("active") : t("inactive")}
-            </span>
-          </p>
-          {profile.subscription_status === 'active' && (
-            <>
-              <p className="text-sm text-muted-foreground">
-                {t("validUntil")}: {formatDate(profile.subscription_end_date)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {t("subscriptionType")}: {profile.subscription_type === 'month' ? t("monthly") : 
-                  profile.subscription_type === 'year' ? t("yearly") : 
-                  profile.subscription_type === 'promo' ? t("promoSubscription") : 
-                  profile.subscription_type}
-              </p>
-            </>
-          )}
-          {profile.promo_code && (
-            <p className="text-sm text-muted-foreground">
-              {t("activePromoCode")}: {profile.promo_code}
-            </p>
-          )}
-        </div>
-
-        {hasValidSubscription && (
-          <Button
-            onClick={handleToggleProfileStatus}
-            variant={profile.subscription_status === 'active' ? "destructive" : "default"}
-            className="w-full gap-2"
-            disabled={isLoading}
-          >
-            <Power className="h-4 w-4" />
-            {profile.subscription_status === 'active' ? t("deactivateProfile") : t("activateProfile")}
-          </Button>
-        )}
+        <SubscriptionStatus 
+          status={profile.subscription_status}
+          endDate={profile.subscription_end_date}
+          type={profile.subscription_type}
+          promoCode={profile.promo_code}
+        />
 
         {profile.subscription_status !== 'active' && !hasValidSubscription && (
-          <>
-            <div className="grid gap-4">
-              <Button 
-                onClick={() => handleSubscribe('price_1QVVz2Hv0pYF1Q358iUsjhnh')}
-                className="w-full"
-              >
-                {t("subscribeMonthly")} - 19€
-              </Button>
-              <Button 
-                onClick={() => handleSubscribe('price_1QVVzoHv0pYF1Q35XiTklnsb')}
-                className="w-full"
-              >
-                {t("subscribeYearly")} - 199€
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Gift className="w-4 h-4" />
-              <Input
-                placeholder={t("enterPromoCode")}
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-              />
-              <Button 
-                onClick={handlePromoCode}
-                disabled={isLoading || !promoCode}
-              >
-                {t("apply")}
-              </Button>
-            </div>
-          </>
+          <SubscriptionPlans 
+            isLoading={isLoading}
+            promoCode={promoCode}
+            onPromoCodeChange={setPromoCode}
+            onPromoCodeSubmit={handlePromoCode}
+            onSubscribe={handleSubscribe}
+          />
         )}
 
-        <div className="pt-4 border-t">
-          <Button
-            variant="destructive"
-            onClick={handleDeleteProfile}
-            disabled={isLoading}
-            className="w-full"
-          >
-            {t("deleteProfile")}
-          </Button>
-        </div>
+        <SubscriptionActions 
+          hasValidSubscription={hasValidSubscription}
+          status={profile.subscription_status}
+          isLoading={isLoading}
+          onToggleStatus={handleToggleProfileStatus}
+          onDelete={handleDeleteProfile}
+        />
       </CardContent>
     </Card>
   );
