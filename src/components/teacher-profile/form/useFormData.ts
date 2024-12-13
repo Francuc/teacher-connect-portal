@@ -29,6 +29,10 @@ export const useFormData = (userId?: string) => {
       studentPlace: "",
       online: "",
     },
+    subscription_status: undefined,
+    subscription_type: undefined,
+    subscription_end_date: undefined,
+    promo_code: undefined
   });
 
   useDefaultCity(formData, setFormData, userId);
