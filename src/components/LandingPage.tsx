@@ -1,26 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { BookOpen, GraduationCap } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { TeachersList } from "./TeachersList";
 import { useState } from "react";
-import { useSubjectsData } from "@/hooks/useSubjectsData";
-import { useSchoolLevelsData } from "@/hooks/useSchoolLevelsData";
 
 export const LandingPage = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: subjects = [] } = useSubjectsData();
-  const { data: schoolLevels = [] } = useSchoolLevelsData();
-
-  const getLocalizedName = (item: { name_en: string; name_fr: string; name_lb: string }) => {
-    switch(language) {
-      case 'fr':
-        return item.name_fr;
-      case 'lb':
-        return item.name_lb;
-      default:
-        return item.name_en;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
@@ -39,53 +24,6 @@ export const LandingPage = () => {
               <p className="text-xl md:text-2xl text-white/90 max-w-2xl">
                 {t("landingDescription")}
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Subjects and Levels Section */}
-        <div className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Subjects */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <BookOpen className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold text-purple.dark">{t("subjects")}</h2>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {subjects.map((subject) => (
-                    <div
-                      key={subject.id}
-                      className="p-4 rounded-xl bg-purple.soft/10 hover:bg-purple.soft/20 transition-colors"
-                    >
-                      <span className="text-sm font-medium text-purple.dark">
-                        {getLocalizedName(subject)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* School Levels */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <GraduationCap className="w-6 h-6 text-primary" />
-                  <h2 className="text-2xl font-bold text-purple.dark">{t("schoolLevels")}</h2>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {schoolLevels.map((level) => (
-                    <div
-                      key={level.id}
-                      className="p-4 rounded-xl bg-purple.soft/10 hover:bg-purple.soft/20 transition-colors"
-                    >
-                      <span className="text-sm font-medium text-purple.dark">
-                        {getLocalizedName(level)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
