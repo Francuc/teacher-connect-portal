@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
 
 interface TeacherProfileViewProps {
   userId: string;
@@ -17,6 +19,19 @@ interface TeacherProfileViewProps {
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [session, setSession] = useState<Session | null>(null);
+  
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   
   const { data: teacherData, isLoading } = useQuery({
     queryKey: ['teacher', userId],
@@ -117,7 +132,18 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="grid gap-6">
-        <PersonalSection profile={teacherData.profile} />
+        <div className="flex justify-between items-start">
+          <PersonalSection profile={teacherData.profile} />
+          {session?.user?.id === userId && (
+            <Button 
+              onClick={handleEditClick}
+              className="bg-primary hover:bg-primary/90 text-white gap-2"
+            >
+              <Pencil className="h-4 w-4" />
+              {t("edit")}
+            </Button>
+          )}
+        </div>
         <div className="grid grid-cols-1 gap-6">
           <BiographySection bio={teacherData.profile.bio} />
           <SubjectsSection subjects={teacherData.subjects} />
