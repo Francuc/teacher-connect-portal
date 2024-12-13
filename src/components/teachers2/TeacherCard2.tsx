@@ -97,8 +97,8 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   return (
     <Card className="p-3 flex flex-col h-[472px]">
       {/* Header Section with increased height */}
-      <div className="h-[85px] flex items-start gap-3 mb-2">
-        <Avatar className="w-21 h-21 rounded-xl border-2 border-purple-soft">
+      <div className="h-[85px] flex items-start gap-3 mb-2 p-[3px]">
+        <Avatar className="w-[79px] h-[79px] rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
               src={getProfilePictureUrl()}
@@ -108,7 +108,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
           ) : (
             <AvatarFallback className="bg-primary/5">
               <User 
-                className="w-10 h-10 text-primary/50"
+                className="w-12 h-12 text-primary/50"
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
