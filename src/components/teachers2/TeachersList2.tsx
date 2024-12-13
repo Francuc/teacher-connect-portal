@@ -13,6 +13,8 @@ export const TeachersList2 = ({ selectedSubject = "all" }: TeachersList2Props) =
   const { data: teachers = [], isLoading } = useQuery({
     queryKey: ["teachers2", selectedSubject],
     queryFn: async () => {
+      console.log("Fetching teachers with subject filter:", selectedSubject);
+      
       let query = supabase
         .from('teachers')
         .select(`
@@ -38,7 +40,7 @@ export const TeachersList2 = ({ selectedSubject = "all" }: TeachersList2Props) =
         .order('created_at', { ascending: false });
 
       if (selectedSubject !== "all") {
-        query = query.contains('teacher_subjects', [{ subject_id: selectedSubject }]);
+        query = query.eq('teacher_subjects.subject_id', selectedSubject);
       }
 
       const { data, error } = await query;
