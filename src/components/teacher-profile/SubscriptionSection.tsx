@@ -135,13 +135,13 @@ export const SubscriptionSection = ({ profile, isOwnProfile }: SubscriptionSecti
           <>
             <div className="grid gap-4">
               <Button 
-                onClick={() => handleSubscribe('price_1OvGrKHhUVFUXGBw0Ql6Iqxs')}
+                onClick={() => handleSubscribe('price_1QVVz2Hv0pYF1Q358iUsjhnh')}
                 className="w-full"
               >
                 {t("subscribeMonthly")} - 19€
               </Button>
               <Button 
-                onClick={() => handleSubscribe('price_1OvGrKHhUVFUXGBw7jxVlwxD')}
+                onClick={() => handleSubscribe('price_1QVVzoHv0pYF1Q35XiTklnsb')}
                 className="w-full"
               >
                 {t("subscribeYearly")} - 199€
