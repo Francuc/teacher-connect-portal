@@ -7,6 +7,7 @@ import { useTeachersData } from "@/hooks/useTeachersData";
 import { useSubjectsData } from "@/hooks/useSubjectsData";
 import { useSchoolLevelsData } from "@/hooks/useSchoolLevelsData";
 import { getLocalizedName, getTeacherLocation, getLowestPrice, formatPrice } from "@/utils/teacherUtils";
+import { useFilteredTeachers } from "@/hooks/useFilteredTeachers";
 
 interface TeachersListProps {
   initialSearchQuery?: string;
@@ -22,23 +23,13 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
   const { data: subjects = [] } = useSubjectsData();
   const { data: schoolLevels = [] } = useSchoolLevelsData();
 
-  const filteredTeachers = teachers.filter(teacher => {
-    const teacherSubjects = teacher.teacher_subjects?.map(s => getLocalizedName(s.subject, language)) || [];
-    const teacherLevels = teacher.teacher_school_levels?.map(l => l.school_level) || [];
-    
-    const matchesSubject = selectedSubject === "all" || teacherSubjects.includes(selectedSubject);
-    const matchesLevel = selectedLevel === "all" || teacherLevels.includes(selectedLevel);
-    
-    const location = getTeacherLocation(teacher, language);
-    const studentCities = teacher.teacher_student_cities?.map(c => c.city_name) || [];
-    const allLocations = [location, ...studentCities];
-    
-    const matchesSearch = !searchQuery || 
-      `${teacher.first_name} ${teacher.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      allLocations.some(loc => loc.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesSubject && matchesLevel && matchesSearch;
-  });
+  const filteredTeachers = useFilteredTeachers(
+    teachers,
+    selectedSubject,
+    selectedLevel,
+    searchQuery,
+    language
+  );
 
   return (
     <div className="container mx-auto px-4 space-y-8">
