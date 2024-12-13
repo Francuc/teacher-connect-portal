@@ -97,7 +97,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   return (
     <Card className="p-3 flex flex-col h-[472px]">
       {/* Header Section with increased height */}
-      <div className="h-[77px] flex items-start gap-3 mb-2">
+      <div className="h-[81px] flex items-start gap-3 mb-2">
         <Avatar className="w-16 h-16 rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
