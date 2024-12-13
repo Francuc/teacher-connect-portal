@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "./ui/button";
-import { LogOut, Plus, User } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "./ui/use-toast";
@@ -66,23 +66,6 @@ export const Navigation = () => {
       return profilesWithUrls || [];
     }
   });
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: error.message,
-      });
-    } else {
-      navigate("/");
-      toast({
-        title: t("success"),
-        description: t("signOut"),
-      });
-    }
-  };
 
   // Reset image errors when profiles change
   useEffect(() => {
@@ -195,16 +178,6 @@ export const Navigation = () => {
               <Plus className="h-5 w-5" />
               {session ? t("myProfile") : t("createAd")}
             </Button>
-            {session && (
-              <Button 
-                onClick={handleLogout} 
-                variant="outline" 
-                className="gap-2 h-12 px-6 text-base border-purple.soft/30 hover:bg-purple.soft/10"
-              >
-                <LogOut className="h-5 w-5" />
-                {t("signOut")}
-              </Button>
-            )}
             <LanguageSwitcher />
           </div>
         </div>
