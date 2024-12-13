@@ -4,7 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from "react";
 
 interface TeacherCardProps {
   teacher: any;
@@ -23,30 +22,17 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [imageError, setImageError] = useState(false);
+  const lowestPrice = getLowestPrice(teacher.teacher_locations);
 
-  useEffect(() => {
-    setImageError(false);
-  }, [teacher]);
-
+  // Get teacher's place location
   const teacherPlace = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Teacher's Place"
   );
-  
+
+  // Get student's place location
   const studentPlace = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
-
-  const profilePictureUrl = teacher.profile_picture_url 
-    ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-    : null;
-
-  console.log('Teacher data:', {
-    subjects: teacher.teacher_subjects,
-    levels: teacher.teacher_school_levels,
-    locations: teacher.teacher_locations,
-    studentCities: teacher.teacher_student_cities
-  });
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -54,15 +40,11 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {profilePictureUrl && !imageError ? (
+            {teacher.profile_picture_url ? (
               <AvatarImage 
-                src={profilePictureUrl}
+                src={teacher.profile_picture_url} 
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
-                onError={() => {
-                  console.log('Image failed to load:', profilePictureUrl);
-                  setImageError(true);
-                }}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
@@ -74,102 +56,90 @@ export const TeacherCard = ({
             <h3 className="text-xl font-bold text-purple-dark">
               {teacher.first_name} {teacher.last_name}
             </h3>
-            {teacher.city && (
-              <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                <MapPin className="w-4 h-4" />
-                {getTeacherLocation(teacher)}
-              </p>
-            )}
           </div>
         </div>
 
         {/* Subjects Section */}
-        {teacher.teacher_subjects && teacher.teacher_subjects.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <BookOpen className="w-4 h-4" />
-              <span>{t("subjects")}</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {teacher.teacher_subjects.map((subjectData: any, index: number) => (
-                <span
-                  key={index}
-                  className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium"
-                >
-                  {getLocalizedName(subjectData.subject)}
-                </span>
-              ))}
-            </div>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <BookOpen className="w-4 h-4" />
+            <span>{t("subjects")}</span>
           </div>
-        )}
+          <div className="flex flex-wrap gap-2">
+            {teacher.teacher_subjects?.slice(0, 3).map((subjectData: any) => (
+              <span
+                key={subjectData.subject.id}
+                className="px-3 py-1 bg-purple-soft text-purple-vivid rounded-full text-sm font-medium"
+              >
+                {getLocalizedName(subjectData.subject)}
+              </span>
+            ))}
+            {teacher.teacher_subjects?.length > 3 && (
+              <span className="px-3 py-1 bg-purple-soft/50 text-purple-vivid rounded-full text-sm font-medium">
+                +{teacher.teacher_subjects.length - 3}
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* School Levels Section */}
-        {teacher.teacher_school_levels && teacher.teacher_school_levels.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <GraduationCap className="w-4 h-4" />
-              <span>{t("schoolLevels")}</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {teacher.teacher_school_levels.map((level: any, index: number) => (
-                <span
-                  key={index}
-                  className="text-xs px-3 py-1 rounded-full bg-accent/10 text-accent font-medium"
-                >
-                  {level.school_level}
-                </span>
-              ))}
-            </div>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <GraduationCap className="w-4 h-4" />
+            <span>{t("schoolLevels")}</span>
           </div>
-        )}
+          <div className="flex flex-wrap gap-2">
+            {teacher.teacher_school_levels?.slice(0, 3).map((level: any, index: number) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+              >
+                {level.school_level}
+              </span>
+            ))}
+            {teacher.teacher_school_levels?.length > 3 && (
+              <span className="px-3 py-1 bg-accent/5 text-accent rounded-full text-sm font-medium">
+                +{teacher.teacher_school_levels.length - 3}
+              </span>
+            )}
+          </div>
+        </div>
 
         {/* Teaching Locations Section */}
-        {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
-          <div className="space-y-4">
-            {/* Teacher's Place */}
-            {teacherPlace && teacher.city && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{t("teacherPlace")}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-purple-dark">
-                    {getTeacherLocation(teacher)}
-                  </span>
-                  <span className="text-sm font-medium bg-primary/10 px-3 py-1 rounded-full">
-                    {formatPrice(teacherPlace.price_per_hour)}/h
-                  </span>
-                </div>
+        <div className="space-y-4">
+          {/* Teacher's Place */}
+          {teacherPlace && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>{t("teacherPlace")}</span>
               </div>
-            )}
+              <div className="text-sm text-purple-dark">
+                {getLocalizedName(teacher.city)}
+              </div>
+            </div>
+          )}
 
-            {/* Student's Place */}
-            {studentPlace && teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{t("studentPlace")}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex flex-wrap gap-2">
-                    {teacher.teacher_student_cities.map((cityData: any, index: number) => (
-                      <span
-                        key={index}
-                        className="text-xs px-3 py-1 rounded-full bg-accent/10 text-accent font-medium"
-                      >
-                        {cityData.city_name}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="text-sm font-medium bg-primary/10 px-3 py-1 rounded-full ml-2">
-                    {formatPrice(studentPlace.price_per_hour)}/h
-                  </span>
-                </div>
+          {/* Student's Place */}
+          {studentPlace && teacher.teacher_student_cities?.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>{t("studentPlace")}</span>
               </div>
-            )}
-          </div>
-        )}
+              <div className="flex flex-wrap gap-2">
+                {teacher.teacher_student_cities.map((cityData: any, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
+                  >
+                    {cityData.city_name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Footer with Action Button */}
         <div className="mt-auto pt-4 border-t flex justify-end">
