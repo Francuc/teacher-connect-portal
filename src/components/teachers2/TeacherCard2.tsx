@@ -21,18 +21,6 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
 
-  const { data: schoolLevels = [] } = useQuery({
-    queryKey: ['schoolLevels'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('school_levels')
-        .select('*')
-        .order('name_en');
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const getLocalizedName = (item: any) => {
     if (!item) return '';
     switch(language) {
@@ -45,24 +33,8 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
     }
   };
 
-  const getTranslatedLevel = (levelName: string) => {
-    const level = schoolLevels.find(l => l.name_en === levelName);
-    if (level) {
-      return getLocalizedName(level);
-    }
-    return levelName;
-  };
-
-  const getProfilePictureUrl = () => {
-    if (!teacher.profile_picture_url) return null;
-    const { data: { publicUrl } } = supabase
-      .storage
-      .from('profile-pictures')
-      .getPublicUrl(teacher.profile_picture_url);
-    return publicUrl;
-  };
-
   const handleCardClick = () => {
+    window.scrollTo(0, 0);
     navigate(`/profile/${teacher.user_id}`);
   };
 
@@ -76,7 +48,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         <Avatar className="w-[100px] h-[100px] rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
-              src={getProfilePictureUrl()}
+              src={teacher.profile_picture_url}
               alt={`${teacher.first_name} ${teacher.last_name}`}
               className="aspect-square h-full w-full object-cover"
             />
@@ -130,14 +102,29 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
                 variant="outline"
                 className="bg-primary/10 text-primary border-none text-xs py-0"
               >
-                {getTranslatedLevel(level.school_level)}
+                {level.school_level}
               </Badge>
             ))}
           </div>
         </Section>
 
         {/* Cities Section */}
-        <TeacherCities cities={teacher.teacher_student_cities} />
+        {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+          <Section>
+            <SectionHeader icon={MapPin} title={t("availableIn")} />
+            <div className="flex flex-wrap gap-1 mt-1">
+              {teacher.teacher_student_cities.map((city: any, index: number) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-none text-xs py-0"
+                >
+                  {city.city_name}
+                </Badge>
+              ))}
+            </div>
+          </Section>
+        )}
 
         {/* Teaching Locations Section */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (

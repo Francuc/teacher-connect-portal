@@ -4,12 +4,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, BookOpen } from "lucide-react";
-import { useState } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface TeachersFilterRowProps {
   onCityChange: (cityId: string) => void;
@@ -18,24 +12,6 @@ interface TeachersFilterRowProps {
 
 export const TeachersFilterRow = ({ onCityChange, onSubjectChange }: TeachersFilterRowProps) => {
   const { t, language } = useLanguage();
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
-
-  const { data: cities = [] } = useQuery({
-    queryKey: ['cities'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('cities')
-        .select(`
-          *,
-          region:regions(*)
-        `)
-        .order('name_en');
-      
-      if (error) throw error;
-      return data || [];
-    },
-  });
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
@@ -46,7 +22,7 @@ export const TeachersFilterRow = ({ onCityChange, onSubjectChange }: TeachersFil
         .order('name_en');
       
       if (error) throw error;
-      return data || [];
+      return data;
     },
   });
 
@@ -70,50 +46,12 @@ export const TeachersFilterRow = ({ onCityChange, onSubjectChange }: TeachersFil
             <Search className="w-4 h-4" />
             {t("city")}
           </label>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between border-purple-soft/30 focus:border-primary focus:ring-primary/20"
-              >
-                {value
-                  ? cities.find((city) => getLocalizedName(city) === value)
-                    ? getLocalizedName(cities.find((city) => getLocalizedName(city) === value))
-                    : value
-                  : t("searchCity")}
-                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput placeholder={t("searchCity")} />
-                <CommandEmpty>{t("noCityFound")}</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {cities.map((city) => (
-                    <CommandItem
-                      key={city.id}
-                      value={getLocalizedName(city)}
-                      onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue);
-                        onCityChange(currentValue === value ? "" : getLocalizedName(city));
-                        setOpen(false);
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === getLocalizedName(city) ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {getLocalizedName(city)}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Input
+            type="text"
+            placeholder={t("searchCity")}
+            onChange={(e) => onCityChange(e.target.value)}
+            className="border-purple-soft/30 focus:border-primary focus:ring-primary/20"
+          />
         </div>
 
         <div className="space-y-2">
