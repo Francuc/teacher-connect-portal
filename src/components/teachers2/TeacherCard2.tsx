@@ -3,13 +3,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User, Book, GraduationCap } from "lucide-react";
+import { User, Book, GraduationCap, MapPin } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { TeacherLocations } from "./card/TeacherLocations";
 import { TeacherContactInfo } from "./card/TeacherContactInfo";
 import { Section } from "./card/Section";
 import { SectionHeader } from "./card/SectionHeader";
+import { TeacherCities } from "./card/TeacherCities";
 import { useNavigate } from "react-router-dom";
 
 interface TeacherCard2Props {
@@ -98,6 +99,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
 
   const handleCardClick = () => {
     navigate(`/profile/${teacher.user_id}`);
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -105,7 +107,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
       className="p-3 flex flex-col h-[472px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50"
       onClick={handleCardClick}
     >
-      {/* Header Section with increased height by 5% */}
+      {/* Header Section */}
       <div className="h-[89px] flex items-start gap-3 mb-2">
         <Avatar className="w-[100px] h-[100px] rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
@@ -150,7 +152,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {/* Subjects Section */}
         <Section>
           <SectionHeader icon={Book} title={t("subjects")} />
-          <div className="flex flex-wrap gap-1 mt-1 min-h-[24px]">
+          <div className="flex flex-wrap gap-1 mt-1">
             {teacher.teacher_subjects?.map((subjectData: any) => (
               <Badge
                 key={subjectData.subject.id}
@@ -166,7 +168,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         {/* School Levels Section */}
         <Section>
           <SectionHeader icon={GraduationCap} title={t("schoolLevels")} />
-          <div className="flex flex-wrap gap-1 mt-1 min-h-[24px]">
+          <div className="flex flex-wrap gap-1 mt-1">
             {teacher.teacher_school_levels?.map((level: any, index: number) => (
               <Badge
                 key={index}
@@ -180,22 +182,10 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         </Section>
 
         {/* Student Cities Section */}
-        {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
-          <Section>
-            <SectionHeader icon={MapPin} title={t("availableIn")} />
-            <div className="flex flex-wrap gap-1 mt-1 min-h-[24px]">
-              {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
-                <Badge
-                  key={index}
-                  variant="outline"
-                  className="bg-primary/10 text-primary border-none text-xs py-0"
-                >
-                  {getTranslatedCityName(cityData.city_name)}
-                </Badge>
-              ))}
-            </div>
-          </Section>
-        )}
+        <TeacherCities 
+          cities={teacher.teacher_student_cities} 
+          getTranslatedCityName={getTranslatedCityName}
+        />
 
         {/* Teaching Locations Section */}
         {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
