@@ -31,7 +31,7 @@ export const useFormData = (userId?: string) => {
     },
   });
 
-  useDefaultCity(userId, formData, setFormData);
+  useDefaultCity(formData, setFormData, userId);
   useTeacherData(userId, setFormData);
 
   return { formData, setFormData, isLoading, setIsLoading };

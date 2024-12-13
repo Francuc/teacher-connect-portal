@@ -44,10 +44,10 @@ export const useDefaultCity = (
 
         if (cities) {
           console.log('Setting default city:', cities.id);
-          setFormData(prev => ({
-            ...prev,
+          setFormData({
+            ...formData,
             cityId: cities.id
-          }));
+          });
         }
       } catch (error) {
         console.error('Error in fetchDefaultCity:', error);
@@ -57,5 +57,5 @@ export const useDefaultCity = (
     if (!userId) {
       fetchDefaultCity();
     }
-  }, [userId, formData.cityId, setFormData, t, toast]);
+  }, [userId, formData.cityId, setFormData, t, toast, formData]);
 };
