@@ -23,6 +23,7 @@ export const useTeachersData = () => {
             )
           ),
           teacher_subjects!inner(
+            id,
             subject:subjects!inner(
               id,
               name_en,
@@ -31,6 +32,7 @@ export const useTeachersData = () => {
             )
           ),
           teacher_school_levels!inner(
+            id,
             school_level
           ),
           teacher_locations!inner(
@@ -49,11 +51,17 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
+      console.log('Raw teachers data:', teachersData);
+
       // Process each teacher's data to include the profile picture URL
       const processedTeachers = teachersData.map(teacher => {
-        const profilePictureUrl = teacher.profile_picture_url
-          ? `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-          : null;
+        if (!teacher.profile_picture_url) {
+          console.log(`No profile picture for teacher ${teacher.id}`);
+          return teacher;
+        }
+
+        const profilePictureUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`;
+        console.log(`Generated profile picture URL for teacher ${teacher.id}:`, profilePictureUrl);
 
         return {
           ...teacher,
@@ -61,7 +69,7 @@ export const useTeachersData = () => {
         };
       });
 
-      console.log('All processed teachers:', processedTeachers);
+      console.log('Processed teachers data:', processedTeachers);
       return processedTeachers;
     },
   });
