@@ -48,6 +48,7 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
             school_level
           ),
           teacher_locations(
+            id,
             location_type,
             price_per_hour
           ),
@@ -64,6 +65,8 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         throw error;
       }
 
+      console.log('Raw teachers data:', data);
+
       const teachersWithUrls = data.map(teacher => {
         if (teacher.profile_picture_url) {
           return {
@@ -74,11 +77,9 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         return teacher;
       });
       
-      console.log('Teachers data with subjects:', teachersWithUrls);
+      console.log('Processed teachers data:', teachersWithUrls);
       return teachersWithUrls || [];
     },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    refetchOnWindowFocus: false,
   });
 
   const { data: subjects = [] } = useQuery({
