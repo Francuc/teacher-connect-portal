@@ -76,21 +76,22 @@ export const Navigation = () => {
     if (!session) {
       // If not logged in, redirect to auth page
       navigate("/auth");
-    } else {
-      // Check if user has a teacher profile
-      const { data: teacherProfile } = await supabase
-        .from('teachers')
-        .select('user_id')
-        .eq('user_id', session.user.id)
-        .single();
+      return;
+    }
 
-      if (teacherProfile) {
-        // If profile exists, go to edit page
-        navigate(`/profile/edit/${session.user.id}`);
-      } else {
-        // If no profile, go to create new profile page
-        navigate("/profile/new");
-      }
+    // Check if user has a teacher profile
+    const { data: teacherProfile } = await supabase
+      .from('teachers')
+      .select('user_id')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (teacherProfile) {
+      // If profile exists, go to edit page
+      navigate(`/profile/edit/${session.user.id}`);
+    } else {
+      // If no profile, go to create new profile page
+      navigate("/profile/new");
     }
   };
 
