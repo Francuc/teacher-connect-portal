@@ -99,8 +99,6 @@ export const TeachersList = ({ initialSearchQuery = "" }: TeachersListProps) => 
         teachers={filteredTeachers}
         isLoading={isLoadingTeachers}
         getLocalizedName={getLocalizedNameWithLanguage}
-        getTeacherLocation={getTeacherLocationWithLanguage}
-        getLowestPrice={getLowestPrice}
         formatPrice={formatPrice}
       />
     </div>
