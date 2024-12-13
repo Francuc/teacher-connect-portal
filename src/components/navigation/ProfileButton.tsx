@@ -1,34 +1,29 @@
-import { Plus, User } from "lucide-react";
-import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
-import { Session } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
 
-interface ProfileButtonProps {
-  session: Session | null;
-}
-
-export const ProfileButton = ({ session }: ProfileButtonProps) => {
+export const ProfileButton = () => {
+  const { session } = useAuth();
   const { t } = useLanguage();
-  const navigate = useNavigate();
 
-  const handleProfileAction = async () => {
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    // If user is logged in, redirect directly to their profile page
-    navigate(`/profile/${session.user.id}`);
-  };
+  if (session) {
+    return (
+      <Link to="/profile">
+        <Button variant="outline" className="h-12 px-6 text-base">
+          {t("myProfile")}
+        </Button>
+      </Link>
+    );
+  }
 
   return (
-    <Button 
-      onClick={handleProfileAction} 
-      className="gap-2 bg-primary hover:bg-primary/90 text-white h-12 px-6 text-base"
-    >
-      <Plus className="h-5 w-5" />
-      {session ? t("myProfile") : t("createAd")}
-    </Button>
+    <Link to="/auth">
+      <Button variant="outline" className="h-12 px-6 text-base">
+        <UserPlus className="w-5 h-5 mr-2" />
+        {t("createAd")}
+      </Button>
+    </Link>
   );
 };
