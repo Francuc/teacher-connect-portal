@@ -3,7 +3,7 @@ export const lb = {
   signInOrSignUp: "Mellt Iech un oder registréiert Iech",
   email: "E-Mail",
   password: "Passwuert",
-  signIn: "Mellt Iech un",
+  signIn: "Umellen",
   signUp: "Registréiert Iech",
   error: "Feeler",
   success: "Erfolg",
@@ -23,6 +23,5 @@ export const lb = {
   selectAtLeastOneRegionOrCity: "Wielt mindestens eng Regioun oder Stad",
   validPriceRequiredForOnline: "Gülteg Präis erfuerderlech fir Online",
   emailAlreadyExists: "Dës E-Mail ass schon registréiert. Mellt Iech w.e.g. un.",
-  signOut: "Ofmellen",
-  signIn: "Umellen",
+  signOut: "Ofmellen"
 };
