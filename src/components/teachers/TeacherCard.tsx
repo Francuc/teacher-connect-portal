@@ -4,7 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface TeacherCardProps {
   teacher: any;
@@ -23,7 +24,31 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
+  const lowestPrice = getLowestPrice(teacher.teacher_locations);
+
+  useEffect(() => {
+    const loadProfilePicture = async () => {
+      if (teacher.profile_picture_url) {
+        try {
+          const { data } = supabase
+            .storage
+            .from('profile-pictures')
+            .getPublicUrl(teacher.profile_picture_url);
+          
+          console.log('Profile picture URL:', data.publicUrl);
+          setProfilePictureUrl(data.publicUrl);
+          setImageError(false);
+        } catch (error) {
+          console.error('Error loading profile picture:', error);
+          setImageError(true);
+        }
+      }
+    };
+
+    loadProfilePicture();
+  }, [teacher.profile_picture_url]);
 
   // Get teacher's place location
   const teacherPlace = teacher.teacher_locations?.find(
@@ -41,15 +66,12 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {teacher.profile_picture_url && !imageError ? (
+            {profilePictureUrl && !imageError ? (
               <AvatarImage 
-                src={teacher.profile_picture_url}
+                src={profilePictureUrl}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
-                onError={() => {
-                  console.error('Error loading image:', teacher.profile_picture_url);
-                  setImageError(true);
-                }}
+                onError={() => setImageError(true)}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
