@@ -144,25 +144,11 @@ export const TeacherCard = ({
           )}
         </div>
 
-        {/* Contact Information */}
-        <div className="space-y-2">
-          {teacher.show_email && teacher.email && (
-            <p className="text-sm text-muted-foreground">
-              {t("email")}: {teacher.email}
-            </p>
-          )}
-          {teacher.show_phone && teacher.phone && (
-            <p className="text-sm text-muted-foreground">
-              {t("phone")}: {teacher.phone}
-            </p>
-          )}
-        </div>
-
         {/* Footer with Action Button */}
         <div className="mt-auto pt-4 border-t flex justify-between items-center">
           {lowestPrice && (
             <div className="text-lg font-semibold text-green-600">
-              {t("priceStartingAt")} {formatPrice(lowestPrice)}/h
+              {t("startingAt")} {formatPrice(lowestPrice)}/h
             </div>
           )}
           <Button 
