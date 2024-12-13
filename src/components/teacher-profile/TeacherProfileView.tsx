@@ -9,6 +9,8 @@ import { LocationsSection } from "./profile-sections/LocationsSection";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Pencil } from "lucide-react";
+import { SubscriptionSection } from "./SubscriptionSection";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TeacherProfileViewProps {
   userId: string;
@@ -17,6 +19,8 @@ interface TeacherProfileViewProps {
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { session } = useAuth();
+  const isOwnProfile = session?.user?.id === userId;
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['teacherProfile', userId],
@@ -116,7 +120,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       </div>
 
       <div className="space-y-6">
-        <PersonalSection profile={profile} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <PersonalSection profile={profile} />
+          {isOwnProfile && (
+            <SubscriptionSection 
+              profile={profile} 
+              isOwnProfile={true}
+            />
+          )}
+        </div>
         <BiographySection bio={profile.bio} />
         <SubjectsSection subjects={profile.teacher_subjects} />
         <SchoolLevelsSection schoolLevels={profile.teacher_school_levels?.map((level: any) => level.school_level) || []} />

@@ -30,7 +30,15 @@ export const FormSections = ({
 
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
-      <PersonalInfoSection formData={formData} setFormData={setFormData} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PersonalInfoSection formData={formData} setFormData={setFormData} />
+        {isUpdate && session?.user && (
+          <SubscriptionSection 
+            profile={formData} 
+            isOwnProfile={true}
+          />
+        )}
+      </div>
       <BiographySection formData={formData} setFormData={setFormData} />
       <SubjectsSection 
         subjects={formData.subjects} 
@@ -43,13 +51,6 @@ export const FormSections = ({
         isEditing={true}
       />
       <LocationSection formData={formData} setFormData={setFormData} />
-      
-      {isUpdate && session?.user && (
-        <SubscriptionSection 
-          profile={formData} 
-          isOwnProfile={true}
-        />
-      )}
       
       <div className="flex justify-end">
         <Button 
