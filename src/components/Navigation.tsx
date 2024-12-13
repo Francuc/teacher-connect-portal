@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { ProfileButton } from "./navigation/ProfileButton";
 import { LogoutButton } from "./navigation/LogoutButton";
-import { TeacherSelector } from "./navigation/TeacherSelector";
+import { RandomTeachersButton } from "./teachers/RandomTeachersButton";
 
 export const Navigation = () => {
   const { t } = useLanguage();
@@ -36,7 +36,7 @@ export const Navigation = () => {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <TeacherSelector />
+            <RandomTeachersButton />
             <ProfileButton session={session} />
             {session && <LogoutButton />}
             <LanguageSwitcher />

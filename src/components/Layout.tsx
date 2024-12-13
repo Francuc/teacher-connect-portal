@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Navigation } from "./Navigation";
 import { Footer } from "./Footer";
+import { SubjectsFooter } from "./SubjectsFooter";
 
 export const Layout = () => {
   return (
@@ -9,6 +10,7 @@ export const Layout = () => {
       <main className="flex-1">
         <Outlet />
       </main>
+      <SubjectsFooter />
       <Footer />
     </div>
   );
