@@ -13,7 +13,7 @@ const AuthPage = () => {
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
-    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
@@ -30,30 +30,27 @@ const AuthPage = () => {
     return () => {
       authSubscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, [navigate]);
 
-  // Add event listener for auth error
+  // Handle auth errors separately
   useEffect(() => {
-    const handleAuthError = (error: any) => {
-      if (error.message?.includes("Invalid login credentials")) {
-        setView("sign_up");
-        toast({
-          title: "Account not found",
-          description: "This account doesn't exist. Please sign up instead.",
-          variant: "destructive",
-        });
+    const handleError = async () => {
+      try {
+        const { error } = await supabase.auth.getSession();
+        if (error?.message?.includes("Invalid login credentials")) {
+          setView("sign_up");
+          toast({
+            title: "Account not found",
+            description: "This account doesn't exist. Please sign up instead.",
+            variant: "destructive",
+          });
+        }
+      } catch (err) {
+        console.error("Auth error:", err);
       }
     };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session, error) => {
-      if (error) {
-        handleAuthError(error);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    handleError();
   }, [toast]);
 
   return (
