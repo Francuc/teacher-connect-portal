@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
+import { MapPin, User, GraduationCap, BookOpen, Euro } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -26,21 +26,6 @@ export const TeacherCard = ({
   const [imageError, setImageError] = useState(false);
   const lowestPrice = getLowestPrice(teacher.teacher_locations || []);
 
-  // Debug logging
-  console.log('Rendering TeacherCard for teacher:', {
-    id: teacher.id,
-    name: `${teacher.first_name} ${teacher.last_name}`,
-    subjects: teacher.teacher_subjects,
-    schoolLevels: teacher.teacher_school_levels,
-    location: getTeacherLocation(teacher),
-    studentCities: teacher.teacher_student_cities
-  });
-
-  if (!teacher) {
-    console.error('No teacher data provided to TeacherCard');
-    return null;
-  }
-
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
       <div className="p-6 flex flex-col h-full space-y-6">
@@ -60,10 +45,16 @@ export const TeacherCard = ({
               </AvatarFallback>
             )}
           </Avatar>
-          <div>
+          <div className="space-y-1">
             <h3 className="text-xl font-bold text-purple-dark">
               {teacher.first_name} {teacher.last_name}
             </h3>
+            {lowestPrice && (
+              <div className="flex items-center gap-1 text-green-600 font-semibold">
+                <Euro className="w-4 h-4" />
+                <span>{formatPrice(lowestPrice)}/h</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -100,9 +91,9 @@ export const TeacherCard = ({
               <span>{t("schoolLevels")}</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {teacher.teacher_school_levels.slice(0, 3).map((level: any, index: number) => (
+              {teacher.teacher_school_levels.slice(0, 3).map((level: any) => (
                 <span
-                  key={index}
+                  key={level.id}
                   className="px-3 py-1 bg-accent/10 text-accent rounded-full text-sm font-medium"
                 >
                   {level.school_level}
@@ -153,8 +144,27 @@ export const TeacherCard = ({
           )}
         </div>
 
+        {/* Contact Information */}
+        <div className="space-y-2">
+          {teacher.show_email && teacher.email && (
+            <p className="text-sm text-muted-foreground">
+              {t("email")}: {teacher.email}
+            </p>
+          )}
+          {teacher.show_phone && teacher.phone && (
+            <p className="text-sm text-muted-foreground">
+              {t("phone")}: {teacher.phone}
+            </p>
+          )}
+        </div>
+
         {/* Footer with Action Button */}
-        <div className="mt-auto pt-4 border-t flex justify-end">
+        <div className="mt-auto pt-4 border-t flex justify-between items-center">
+          {lowestPrice && (
+            <div className="text-lg font-semibold text-green-600">
+              {t("startingAt")} {formatPrice(lowestPrice)}/h
+            </div>
+          )}
           <Button 
             onClick={() => navigate(`/profile/${teacher.user_id}`)}
             className="bg-purple-vivid hover:bg-purple-vivid/90 text-white"
