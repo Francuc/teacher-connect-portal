@@ -5,7 +5,7 @@ export const useTeachersData = () => {
   return useQuery({
     queryKey: ['teachers'],
     queryFn: async () => {
-      console.log('Fetching teachers data...');
+      console.log('Fetching teachers data with all relations...');
       const { data: teachersData, error: teachersError } = await supabase
         .from('teachers')
         .select(`
@@ -73,7 +73,7 @@ export const useTeachersData = () => {
       return processedTeachers;
     },
     staleTime: Infinity, // Prevent automatic refetching
-    gcTime: 1000 * 60 * 5, // Cache for 5 minutes (renamed from cacheTime)
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
     refetchOnWindowFocus: false, // Prevent refetch on window focus
     refetchOnMount: false, // Prevent refetch on mount
     retry: 2, // Retry failed requests twice
