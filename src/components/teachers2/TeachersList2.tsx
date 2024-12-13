@@ -3,18 +3,13 @@ import { supabase } from "@/lib/supabase";
 import { TeachersGrid2 } from "./TeachersGrid2";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface TeachersList2Props {
-  cityFilter?: string;
-  subjectFilter?: string;
-}
-
-export const TeachersList2 = ({ cityFilter, subjectFilter }: TeachersList2Props) => {
+export const TeachersList2 = () => {
   const { language } = useLanguage();
 
   const { data: teachers = [], isLoading } = useQuery({
-    queryKey: ["teachers2", cityFilter, subjectFilter],
+    queryKey: ["teachers2"],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('teachers')
         .select(`
           *,
@@ -37,16 +32,6 @@ export const TeachersList2 = ({ cityFilter, subjectFilter }: TeachersList2Props)
         `)
         .eq('subscription_status', 'active')
         .order('created_at', { ascending: false });
-
-      if (cityFilter) {
-        query = query.contains('teacher_student_cities', [{ city_name: cityFilter }]);
-      }
-
-      if (subjectFilter && subjectFilter !== 'all') {
-        query = query.contains('teacher_subjects', [{ subject_id: subjectFilter }]);
-      }
-
-      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching teachers:", error);

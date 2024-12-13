@@ -1,13 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BookOpen } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
-import { TeachersFilterRow } from "./teachers/TeachersFilterRow";
-import { useState } from "react";
 
 export const LandingPage = () => {
   const { t } = useLanguage();
-  const [selectedCity, setSelectedCity] = useState<string>("");
-  const [selectedSubject, setSelectedSubject] = useState<string>("all");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
@@ -30,20 +26,9 @@ export const LandingPage = () => {
           </div>
         </div>
 
-        {/* Filters Section */}
-        <div className="container mx-auto px-4 -mt-8">
-          <TeachersFilterRow
-            onCityChange={setSelectedCity}
-            onSubjectChange={setSelectedSubject}
-          />
-        </div>
-
         {/* Teachers List Section */}
         <div className="py-16 bg-gradient-to-b from-white to-purple.soft/20">
-          <TeachersList2 
-            cityFilter={selectedCity}
-            subjectFilter={selectedSubject}
-          />
+          <TeachersList2 />
         </div>
       </main>
     </div>
