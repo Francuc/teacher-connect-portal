@@ -15,6 +15,12 @@ serve(async (req) => {
   try {
     const { priceId } = await req.json()
     
+    if (!priceId) {
+      throw new Error('No price ID provided')
+    }
+
+    console.log('Processing checkout for price ID:', priceId)
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
