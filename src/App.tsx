@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import TeacherProfileForm from "./components/TeacherProfileForm";
 import { TeachersList } from "./components/TeachersList";
 import Teachers2 from "./pages/Teachers2";
+import AuthPage from "./pages/Auth";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route element={<Layout />}>
               <Route index element={<Landing />} />
+              <Route path="auth" element={<AuthPage />} />
               <Route path="profile/new" element={<TeacherProfileForm />} />
               <Route path="profile/:userId" element={<TeacherProfileForm />} />
               <Route path="profile/edit/:userId" element={<TeacherProfileForm />} />
