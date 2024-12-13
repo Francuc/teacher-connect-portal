@@ -19,38 +19,43 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           .from('teachers')
           .select(`
             *,
-            city:cities!left (
+            city:cities!left(
               id,
               name_en,
               name_fr,
               name_lb,
-              region:regions!left (
+              region:regions!left(
                 id,
                 name_en,
                 name_fr,
                 name_lb
               )
             ),
-            teacher_subjects!left (
-              subject:subjects!left (
+            teacher_subjects!left(
+              subject:subjects!left(
                 id,
                 name_en,
                 name_fr,
                 name_lb
               )
             ),
-            teacher_school_levels!left (
+            teacher_school_levels!left(
               school_level
             ),
-            teacher_locations!left (
+            teacher_locations!left(
               location_type,
               price_per_hour
             ),
-            teacher_student_regions!left (
+            teacher_student_regions!left(
               region_name
             ),
-            teacher_student_cities!left (
-              city_name
+            teacher_student_cities!left(
+              cities!left(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
             )
           `)
           .eq('user_id', userId)
@@ -115,7 +120,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           teachingLocations: profile.teacher_locations?.map((l: any) => l.location_type) || [],
           cityId: profile.city_id || null,
           studentRegions: profile.teacher_student_regions?.map((r: any) => r.region_name) || [],
-          studentCities: profile.teacher_student_cities?.map((c: any) => c.city_name) || [],
+          studentCities: profile.teacher_student_cities?.map((c: any) => c.cities.id) || [],
           pricePerHour
         });
 
