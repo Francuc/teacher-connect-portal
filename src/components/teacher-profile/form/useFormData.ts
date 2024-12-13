@@ -35,7 +35,7 @@ export const useFormData = (userId: string | null) => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { fetchTeacherProfile } = useTeacherProfile(userId);
-  const { fetchTeacherSubjects } = useTeacherSubjects();
+  const { data: allSubjects } = useTeacherSubjects();
   const { fetchTeacherLocations, processLocations } = useTeacherLocations();
   const { fetchTeacherRegions } = useTeacherRegions();
   const { fetchTeacherCities } = useTeacherCities();
@@ -51,14 +51,17 @@ export const useFormData = (userId: string | null) => {
         const [
           profile,
           locations,
-          subjects,
+          teacherSubjects,
           schoolLevels,
           studentRegions,
           studentCities
         ] = await Promise.all([
           fetchTeacherProfile(),
           fetchTeacherLocations(userId),
-          fetchTeacherSubjects(userId),
+          supabase
+            .from('teacher_subjects')
+            .select('subject_id')
+            .eq('teacher_id', userId),
           supabase
             .from('teacher_school_levels')
             .select('school_level')
@@ -74,6 +77,12 @@ export const useFormData = (userId: string | null) => {
 
         const { locationTypes, prices } = processLocations(locations);
 
+        // Map subject IDs to full subject objects
+        const subjects = teacherSubjects?.data?.map(ts => {
+          const subject = allSubjects?.find(s => s.id === ts.subject_id);
+          return subject ? { subject } : null;
+        }).filter(Boolean) || [];
+
         setFormData({
           firstName: profile.first_name || "",
           lastName: profile.last_name || "",
@@ -86,7 +95,7 @@ export const useFormData = (userId: string | null) => {
           bio: profile.bio || "",
           profilePicture: null,
           profilePictureUrl: profile.profile_picture_url || "",
-          subjects: subjects || [],
+          subjects,
           schoolLevels: schoolLevels?.data?.map(l => l.school_level) || [],
           teachingLocations: locationTypes,
           cityId: profile.city_id || "",
@@ -103,7 +112,7 @@ export const useFormData = (userId: string | null) => {
     };
 
     loadTeacherData();
-  }, [userId]);
+  }, [userId, allSubjects]);
 
   return {
     formData,
