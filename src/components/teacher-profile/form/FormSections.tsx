@@ -28,6 +28,8 @@ export const FormSections = ({
   const { t } = useLanguage();
   const { session } = useAuth();
 
+  console.log('FormSections - subscription status:', formData.subscription_status);
+
   return (
     <form onSubmit={onSubmit} className="max-w-4xl mx-auto p-4 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

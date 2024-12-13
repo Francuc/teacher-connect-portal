@@ -124,11 +124,13 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
           studentCities: profile.teacher_student_cities?.map((c: any) => c.city_id) || [],
           pricePerHour,
           user_id: profile.user_id,
-          subscription_status: profile.subscription_status || 'inactive',
+          subscription_status: profile.subscription_status,
           subscription_type: profile.subscription_type,
           subscription_end_date: profile.subscription_end_date,
           promo_code: profile.promo_code
         });
+
+        console.log('Subscription status from database:', profile.subscription_status);
 
       } catch (error) {
         console.error('Error in fetchTeacherData:', error);
