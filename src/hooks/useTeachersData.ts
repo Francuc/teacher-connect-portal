@@ -6,7 +6,7 @@ export const useTeachersData = () => {
     queryKey: ['teachers'],
     queryFn: async () => {
       console.log('Fetching teachers data...');
-      const { data: teachersData, error: teachersError } = await supabase
+      const { data: teachers, error: teachersError } = await supabase
         .from('teachers')
         .select(`
           *,
@@ -23,7 +23,7 @@ export const useTeachersData = () => {
             )
           ),
           teacher_subjects(
-            subject_id,
+            id,
             subject:subjects(
               id,
               name_en,
@@ -52,22 +52,12 @@ export const useTeachersData = () => {
         throw teachersError;
       }
 
-      console.log('Teachers data received:', teachersData);
-
-      // Process profile pictures
-      const processedTeachers = teachersData.map(teacher => {
-        if (!teacher.profile_picture_url) {
-          return teacher;
-        }
-
-        return {
-          ...teacher,
-          profile_picture_url: `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`
-        };
-      });
-
-      console.log('Processed teachers data:', processedTeachers);
-      return processedTeachers;
+      console.log('Teachers data received:', teachers?.length);
+      return teachers || [];
     },
+    staleTime: 30000, // Data considered fresh for 30 seconds
+    cacheTime: 5 * 60 * 1000, // Cache kept for 5 minutes
+    refetchOnWindowFocus: false, // Prevent refetch on window focus
+    refetchOnMount: true, // Always fetch fresh data on mount
   });
 };
