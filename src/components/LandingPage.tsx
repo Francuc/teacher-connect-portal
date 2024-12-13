@@ -3,7 +3,8 @@ import { BookOpen, MapPin, Computer } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -15,9 +16,19 @@ import { Switch } from "@/components/ui/switch";
 
 export const LandingPage = () => {
   const { t, language } = useLanguage();
+  const [searchParams] = useSearchParams();
+  const cityFromUrl = searchParams.get('city');
+  
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
-  const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [selectedCity, setSelectedCity] = useState<string>(cityFromUrl || "all");
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+
+  // Update selected city when URL parameter changes
+  useEffect(() => {
+    if (cityFromUrl) {
+      setSelectedCity(cityFromUrl);
+    }
+  }, [cityFromUrl]);
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
