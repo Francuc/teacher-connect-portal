@@ -82,4 +82,7 @@ export const en: Translation = {
   allSubjects: "All Subjects",
   allLevels: "All Levels",
   availableIn: "Available in",
+  logout: "Log out",
+  logoutSuccess: "Successfully logged out",
+  logoutError: "Error logging out",
 };

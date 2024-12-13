@@ -82,5 +82,7 @@ export const fr: Translation = {
   allSubjects: "Toutes les Matières",
   allLevels: "Tous les Niveaux",
   availableIn: "Disponible à",
+  logout: "Se déconnecter",
+  logoutSuccess: "Déconnexion réussie",
+  logoutError: "Erreur lors de la déconnexion",
 };
-

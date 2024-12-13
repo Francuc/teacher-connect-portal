@@ -86,6 +86,9 @@ export type Translation = {
   allSubjects: string;
   allLevels: string;
   availableIn: string;  // Added this new translation key
+  logout: string;
+  logoutSuccess: string;
+  logoutError: string;
 };
 
 export type TranslationKey = keyof Translation;

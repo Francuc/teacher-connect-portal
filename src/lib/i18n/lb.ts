@@ -82,5 +82,7 @@ export const lb: Translation = {
   allSubjects: "All Fächer",
   allLevels: "All Niveauen",
   availableIn: "Verfügbar an",
+  logout: "Ausloggen",
+  logoutSuccess: "Erfollegräich ausgeloggt",
+  logoutError: "Feeler beim Ausloggen",
 };
-
