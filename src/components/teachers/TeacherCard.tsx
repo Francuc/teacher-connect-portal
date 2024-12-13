@@ -115,7 +115,7 @@ export const TeacherCard = ({
         {/* Price Range */}
         {lowestPrice && (
           <div className="flex items-center justify-end gap-2 text-purple-vivid font-semibold">
-            {t("startingAt")} {formatPrice(lowestPrice)}
+            {t("startingFrom")} {formatPrice(lowestPrice)}
           </div>
         )}
 
