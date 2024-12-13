@@ -112,12 +112,14 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
 
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
-      <div className="flex justify-end mb-6">
-        <Button onClick={handleEditClick} className="flex items-center gap-2">
-          <Pencil className="w-4 h-4" />
-          Edit Profile
-        </Button>
-      </div>
+      {isOwnProfile && (
+        <div className="flex justify-end mb-6">
+          <Button onClick={handleEditClick} className="flex items-center gap-2">
+            <Pencil className="w-4 h-4" />
+            Edit Profile
+          </Button>
+        </div>
+      )}
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
