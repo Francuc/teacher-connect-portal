@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -64,45 +65,86 @@ const AuthPage = () => {
   }, [toast]);
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-center mb-6">Welcome</h1>
-      <Auth
-        supabaseClient={supabase}
-        view={view}
-        appearance={{ 
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#2563eb',
-                brandAccent: '#1d4ed8',
-              },
-            },
-          },
-        }}
-        theme="light"
-        providers={[]}
-        localization={{
-          variables: {
-            sign_in: {
-              email_label: 'Email',
-              password_label: 'Password',
-              email_input_placeholder: 'Your email address',
-              password_input_placeholder: 'Your password',
-              button_label: 'Sign in',
-              loading_button_label: 'Signing in ...',
-            },
-            sign_up: {
-              email_label: 'Email',
-              password_label: 'Password',
-              email_input_placeholder: 'Your email address',
-              password_input_placeholder: 'Your password',
-              button_label: 'Sign up',
-              loading_button_label: 'Signing up ...',
-            },
-          },
-        }}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-purple-soft via-background to-purple-light dark:from-purple-dark dark:via-background dark:to-purple-vivid flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
+            Welcome
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Sign in to your account or create a new one
+          </p>
+        </div>
+        
+        <Card className="backdrop-blur-sm bg-white/50 dark:bg-gray-900/50 border-primary/10">
+          <CardHeader>
+            <CardTitle className="text-center text-2xl font-semibold text-primary">
+              {view === "sign_in" ? "Sign In" : "Sign Up"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Auth
+              supabaseClient={supabase}
+              view={view}
+              appearance={{ 
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: 'rgb(155, 135, 245)',
+                      brandAccent: 'rgb(126, 105, 171)',
+                      brandButtonText: 'white',
+                      defaultButtonBackground: 'white',
+                      defaultButtonBackgroundHover: '#E5DEFF',
+                      inputBackground: 'white',
+                      inputBorder: 'lightgray',
+                      inputBorderHover: 'gray',
+                      inputBorderFocus: 'rgb(155, 135, 245)',
+                    },
+                    borderWidths: {
+                      buttonBorderWidth: '1px',
+                      inputBorderWidth: '1px',
+                    },
+                    radii: {
+                      borderRadiusButton: '8px',
+                      buttonBorderRadius: '8px',
+                      inputBorderRadius: '8px',
+                    },
+                  },
+                },
+                className: {
+                  container: 'w-full',
+                  button: 'w-full px-4 py-2 rounded-lg font-medium transition-colors',
+                  input: 'w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-primary/50 transition-shadow',
+                  label: 'text-sm font-medium text-gray-700 dark:text-gray-300',
+                }
+              }}
+              theme="light"
+              providers={[]}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: 'Email',
+                    password_label: 'Password',
+                    email_input_placeholder: 'Your email address',
+                    password_input_placeholder: 'Your password',
+                    button_label: 'Sign in',
+                    loading_button_label: 'Signing in ...',
+                  },
+                  sign_up: {
+                    email_label: 'Email',
+                    password_label: 'Password',
+                    email_input_placeholder: 'Your email address',
+                    password_input_placeholder: 'Your password',
+                    button_label: 'Sign up',
+                    loading_button_label: 'Signing up ...',
+                  },
+                },
+              }}
+            />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
