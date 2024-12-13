@@ -13,7 +13,7 @@ const AuthPage = () => {
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
         navigate("/");
       } else if (event === 'SIGNED_OUT') {
@@ -21,8 +21,23 @@ const AuthPage = () => {
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    const { data: { subscription: errorSubscription } } = supabase.auth.onError((error) => {
+      console.error('Auth error:', error);
+      if (error.message.includes('Invalid login credentials')) {
+        toast({
+          title: t("error"),
+          description: t("noAccount"),
+          variant: "destructive",
+        });
+        setView("sign_up");
+      }
+    });
+
+    return () => {
+      authSubscription.unsubscribe();
+      errorSubscription.unsubscribe();
+    };
+  }, [navigate, toast, t]);
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-md">
@@ -62,17 +77,6 @@ const AuthPage = () => {
               loading_button_label: 'Signing up ...',
             },
           },
-        }}
-        onError={(error) => {
-          console.error('Auth error:', error);
-          if (error.message.includes('Invalid login credentials')) {
-            toast({
-              title: t("error"),
-              description: t("noAccount"),
-              variant: "destructive",
-            });
-            setView("sign_up");
-          }
         }}
       />
     </div>
