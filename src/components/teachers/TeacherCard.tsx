@@ -28,14 +28,13 @@ export const TeacherCard = ({
   // Reset image error state when teacher changes
   useEffect(() => {
     setImageError(false);
-  }, [teacher.profile_picture_url]);
+  }, [teacher]);
 
-  // Get teacher's place location
+  // Get locations by type
   const teacherPlace = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Teacher's Place"
   );
-
-  // Get student's place location
+  
   const studentPlace = teacher.teacher_locations?.find(
     (loc: any) => loc.location_type === "Student's Place"
   );
@@ -46,9 +45,9 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {teacher.profile_picture_url && !imageError ? (
+            {!imageError && teacher.profile_picture_url ? (
               <AvatarImage 
-                src={teacher.profile_picture_url}
+                src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${teacher.profile_picture_url}`}
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
                 onError={() => setImageError(true)}
@@ -115,7 +114,7 @@ export const TeacherCard = ({
         {/* Teaching Locations Section */}
         <div className="space-y-4">
           {/* Teacher's Place */}
-          {teacherPlace && (
+          {teacherPlace && teacher.city && (
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />
