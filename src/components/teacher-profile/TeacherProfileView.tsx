@@ -105,7 +105,13 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
               id,
               name_en,
               name_fr,
-              name_lb
+              name_lb,
+              region:regions (
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
             )
           `)
           .eq('teacher_id', userId)
