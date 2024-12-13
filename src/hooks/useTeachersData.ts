@@ -26,7 +26,7 @@ export const useTeachersData = () => {
             price_per_hour
           ),
           teacher_student_cities!inner (
-            city_name
+            city:cities!inner (*)
           )
         `);
 
