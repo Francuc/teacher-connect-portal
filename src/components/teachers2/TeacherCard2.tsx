@@ -95,7 +95,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
   };
 
   return (
-    <Card className="p-3 flex flex-col h-[400px] transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
+    <Card className="p-3 flex flex-col h-[450px] transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20">
       {/* Header Section with fixed height */}
       <div className="h-[70px] flex items-start gap-3 mb-2">
         <Avatar className="w-16 h-16 rounded-xl border-2 border-purple-soft">
@@ -137,7 +137,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
 
       <Separator className="my-2" />
 
-      <div className="grid grid-cols-1 gap-2 flex-1">
+      <div className="grid grid-cols-1 gap-3 flex-1">
         {/* Subjects Section */}
         <Section>
           <SectionHeader icon={Book} title={t("subjects")} />
