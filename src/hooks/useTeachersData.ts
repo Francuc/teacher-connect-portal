@@ -56,7 +56,7 @@ export const useTeachersData = () => {
       return teachers || [];
     },
     staleTime: 30000, // Data considered fresh for 30 seconds
-    cacheTime: 5 * 60 * 1000, // Cache kept for 5 minutes
+    gcTime: 5 * 60 * 1000, // Cache kept for 5 minutes (renamed from cacheTime)
     refetchOnWindowFocus: false, // Prevent refetch on window focus
     refetchOnMount: true, // Always fetch fresh data on mount
   });
