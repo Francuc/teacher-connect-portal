@@ -119,12 +119,7 @@ export const useTeacherData = (userId: string | undefined, setFormData: (data: F
             profilePictureUrl: profile.profile_picture_url || "",
             subjects: subjects?.map(s => ({
               subject_id: s.subject_id,
-              subject: {
-                id: s.subject.id,
-                name_en: s.subject.name_en,
-                name_fr: s.subject.name_fr,
-                name_lb: s.subject.name_lb
-              }
+              subject: s.subject
             })) || [],
             schoolLevels: schoolLevels?.map(l => l.school_level) || [],
             teachingLocations: locations?.map(l => l.location_type) || [],
