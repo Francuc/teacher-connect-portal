@@ -298,9 +298,13 @@ export type Database = {
           last_name: string
           phone: string | null
           profile_picture_url: string | null
+          promo_code: string | null
           show_email: boolean | null
           show_facebook: boolean | null
           show_phone: boolean | null
+          subscription_end_date: string | null
+          subscription_status: string | null
+          subscription_type: string | null
           updated_at: string
           user_id: string
         }
@@ -315,9 +319,13 @@ export type Database = {
           last_name: string
           phone?: string | null
           profile_picture_url?: string | null
+          promo_code?: string | null
           show_email?: boolean | null
           show_facebook?: boolean | null
           show_phone?: boolean | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_type?: string | null
           updated_at?: string
           user_id: string
         }
@@ -332,9 +340,13 @@ export type Database = {
           last_name?: string
           phone?: string | null
           profile_picture_url?: string | null
+          promo_code?: string | null
           show_email?: boolean | null
           show_facebook?: boolean | null
           show_phone?: boolean | null
+          subscription_end_date?: string | null
+          subscription_status?: string | null
+          subscription_type?: string | null
           updated_at?: string
           user_id?: string
         }
