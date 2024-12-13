@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, User, GraduationCap, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
 
 interface TeacherCardProps {
   teacher: any;
@@ -22,7 +23,13 @@ export const TeacherCard = ({
 }: TeacherCardProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
   const lowestPrice = getLowestPrice(teacher.teacher_locations);
+
+  // Reset image error state when teacher changes
+  useEffect(() => {
+    setImageError(false);
+  }, [teacher.profile_picture_url]);
 
   // Get teacher's place location
   const teacherPlace = teacher.teacher_locations?.find(
@@ -40,11 +47,12 @@ export const TeacherCard = ({
         {/* Profile Section */}
         <div className="flex items-center gap-4">
           <Avatar className="w-20 h-20 rounded-full border-4 border-purple-soft">
-            {teacher.profile_picture_url ? (
+            {teacher.profile_picture_url && !imageError ? (
               <AvatarImage 
                 src={teacher.profile_picture_url} 
                 alt={`${teacher.first_name} ${teacher.last_name}`}
                 className="object-cover"
+                onError={() => setImageError(true)}
               />
             ) : (
               <AvatarFallback className="bg-purple-soft">
