@@ -37,14 +37,7 @@ export const TeachersList2 = ({
             price_per_hour
           ),
           teacher_student_cities!left (
-            city_name,
-            cities!left (
-              id,
-              name_en,
-              name_fr,
-              name_lb,
-              region:regions!left (*)
-            )
+            city_name
           )
         `)
         .eq('subscription_status', 'active')
@@ -75,7 +68,7 @@ export const TeachersList2 = ({
           
           // Check cities where teacher serves students
           return teacher.teacher_student_cities?.some(
-            (sc: any) => sc.cities?.id === selectedCity
+            (sc: any) => sc.city_name === selectedCity
           );
         });
       }

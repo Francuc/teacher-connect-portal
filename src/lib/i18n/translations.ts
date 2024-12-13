@@ -4,14 +4,16 @@ import { lb } from './lb';
 
 export type Language = 'en' | 'fr' | 'lb';
 
-// Define the Translation type based on the English translations
-export type Translation = typeof en;
+// Define the Translation type based on the English translations structure
+export type Translation = {
+  [K in keyof typeof en]: string;
+};
 
 export type TranslationKey = keyof Translation;
 
-// Create translations object with English as the base
+// Create translations object with English as the base, using type assertion
 export const translations: Record<Language, Translation> = {
   en,
-  fr: { ...en, ...fr },  // Merge with English to ensure all keys exist
-  lb: { ...en, ...lb },  // Merge with English to ensure all keys exist
+  fr: { ...en, ...fr } as Translation,
+  lb: { ...en, ...lb } as Translation,
 };
