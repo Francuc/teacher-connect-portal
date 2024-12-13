@@ -28,10 +28,12 @@ serve(async (req) => {
       throw new Error('No email found')
     }
 
+    console.log('Creating Stripe instance with secret key...')
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
     })
 
+    console.log('Checking for existing customer...')
     const customers = await stripe.customers.list({
       email: user.email,
       limit: 1
@@ -42,6 +44,7 @@ serve(async (req) => {
       customerId = customers.data[0].id
     }
 
+    console.log('Creating checkout session...')
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -56,6 +59,7 @@ serve(async (req) => {
       cancel_url: `${req.headers.get('origin')}/profile/${user.id}?payment=cancelled`,
     })
 
+    console.log('Checkout session created successfully')
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
@@ -64,6 +68,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error in create-checkout:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
