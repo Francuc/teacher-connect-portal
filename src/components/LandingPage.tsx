@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 
 export const LandingPage = () => {
   const { t, language } = useLanguage();
@@ -123,60 +122,57 @@ export const LandingPage = () => {
                 </Select>
               </div>
 
-              {/* City Filter */}
-              <div className="relative">
-                <Select
-                  value={selectedCity}
-                  onValueChange={setSelectedCity}
-                >
-                  <SelectTrigger 
-                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
+              {/* City Filter with Online Switch */}
+              <div className="relative flex gap-2 items-center">
+                <div className="flex-1">
+                  <Select
+                    value={selectedCity}
+                    onValueChange={setSelectedCity}
                   >
-                    <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
-                    <SelectValue placeholder={t("selectCity")} />
-                  </SelectTrigger>
-                  <SelectContent 
-                    className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
-                    align="center"
-                  >
-                    <div className="p-4">
-                      <SelectItem 
-                        value="all"
-                        className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
-                      >
-                        {t("allCities")}
-                      </SelectItem>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {cities
-                          .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
-                          .map((city) => (
-                          <SelectItem 
-                            key={city.id} 
-                            value={city.id}
-                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
-                          >
-                            {getLocalizedName(city)}
-                          </SelectItem>
-                        ))}
+                    <SelectTrigger 
+                      className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
+                    >
+                      <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
+                      <SelectValue placeholder={t("selectCity")} />
+                    </SelectTrigger>
+                    <SelectContent 
+                      className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
+                      align="center"
+                    >
+                      <div className="p-4">
+                        <SelectItem 
+                          value="all"
+                          className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                        >
+                          {t("allCities")}
+                        </SelectItem>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {cities
+                            .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                            .map((city) => (
+                            <SelectItem 
+                              key={city.id} 
+                              value={city.id}
+                              className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
+                            >
+                              {getLocalizedName(city)}
+                            </SelectItem>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </SelectContent>
-                </Select>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-center h-14 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
+                  <Switch
+                    id="online-mode"
+                    checked={showOnlineOnly}
+                    onCheckedChange={setShowOnlineOnly}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                  <Computer className="w-5 h-5 ml-2 text-primary/70" />
+                </div>
               </div>
-            </div>
-
-            {/* Online Filter Switch */}
-            <div className="flex items-center justify-center space-x-2 mt-6">
-              <Switch
-                id="online-mode"
-                checked={showOnlineOnly}
-                onCheckedChange={setShowOnlineOnly}
-                className="data-[state=checked]:bg-primary"
-              />
-              <Label htmlFor="online-mode" className="flex items-center gap-2 cursor-pointer">
-                <Computer className="w-4 h-4" />
-                {t("onlineOnly")}
-              </Label>
             </div>
           </div>
 
