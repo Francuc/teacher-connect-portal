@@ -19,17 +19,17 @@ export const TeachersList2 = () => {
             *,
             region:regions (*)
           ),
-          teacher_subjects!left (
-            subject:subjects!inner (*)
+          teacher_subjects (
+            subject:subjects (*)
           ),
-          teacher_school_levels!left (
+          teacher_school_levels (
             school_level
           ),
-          teacher_locations!left (
+          teacher_locations (
             location_type,
             price_per_hour
           ),
-          teacher_student_cities!left (
+          teacher_student_cities (
             city_name
           )
         `)
