@@ -22,8 +22,8 @@ const AuthPage = () => {
     });
 
     // Handle auth errors through error events
-    const handleAuthError = (event: any) => {
-      if (event.error?.message?.includes('Invalid login credentials')) {
+    const handleAuthError = (error: any) => {
+      if (error.error?.message === "Invalid login credentials") {
         setView("sign_up");
         toast({
           title: "Account not found",
@@ -33,8 +33,10 @@ const AuthPage = () => {
       }
     };
 
-    // Add error event listener
-    window.addEventListener('supabase.auth.error', handleAuthError);
+    // Subscribe to auth state changes and errors
+    const {
+      data: { subscription: errorSubscription },
+    } = supabase.auth.onError(handleAuthError);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -44,7 +46,7 @@ const AuthPage = () => {
 
     return () => {
       authSubscription.unsubscribe();
-      window.removeEventListener('supabase.auth.error', handleAuthError);
+      errorSubscription.unsubscribe();
     };
   }, [navigate, toast]);
 
