@@ -37,7 +37,7 @@ export const Navigation = () => {
           </div>
           <div className="flex items-center gap-6">
             <RandomTeachersButton />
-            <ProfileButton session={session} />
+            <ProfileButton />
             {session && <LogoutButton />}
             <LanguageSwitcher />
           </div>
