@@ -34,7 +34,14 @@ export const FormSections = ({
         <PersonalInfoSection formData={formData} setFormData={setFormData} />
         {isUpdate && session?.user && (
           <SubscriptionSection 
-            profile={formData} 
+            profile={{
+              ...formData,
+              user_id: session.user.id,
+              subscription_status: formData.subscription_status,
+              subscription_type: formData.subscription_type,
+              subscription_end_date: formData.subscription_end_date,
+              promo_code: formData.promo_code
+            }} 
             isOwnProfile={true}
           />
         )}

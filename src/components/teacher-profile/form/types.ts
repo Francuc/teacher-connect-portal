@@ -36,6 +36,6 @@ export interface FormData {
   user_id?: string;
   subscription_status?: string;
   subscription_type?: string;
-  subscription_end_date?: string;
+  subscription_end_date?: string | null;
   promo_code?: string;
 }
