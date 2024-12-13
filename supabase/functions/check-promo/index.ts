@@ -15,7 +15,9 @@ serve(async (req) => {
   try {
     const { promoCode, userId } = await req.json()
     
-    if (promoCode !== 'PIERE') {
+    // Make the comparison case-insensitive
+    if (promoCode.toUpperCase() !== 'PIERE') {
+      console.log(`Invalid promo code attempted: ${promoCode}`);
       return new Response(
         JSON.stringify({ success: false }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -32,19 +34,24 @@ serve(async (req) => {
     const endDate = new Date(now)
     endDate.setDate(endDate.getDate() + 7)
 
+    console.log(`Applying promo code for user ${userId}`);
+    
     const { error } = await supabaseClient
       .from('teachers')
       .update({
         subscription_status: 'active',
         subscription_type: 'promo',
         subscription_end_date: endDate.toISOString(),
-        promo_code: promoCode
+        promo_code: promoCode.toUpperCase()
       })
       .eq('user_id', userId)
 
-    if (error) throw error
+    if (error) {
+      console.error('Error updating teacher profile:', error);
+      throw error;
+    }
 
-    console.log(`Promo code ${promoCode} applied for user ${userId}, subscription active until ${endDate.toISOString()}`)
+    console.log(`Successfully applied promo code. Subscription active until ${endDate.toISOString()}`);
 
     return new Response(
       JSON.stringify({ success: true }),
