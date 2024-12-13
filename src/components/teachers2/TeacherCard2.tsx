@@ -27,6 +27,26 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
     }
   });
 
+  const { data: cities = [] } = useQuery({
+    queryKey: ['teacherCities', teacher.teacher_student_cities],
+    queryFn: async () => {
+      if (!teacher.teacher_student_cities?.length) return [];
+      
+      const cityNames = teacher.teacher_student_cities.map((c: any) => c.city_name);
+      const { data, error } = await supabase
+        .from('cities')
+        .select(`
+          *,
+          region:regions(*)
+        `)
+        .in('name_en', cityNames);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!teacher.teacher_student_cities?.length
+  });
+
   const getLocalizedName = (item: any) => {
     if (!item) return '';
     switch(language) {
@@ -52,6 +72,14 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
       return getLocalizedName(level);
     }
     return levelName;
+  };
+
+  const getTranslatedCityName = (cityName: string) => {
+    const city = cities.find(c => c.name_en === cityName);
+    if (city) {
+      return getLocalizedName(city);
+    }
+    return cityName;
   };
 
   // Get the full URL for the profile picture
@@ -173,7 +201,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
               variant="outline"
               className="bg-purple-soft text-purple-vivid border-none"
             >
-              {cityData.city_name}
+              {getTranslatedCityName(cityData.city_name)}
             </Badge>
           ))}
         </div>
