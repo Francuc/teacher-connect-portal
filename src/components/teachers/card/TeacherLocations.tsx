@@ -31,7 +31,7 @@ export const TeacherLocations = ({
             variant="outline"
             className="bg-primary/10 text-primary border-none flex items-center gap-2"
           >
-            <span>{location.location_type}</span>
+            <span>{t(location.location_type)}</span>
             <span className="font-semibold">
               {formatPrice(location.price_per_hour)}
             </span>

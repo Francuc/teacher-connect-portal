@@ -3,10 +3,11 @@ import { supabase } from "@/lib/supabase";
 
 export const useTeachersData = () => {
   return useQuery({
-    queryKey: ['teachers'],
+    queryKey: ["teachers"],
     queryFn: async () => {
-      console.log('Fetching teachers data...');
-      const { data: teachers, error: teachersError } = await supabase
+      console.info("Fetching teachers data with relations...");
+      
+      const { data: teachers, error } = await supabase
         .from('teachers')
         .select(`
           *,
@@ -23,7 +24,6 @@ export const useTeachersData = () => {
             )
           ),
           teacher_subjects(
-            id,
             subject:subjects(
               id,
               name_en,
@@ -33,31 +33,26 @@ export const useTeachersData = () => {
           ),
           teacher_school_levels(
             school_level,
-            id
+            created_at
           ),
           teacher_locations(
-            id,
             location_type,
             price_per_hour
           ),
           teacher_student_cities(
-            id,
             city_name
           )
-        `)
-        .order('created_at', { ascending: false });
+        `);
 
-      if (teachersError) {
-        console.error('Error fetching teachers:', teachersError);
-        throw teachersError;
+      if (error) {
+        console.error("Error fetching teachers:", error);
+        throw error;
       }
 
-      console.log('Teachers data received:', teachers?.length);
-      return teachers || [];
+      console.info("Teachers data fetched:", teachers?.length);
+      return teachers;
     },
-    staleTime: 30000, // Data considered fresh for 30 seconds
-    gcTime: 5 * 60 * 1000, // Cache kept for 5 minutes (renamed from cacheTime)
-    refetchOnWindowFocus: false, // Prevent refetch on window focus
-    refetchOnMount: true, // Always fetch fresh data on mount
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 1 * 60 * 1000, // 1 minute
   });
 };

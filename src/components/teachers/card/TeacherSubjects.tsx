@@ -18,7 +18,7 @@ export const TeacherSubjects = ({ subjects, getLocalizedName }: TeacherSubjectsP
       <div className="flex flex-wrap gap-2">
         {subjects?.slice(0, 3).map((subjectData: any) => (
           <span
-            key={subjectData.subject_id}
+            key={subjectData.subject.id}
             className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium"
           >
             {getLocalizedName(subjectData.subject)}

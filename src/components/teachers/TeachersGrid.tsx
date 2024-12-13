@@ -1,42 +1,24 @@
 import { TeacherCard } from "./TeacherCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TeachersGridProps {
   teachers: any[];
-  isLoading: boolean;
-  getLocalizedName: (item: any) => string;
-  formatPrice: (price: number) => string;
 }
 
-export const TeachersGrid = ({
-  teachers,
-  isLoading,
-  getLocalizedName,
-  formatPrice,
-}: TeachersGridProps) => {
-  if (isLoading) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, index) => (
-          <div
-            key={index}
-            className="h-[400px] rounded-lg bg-muted animate-pulse"
-          />
-        ))}
-      </div>
-    );
-  }
+export const TeachersGrid = ({ teachers }: TeachersGridProps) => {
+  const { t, currentLanguage } = useLanguage();
 
-  if (teachers.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-lg text-muted-foreground">No teachers found</p>
-      </div>
-    );
-  }
+  const getLocalizedName = (item: any) => {
+    return item?.[`name_${currentLanguage}`] || item?.name_en;
+  };
+
+  const formatPrice = (price: number) => {
+    return `${price}€/h`;
+  };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {teachers.map((teacher) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {teachers?.map((teacher) => (
         <TeacherCard
           key={teacher.id}
           teacher={teacher}
