@@ -18,22 +18,22 @@ export const TeacherContactInfo = ({
   facebookProfile,
 }: TeacherContactInfoProps) => {
   return (
-    <div className="space-y-0.5 mt-1">
+    <div className="space-y-1 mt-2">
       {showEmail && email && (
         <a 
           href={`mailto:${email}`}
-          className="text-xs flex items-center gap-1 text-primary hover:text-primary/90"
+          className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
         >
-          <Mail className="w-3 h-3" />
+          <Mail className="w-4 h-4" />
           {email}
         </a>
       )}
       {showPhone && phone && (
         <a 
           href={`tel:${phone}`}
-          className="text-xs flex items-center gap-1 text-primary hover:text-primary/90"
+          className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
         >
-          <Phone className="w-3 h-3" />
+          <Phone className="w-4 h-4" />
           {phone}
         </a>
       )}
@@ -42,9 +42,9 @@ export const TeacherContactInfo = ({
           href={facebookProfile}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs flex items-center gap-1 text-primary hover:text-primary/90"
+          className="text-sm flex items-center gap-2 text-primary hover:text-primary/90"
         >
-          <Facebook className="w-3 h-3" />
+          <Facebook className="w-4 h-4" />
           Facebook Profile
         </a>
       )}
