@@ -15,7 +15,7 @@ serve(async (req) => {
     const { promoCode, userId } = await req.json()
     
     // Make the comparison case-insensitive
-    if (promoCode.toUpperCase() !== 'PIERE') {
+    if (promoCode.toUpperCase() !== 'PIERRE') {
       console.log(`Invalid promo code attempted: ${promoCode}`);
       return new Response(
         JSON.stringify({ success: false }),
@@ -53,9 +53,9 @@ serve(async (req) => {
       )
     }
 
-    // Set end date to 7 days from now
+    // Set end date to 1 month from now
     const endDate = new Date(now)
-    endDate.setDate(endDate.getDate() + 7)
+    endDate.setMonth(endDate.getMonth() + 1)
 
     console.log(`Applying promo code for user ${userId}`);
     
