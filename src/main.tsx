@@ -4,10 +4,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { Layout } from "@/components/Layout";
-import { Index } from "@/pages/Index";
-import { Auth } from "@/pages/Auth";
-import { Landing } from "@/pages/Landing";
-import { Teachers2 } from "@/pages/Teachers2";
+import Index from "@/pages/Index";
+import Auth from "@/pages/Auth";
+import Landing from "@/pages/Landing";
+import Teachers2 from "@/pages/Teachers2";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import "./index.css";
 

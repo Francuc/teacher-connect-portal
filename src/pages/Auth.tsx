@@ -1,4 +1,4 @@
-import { Auth } from "@supabase/auth-ui-react";
+import { Auth as AuthUI } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LogIn } from "lucide-react";
 
-const AuthPage = () => {
+const Auth = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -48,7 +48,7 @@ const AuthPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Auth
+          <AuthUI
             supabaseClient={supabase}
             appearance={{
               theme: ThemeSupa,
@@ -95,4 +95,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default Auth;
