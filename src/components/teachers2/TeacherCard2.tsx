@@ -3,10 +3,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, User, Book, GraduationCap, Euro } from "lucide-react";
-import { formatPrice } from "@/utils/teacherUtils";
+import { MapPin, User, Book, GraduationCap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
+import { TeacherLocations } from "./card/TeacherLocations";
+import { TeacherContactInfo } from "./card/TeacherContactInfo";
 
 interface TeacherCard2Props {
   teacher: any;
@@ -82,7 +83,6 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
     return cityName;
   };
 
-  // Get the full URL for the profile picture
   const getProfilePictureUrl = () => {
     if (!teacher.profile_picture_url) return null;
     const { data: { publicUrl } } = supabase
@@ -114,7 +114,7 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
             </AvatarFallback>
           )}
         </Avatar>
-        <div>
+        <div className="flex-1">
           <h3 className="text-xl font-semibold text-purple-dark">
             {teacher.first_name} {teacher.last_name}
           </h3>
@@ -122,10 +122,25 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
             <MapPin className="w-4 h-4" />
             {getTeacherLocation()}
           </p>
+          <TeacherContactInfo
+            email={teacher.email}
+            phone={teacher.phone}
+            facebookProfile={teacher.facebook_profile}
+            showEmail={teacher.show_email}
+            showPhone={teacher.show_phone}
+            showFacebook={teacher.show_facebook}
+          />
         </div>
       </div>
 
       <Separator className="my-4" />
+
+      {/* Teaching Locations Section */}
+      {teacher.teacher_locations && teacher.teacher_locations.length > 0 && (
+        <div className="mb-4">
+          <TeacherLocations locations={teacher.teacher_locations} />
+        </div>
+      )}
 
       {/* Subjects Section */}
       <div className="space-y-2 mb-4">
@@ -165,47 +180,26 @@ export const TeacherCard2 = ({ teacher }: TeacherCard2Props) => {
         </div>
       </div>
 
-      {/* Teaching Locations Section */}
-      <div className="space-y-2 mb-4">
-        <h4 className="font-semibold flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
-          {t("teachingLocations")}
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {teacher.teacher_locations?.map((location: any, index: number) => (
-            <Badge
-              key={index}
-              variant="outline"
-              className="bg-secondary/10 text-secondary border-none flex items-center gap-2"
-            >
-              <span>{t(location.location_type)}</span>
-              <span className="font-semibold flex items-center">
-                <Euro className="w-3 h-3 mr-1" />
-                {formatPrice(location.price_per_hour)}
-              </span>
-            </Badge>
-          ))}
-        </div>
-      </div>
-
       {/* Student Cities Section */}
-      <div className="space-y-2">
-        <h4 className="font-semibold flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
-          {t("availableIn")}
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
-            <Badge
-              key={index}
-              variant="outline"
-              className="bg-purple-soft text-purple-vivid border-none"
-            >
-              {getTranslatedCityName(cityData.city_name)}
-            </Badge>
-          ))}
+      {teacher.teacher_student_cities && teacher.teacher_student_cities.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="font-semibold flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            {t("availableIn")}
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {teacher.teacher_student_cities?.map((cityData: any, index: number) => (
+              <Badge
+                key={index}
+                variant="outline"
+                className="bg-purple-soft text-purple-vivid border-none"
+              >
+                {getTranslatedCityName(cityData.city_name)}
+              </Badge>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 };
