@@ -6,18 +6,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface TeachersList2Props {
   selectedSubject?: string;
   selectedCity?: string;
+  showOnlineOnly?: boolean;
 }
 
 export const TeachersList2 = ({ 
   selectedSubject = "all",
-  selectedCity = "all"
+  selectedCity = "all",
+  showOnlineOnly = false
 }: TeachersList2Props) => {
   const { language } = useLanguage();
 
   const { data: teachers = [], isLoading } = useQuery({
-    queryKey: ["teachers2", selectedSubject, selectedCity],
+    queryKey: ["teachers2", selectedSubject, selectedCity, showOnlineOnly],
     queryFn: async () => {
-      console.log("Fetching teachers with filters:", { selectedSubject, selectedCity });
+      console.log("Fetching teachers with filters:", { selectedSubject, selectedCity, showOnlineOnly });
       
       let query = supabase
         .from('teachers')
@@ -60,30 +62,43 @@ export const TeachersList2 = ({
         );
       }
 
-      // Apply city filter
-      if (selectedCity !== "all") {
+      // Apply city and online filters
+      if (selectedCity !== "all" || showOnlineOnly) {
         filteredTeachers = filteredTeachers.filter(teacher => {
-          // Check teacher's own city
-          if (teacher.city?.id === selectedCity) return true;
-          
-          // Check cities where teacher serves students
-          return teacher.teacher_student_cities?.some(
-            (sc: any) => sc.city_name === selectedCity
+          const hasOnlineTeaching = teacher.teacher_locations?.some(
+            (loc: any) => loc.location_type === "Online"
           );
+
+          // If showing online only, teacher must offer online teaching
+          if (showOnlineOnly && !hasOnlineTeaching) {
+            return false;
+          }
+
+          // If city is selected and not showing online only
+          if (selectedCity !== "all" && !showOnlineOnly) {
+            // Check if teacher is in the selected city or serves students there
+            const isInCity = teacher.city?.id === selectedCity;
+            const servesCity = teacher.teacher_student_cities?.some(
+              (sc: any) => sc.city_name === selectedCity
+            );
+            return isInCity || servesCity;
+          }
+
+          // If showing online only and city is selected
+          if (selectedCity !== "all" && showOnlineOnly && hasOnlineTeaching) {
+            const isInCity = teacher.city?.id === selectedCity;
+            const servesCity = teacher.teacher_student_cities?.some(
+              (sc: any) => sc.city_name === selectedCity
+            );
+            return isInCity || servesCity || hasOnlineTeaching;
+          }
+
+          return true;
         });
       }
 
       // Sort teachers: matching filters first, then by subscription end date
       return filteredTeachers.sort((a, b) => {
-        const aMatches = selectedSubject === "all" || 
-          a.teacher_subjects?.some((s: any) => s.subject?.id === selectedSubject);
-        const bMatches = selectedSubject === "all" || 
-          b.teacher_subjects?.some((s: any) => s.subject?.id === selectedSubject);
-
-        if (aMatches && !bMatches) return -1;
-        if (!aMatches && bMatches) return 1;
-
-        // If both match or don't match, sort by subscription end date
         const aDate = new Date(a.subscription_end_date || 0);
         const bDate = new Date(b.subscription_end_date || 0);
         return bDate.getTime() - aDate.getTime();

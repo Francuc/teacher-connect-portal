@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { BookOpen, MapPin } from "lucide-react";
+import { BookOpen, MapPin, Wifi } from "lucide-react";
 import { TeachersList2 } from "./teachers2/TeachersList2";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -11,11 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const LandingPage = () => {
   const { t, language } = useLanguage();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
   const [selectedCity, setSelectedCity] = useState<string>("all");
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   const { data: subjects = [] } = useQuery({
     queryKey: ['subjects'],
@@ -161,11 +164,26 @@ export const LandingPage = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Online Filter Switch */}
+            <div className="flex items-center justify-center space-x-2 mt-6">
+              <Switch
+                id="online-mode"
+                checked={showOnlineOnly}
+                onCheckedChange={setShowOnlineOnly}
+                className="data-[state=checked]:bg-primary"
+              />
+              <Label htmlFor="online-mode" className="flex items-center gap-2 cursor-pointer">
+                <Wifi className="w-4 h-4" />
+                {t("onlineOnly")}
+              </Label>
+            </div>
           </div>
 
           <TeachersList2 
             selectedSubject={selectedSubject} 
             selectedCity={selectedCity}
+            showOnlineOnly={showOnlineOnly}
           />
         </div>
       </main>
