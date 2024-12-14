@@ -79,6 +79,7 @@ export const en = {
   profilePictureTypeError: "Profile Picture Type Error",
   selectProfile: "Select Profile",
   createAd: "Create Ad",
+  availableIn: "Available in",
   myProfile: "My Profile",
   cities: "Cities",
   regions: "Regions",

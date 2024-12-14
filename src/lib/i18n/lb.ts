@@ -1,7 +1,7 @@
 export const lb = {
-  welcome: "Willkommen",
-  findTeacher: "Fannen Iech e Léier",
-  landingDescription: "Ech sinn hei fir Iech ze hëllefen, den idealen Léier ze fannen.",
+  welcome: "Wëllkomm",
+  findTeacher: "Fannt Äre perfekte Léierpersoun",
+  landingDescription: "Entdeckt qualifizéiert Léierpersounen a fänkt Äre Léierwee haut un.",
   filterBySubject: "No Fach filteren",
   selectSubject: "Eng Fach auswielen",
   allSubjects: "All Fächer",
@@ -13,4 +13,6 @@ export const lb = {
   noCitiesAvailable: "Keng Stied verfügbar.",
   noResults: "Keng Resultater fonnt.",
   onlineOnly: "Nëmmen Online Coursen",
+  createAd: "Annonce erstellen",
+  availableIn: "Verfügbar an"
 } as const;
