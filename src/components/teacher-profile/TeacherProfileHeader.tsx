@@ -1,4 +1,7 @@
+import { Card } from "@/components/ui/card";
 import { Teacher } from "@/types/teacher";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 
 interface TeacherProfileHeaderProps {
   teacher: Teacher;
@@ -7,22 +10,25 @@ interface TeacherProfileHeaderProps {
 export const TeacherProfileHeader = ({ teacher }: TeacherProfileHeaderProps) => {
   return (
     <div className="flex items-center space-x-4">
-      <div className="flex-shrink-0">
+      <Avatar className="h-16 w-16">
         {teacher.profile_picture_url ? (
-          <img
+          <AvatarImage 
             src={teacher.profile_picture_url}
             alt={`${teacher.first_name} ${teacher.last_name}`}
-            className="h-16 w-16 rounded-full object-cover"
           />
         ) : (
-          <div className="h-16 w-16 rounded-full bg-gray-200" />
+          <AvatarFallback>
+            <User className="h-8 w-8" />
+          </AvatarFallback>
         )}
-      </div>
+      </Avatar>
       <div>
         <h1 className="text-2xl font-bold">
           {teacher.first_name} {teacher.last_name}
         </h1>
-        <p className="text-gray-600">{teacher.email}</p>
+        {teacher.show_email && (
+          <p className="text-gray-600">{teacher.email}</p>
+        )}
       </div>
     </div>
   );
