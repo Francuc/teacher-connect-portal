@@ -3,7 +3,6 @@ import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
 import { FormContainer } from "./teacher-profile/form/FormContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { SubscriptionSection } from "./teacher-profile/SubscriptionSection";
 
 const TeacherProfileForm = () => {
   const { userId } = useParams();
@@ -75,12 +74,9 @@ const TeacherProfileForm = () => {
     return <div>Loading...</div>;
   }
 
-  const isOwnProfile = true; // For edit mode, this is always true
-
   return (
     <div className="space-y-8">
       <FormContainer userId={userId} initialData={profile} />
-      <SubscriptionSection profile={profile} isOwnProfile={isOwnProfile} />
     </div>
   );
 };
