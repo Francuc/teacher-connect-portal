@@ -67,7 +67,7 @@ const TeacherProfileForm = () => {
   });
   
   if (isViewMode) {
-    return <TeacherProfileView userId={userId || ''} />;
+    return <TeacherProfileView teacherId={userId || ''} />;
   }
 
   if (isLoading) {
