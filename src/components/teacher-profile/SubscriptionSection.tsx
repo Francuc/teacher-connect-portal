@@ -134,7 +134,7 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
     }
   };
 
-  const hasValidSubscription = profile.subscription_end_date && new Date(profile.subscription_end_date) > new Date();
+  const hasValidSubscription = profile?.subscription_end_date && new Date(profile.subscription_end_date) > new Date();
 
   if (!isOwnProfile) return null;
 
@@ -148,10 +148,10 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
       </CardHeader>
       <CardContent className="space-y-4">
         <SubscriptionStatus 
-          status={profile.subscription_status}
-          endDate={profile.subscription_end_date}
-          type={profile.subscription_type}
-          promoCode={profile.promo_code}
+          status={profile?.subscription_status}
+          endDate={profile?.subscription_end_date}
+          type={profile?.subscription_type}
+          promoCode={profile?.promo_code}
           onToggleStatus={handleToggleProfileStatus}
           isLoading={isLoading}
         />
