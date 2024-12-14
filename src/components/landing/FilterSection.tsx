@@ -46,6 +46,13 @@ export const FilterSection = ({
     }
   };
 
+  const mobileSelectStyles = isMobile ? 
+    "fixed inset-0 h-[100dvh] w-screen border-0 bg-white p-0 shadow-none" : "";
+
+  const mobileContentStyles = isMobile ?
+    "grid grid-cols-2 gap-3 p-4 pb-8 overflow-y-auto max-h-[calc(100vh-60px)]" : 
+    "grid grid-cols-2 md:grid-cols-3 gap-3";
+
   return (
     <div className="container mx-auto px-4 mb-12">
       <div className="flex flex-col gap-6 max-w-2xl mx-auto">
@@ -62,30 +69,33 @@ export const FilterSection = ({
               <SelectValue placeholder={t("selectSubject")} />
             </SelectTrigger>
             <SelectContent 
-              className={`bg-white ${isMobile ? 'fixed inset-0 min-h-screen border-none rounded-none' : ''}`}
+              className={mobileSelectStyles}
               position={isMobile ? "popper" : "item-aligned"}
               side={isMobile ? "bottom" : "top"}
             >
-              <div className="p-4 overflow-y-auto max-h-[80vh]">
+              {isMobile && (
+                <div className="sticky top-0 z-10 flex items-center justify-center h-[60px] border-b bg-white text-lg font-medium">
+                  {t("selectSubject")}
+                </div>
+              )}
+              <div className={mobileContentStyles}>
                 <SelectItem 
                   value="all"
-                  className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                  className="col-span-2 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg flex items-center justify-center"
                 >
                   {t("allSubjects")}
                 </SelectItem>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {subjects
-                    .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
-                    .map((subject) => (
-                    <SelectItem 
-                      key={subject.id} 
-                      value={subject.id}
-                      className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
-                    >
-                      {getLocalizedName(subject)}
-                    </SelectItem>
-                  ))}
-                </div>
+                {subjects
+                  .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                  .map((subject) => (
+                  <SelectItem 
+                    key={subject.id} 
+                    value={subject.id}
+                    className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
+                  >
+                    {getLocalizedName(subject)}
+                  </SelectItem>
+                ))}
               </div>
             </SelectContent>
           </Select>
@@ -104,30 +114,33 @@ export const FilterSection = ({
               <SelectValue placeholder={t("selectCity")} />
             </SelectTrigger>
             <SelectContent 
-              className={`bg-white ${isMobile ? 'fixed inset-0 min-h-screen border-none rounded-none' : ''}`}
+              className={mobileSelectStyles}
               position={isMobile ? "popper" : "item-aligned"}
               side={isMobile ? "bottom" : "top"}
             >
-              <div className="p-4 overflow-y-auto max-h-[80vh]">
+              {isMobile && (
+                <div className="sticky top-0 z-10 flex items-center justify-center h-[60px] border-b bg-white text-lg font-medium">
+                  {t("selectCity")}
+                </div>
+              )}
+              <div className={mobileContentStyles}>
                 <SelectItem 
                   value="all"
-                  className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                  className="col-span-2 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg flex items-center justify-center"
                 >
                   {t("allCities")}
                 </SelectItem>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {cities
-                    .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
-                    .map((city) => (
-                    <SelectItem 
-                      key={city.id} 
-                      value={city.id}
-                      className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
-                    >
-                      {getLocalizedName(city)}
-                    </SelectItem>
-                  ))}
-                </div>
+                {cities
+                  .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                  .map((city) => (
+                  <SelectItem 
+                    key={city.id} 
+                    value={city.id}
+                    className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
+                  >
+                    {getLocalizedName(city)}
+                  </SelectItem>
+                ))}
               </div>
             </SelectContent>
           </Select>
