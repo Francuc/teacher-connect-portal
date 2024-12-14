@@ -22,25 +22,25 @@ const TeacherProfileForm = () => {
           .from('teachers')
           .select(`
             *,
-            city:cities!left(
+            city:cities(
               *,
-              region:regions!left(*)
+              region:regions(*)
             ),
-            teacher_subjects!left(
-              subject:subjects!left(*)
+            teacher_subjects(
+              subject:subjects(*)
             ),
-            teacher_school_levels!left(
+            teacher_school_levels(
               school_level
             ),
-            teacher_locations!left(
+            teacher_locations(
               location_type,
               price_per_hour
             ),
-            teacher_student_regions!left(
+            teacher_student_regions(
               region_name
             ),
-            teacher_student_cities!left(
-              cities!left(
+            teacher_student_cities(
+              cities(
                 id,
                 name_en,
                 name_fr,
