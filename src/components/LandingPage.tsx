@@ -70,9 +70,9 @@ export const LandingPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-purple.soft via-white to-purple.soft/20">
       <main>
         {/* Hero Section with animated gradient background */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-primary/95 to-secondary/95 rounded-b-[2rem] shadow-lg mt-16">
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/95 to-secondary/95 rounded-[2rem] shadow-lg mt-12 mx-4">
           <div className="absolute inset-0 bg-purple.dark/5 pattern-grid-lg opacity-10"></div>
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-6 py-6">
             <div className="flex flex-col items-center text-center space-y-4 max-w-2xl mx-auto">
               <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
                 <BookOpen className="w-8 h-8 text-white" />
@@ -87,6 +87,7 @@ export const LandingPage = () => {
           </div>
         </div>
 
+        {/* Rest of the component */}
         {/* Teachers List Section */}
         <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
           {/* Filters Section */}
