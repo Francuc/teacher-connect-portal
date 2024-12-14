@@ -1,97 +1,151 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { TeacherProfileHeader } from "./TeacherProfileHeader";
-import { TeacherProfileDetails } from "./TeacherProfileDetails";
-import { TeacherProfileSubjects } from "./TeacherProfileSubjects";
-import { TeacherProfileContact } from "./TeacherProfileContact";
-import { TeacherProfileReviews } from "./TeacherProfileReviews";
-import { TeacherProfileAvailability } from "./TeacherProfileAvailability";
-import { TeacherProfilePricing } from "./TeacherProfilePricing";
-import { TeacherProfileLocation } from "./TeacherProfileLocation";
-import { TeacherProfileOnline } from "./TeacherProfileOnline";
-import { TeacherProfileLanguages } from "./TeacherProfileLanguages";
-import { TeacherProfileEducation } from "./TeacherProfileEducation";
-import { TeacherProfileExperience } from "./TeacherProfileExperience";
-import { TeacherProfileCertifications } from "./TeacherProfileCertifications";
-import { TeacherProfileAbout } from "./TeacherProfileAbout";
-import { Skeleton } from "../ui/skeleton";
+import { PersonalSection } from "./profile-sections/PersonalSection";
+import { BiographySection } from "./profile-sections/BiographySection";
+import { SubjectsSection } from "./profile-sections/SubjectsSection";
+import { SchoolLevelsSection } from "./profile-sections/SchoolLevelsSection";
+import { LocationsSection } from "./profile-sections/LocationsSection";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { Pencil } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
-export const TeacherProfileView = ({ teacherId }: { teacherId: string }) => {
-  const { t } = useLanguage();
+interface TeacherProfileViewProps {
+  userId: string;
+}
 
-  const { data: teacher, isLoading } = useQuery({
-    queryKey: ["teacher", teacherId],
+export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
+  const navigate = useNavigate();
+  const { language } = useLanguage();
+  const { session } = useAuth();
+  const isOwnProfile = session?.user?.id === userId;
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['teacherProfile', userId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("teachers")
-        .select("*, cities(*), subjects(*)")
-        .eq("user_id", teacherId)
-        .single();
+      console.log('Fetching teacher data for userId:', userId);
+      try {
+        const { data, error } = await supabase
+          .from('teachers')
+          .select(`
+            *,
+            city:cities!left(
+              id,
+              name_en,
+              name_fr,
+              name_lb,
+              region:regions!left(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
+            ),
+            teacher_subjects!left(
+              subject:subjects!left(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
+            ),
+            teacher_school_levels!left(
+              school_level
+            ),
+            teacher_locations!left(
+              location_type,
+              price_per_hour
+            ),
+            teacher_student_regions!left(
+              region_name
+            ),
+            teacher_student_cities!left(
+              cities!left(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
+            )
+          `)
+          .eq('user_id', userId)
+          .maybeSingle();
 
-      if (error) {
+        if (error) {
+          console.error('Error fetching teacher profile:', error);
+          throw error;
+        }
+
+        // Get the public URL for the profile picture if it exists
+        if (data && data.profile_picture_url) {
+          const { data: { publicUrl } } = supabase
+            .storage
+            .from('profile-pictures')
+            .getPublicUrl(data.profile_picture_url);
+          data.profile_picture_url = publicUrl;
+        }
+
+        return data;
+      } catch (error) {
+        console.error('Error in fetchTeacherData:', error);
         throw error;
       }
-
-      return data;
     },
   });
 
+  const getLocalizedName = (item: any) => {
+    if (!item) return '';
+    switch(language) {
+      case 'fr':
+        return item.name_fr;
+      case 'lb':
+        return item.name_lb;
+      default:
+        return item.name_en;
+    }
+  };
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple.soft/20 to-white">
-        <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="space-y-4">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-36 w-full" />
-          </div>
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  if (!teacher) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple.soft/20 to-white">
-        <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {t("teacherNotFound")}
-            </h1>
-          </div>
-        </div>
-      </div>
-    );
+  if (!profile) {
+    return <div>Profile not found</div>;
   }
+
+  const handleEditClick = () => {
+    navigate(`/profile/edit/${userId}`);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple.soft/20 to-white">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-purple.soft/30">
-          <div className="p-1 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl">
-            <div className="bg-white rounded-lg p-6">
-              <TeacherProfileHeader teacher={teacher} />
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 space-y-6">
-                  <TeacherProfileAbout teacher={teacher} />
-                  <TeacherProfileSubjects teacher={teacher} />
-                  <TeacherProfileEducation teacher={teacher} />
-                  <TeacherProfileExperience teacher={teacher} />
-                  <TeacherProfileCertifications teacher={teacher} />
-                  <TeacherProfileReviews teacher={teacher} />
-                </div>
-                <div className="space-y-6">
-                  <TeacherProfileContact teacher={teacher} />
-                  <TeacherProfileDetails teacher={teacher} />
-                  <TeacherProfilePricing teacher={teacher} />
-                  <TeacherProfileAvailability teacher={teacher} />
-                  <TeacherProfileLocation teacher={teacher} />
-                  <TeacherProfileOnline teacher={teacher} />
-                  <TeacherProfileLanguages teacher={teacher} />
-                </div>
-              </div>
-            </div>
+    <div className="container max-w-4xl mx-auto py-6 px-4">
+      {isOwnProfile && (
+        <div className="flex justify-end mb-4">
+          <Button onClick={handleEditClick} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
+            <Pencil className="w-4 h-4" />
+            Edit Profile
+          </Button>
+        </div>
+      )}
+
+      <div className="space-y-4 bg-purple.soft/5 rounded-xl p-4 shadow-lg border border-purple.soft/20">
+        <PersonalSection profile={profile} />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <BiographySection bio={profile.bio} />
+            <SubjectsSection subjects={profile.teacher_subjects} />
+          </div>
+          
+          <div className="space-y-4">
+            <SchoolLevelsSection schoolLevels={profile.teacher_school_levels?.map((level: any) => level.school_level) || []} />
+            <LocationsSection
+              locations={profile.teacher_locations}
+              city={profile.city}
+              studentRegions={profile.teacher_student_regions?.map((r: any) => r.region_name) || []}
+              studentCities={profile.teacher_student_cities?.map((c: any) => getLocalizedName(c.cities)) || []}
+            />
           </div>
         </div>
       </div>

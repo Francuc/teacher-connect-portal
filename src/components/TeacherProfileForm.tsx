@@ -22,38 +22,25 @@ const TeacherProfileForm = () => {
           .from('teachers')
           .select(`
             *,
-            city:cities(
-              id,
-              name_en,
-              name_fr,
-              name_lb,
-              region:regions(
-                id,
-                name_en,
-                name_fr,
-                name_lb
-              )
+            city:cities!left(
+              *,
+              region:regions!left(*)
             ),
-            teacher_subjects(
-              subject:subjects(
-                id,
-                name_en,
-                name_fr,
-                name_lb
-              )
+            teacher_subjects!left(
+              subject:subjects!left(*)
             ),
-            teacher_school_levels(
+            teacher_school_levels!left(
               school_level
             ),
-            teacher_locations(
+            teacher_locations!left(
               location_type,
               price_per_hour
             ),
-            teacher_student_regions(
+            teacher_student_regions!left(
               region_name
             ),
-            teacher_student_cities(
-              cities(
+            teacher_student_cities!left(
+              cities!left(
                 id,
                 name_en,
                 name_fr,
@@ -80,7 +67,7 @@ const TeacherProfileForm = () => {
   });
   
   if (isViewMode) {
-    return <TeacherProfileView teacherId={userId || ''} />;
+    return <TeacherProfileView userId={userId || ''} />;
   }
 
   if (isLoading) {

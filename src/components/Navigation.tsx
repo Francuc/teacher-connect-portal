@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 export const Navigation = () => {
   const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

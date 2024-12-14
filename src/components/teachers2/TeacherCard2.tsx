@@ -78,13 +78,13 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
 
   return (
     <Card 
-      className={`p-3 flex flex-col h-[500px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50 ${
+      className={`p-3 flex flex-col h-[472px] cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-primary/50 ${
         isDisabled ? 'opacity-50 pointer-events-none grayscale' : 'cursor-pointer'
       }`}
       onClick={isDisabled ? undefined : handleCardClick}
     >
-      {/* Header Section - Increased height from 89px to 110px */}
-      <div className="h-[110px] flex items-start gap-3 mb-2">
+      {/* Header Section */}
+      <div className="h-[89px] flex items-start gap-3 mb-2">
         <Avatar className="w-[100px] h-[100px] rounded-xl border-2 border-purple-soft">
           {teacher.profile_picture_url ? (
             <AvatarImage 
