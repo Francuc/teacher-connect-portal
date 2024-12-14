@@ -119,9 +119,9 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto py-8 px-4">
+    <div className="container max-w-4xl mx-auto py-6 px-4">
       {isOwnProfile && (
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-end mb-4">
           <Button onClick={handleEditClick} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
             <Pencil className="w-4 h-4" />
             Edit Profile
@@ -129,16 +129,16 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         </div>
       )}
 
-      <div className="space-y-6 bg-purple-soft rounded-xl p-6 shadow-lg">
+      <div className="space-y-4 bg-purple.soft/5 rounded-xl p-4 shadow-lg border border-purple.soft/20">
         <PersonalSection profile={profile} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="space-y-4">
             <BiographySection bio={profile.bio} />
             <SubjectsSection subjects={profile.teacher_subjects} />
           </div>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             <SchoolLevelsSection schoolLevels={profile.teacher_school_levels?.map((level: any) => level.school_level) || []} />
             <LocationsSection
               locations={profile.teacher_locations}
