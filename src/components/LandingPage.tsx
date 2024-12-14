@@ -105,17 +105,19 @@ export const LandingPage = () => {
                     <SelectValue placeholder={t("selectSubject")} />
                   </SelectTrigger>
                   <SelectContent 
-                    className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
+                    className="bg-white max-h-[80vh] w-screen"
+                    position="popper"
                     align="center"
+                    sideOffset={8}
                   >
-                    <div className="p-4">
+                    <div className="p-4 overflow-y-auto">
                       <SelectItem 
                         value="all"
                         className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-4 gap-3">
+                      <div className="grid grid-cols-3 gap-3">
                         {subjects
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((subject) => (
@@ -147,17 +149,19 @@ export const LandingPage = () => {
                       <SelectValue placeholder={t("selectCity")} />
                     </SelectTrigger>
                     <SelectContent 
-                      className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
+                      className="bg-white max-h-[80vh] w-screen"
+                      position="popper"
                       align="center"
+                      sideOffset={8}
                     >
-                      <div className="p-4">
+                      <div className="p-4 overflow-y-auto">
                         <SelectItem 
                           value="all"
                           className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
                         >
                           {t("allCities")}
                         </SelectItem>
-                        <div className="grid grid-cols-4 gap-3">
+                        <div className="grid grid-cols-3 gap-3">
                           {cities
                             .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                             .map((city) => (
@@ -195,5 +199,3 @@ export const LandingPage = () => {
         </div>
       </main>
     </div>
-  );
-};
