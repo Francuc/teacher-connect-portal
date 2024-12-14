@@ -23,11 +23,24 @@ const TeacherProfileForm = () => {
           .select(`
             *,
             city:cities(
-              *,
-              region:regions(*)
+              id,
+              name_en,
+              name_fr,
+              name_lb,
+              region:regions(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
             ),
             teacher_subjects(
-              subject:subjects(*)
+              subject:subjects(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
             ),
             teacher_school_levels(
               school_level
