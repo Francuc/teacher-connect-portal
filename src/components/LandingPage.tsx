@@ -87,7 +87,6 @@ export const LandingPage = () => {
           </div>
         </div>
 
-        {/* Rest of the component */}
         {/* Teachers List Section */}
         <div className="py-8 bg-gradient-to-b from-white to-purple.soft/20">
           {/* Filters Section */}
@@ -116,7 +115,7 @@ export const LandingPage = () => {
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {subjects
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((subject) => (
@@ -158,7 +157,7 @@ export const LandingPage = () => {
                         >
                           {t("allCities")}
                         </SelectItem>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                           {cities
                             .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                             .map((city) => (
