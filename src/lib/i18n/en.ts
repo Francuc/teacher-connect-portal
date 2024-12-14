@@ -12,7 +12,6 @@ export const en = {
   searchPlaceholder: "Search for teachers...",
   subjects: "Subjects",
   schoolLevels: "School Levels",
-  teacherNotFound: "Teacher not found",
   loading: "Loading...",
   error: "Error",
   retry: "Retry",
