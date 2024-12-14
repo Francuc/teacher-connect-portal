@@ -73,6 +73,7 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
               {(formData.profilePictureUrl || formData.profilePicture) ? (
                 <AvatarImage 
                   src={formData.profilePictureUrl || (formData.profilePicture ? URL.createObjectURL(formData.profilePicture) : '')} 
+                  alt={`${formData.firstName} ${formData.lastName}`}
                   className="object-cover"
                 />
               ) : (
