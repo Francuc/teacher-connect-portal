@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Mail, Phone, Facebook } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 type PersonalSectionProps = {
   profile: {
@@ -20,6 +21,21 @@ type PersonalSectionProps = {
 export const PersonalSection = ({ profile }: PersonalSectionProps) => {
   const { t } = useLanguage();
 
+  // Get the public URL for the profile picture if it exists
+  const getProfilePictureUrl = () => {
+    if (profile.profile_picture_url) {
+      if (profile.profile_picture_url.startsWith('http')) {
+        return profile.profile_picture_url;
+      }
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from('profile-pictures')
+        .getPublicUrl(profile.profile_picture_url);
+      return publicUrl;
+    }
+    return '';
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -31,7 +47,7 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
             <Avatar className="w-32 h-32">
               {profile.profile_picture_url ? (
                 <AvatarImage 
-                  src={profile.profile_picture_url} 
+                  src={getProfilePictureUrl()}
                   alt={`${profile.first_name} ${profile.last_name}`}
                   className="object-cover"
                 />

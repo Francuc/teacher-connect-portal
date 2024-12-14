@@ -9,7 +9,6 @@ import { LocationsSection } from "./profile-sections/LocationsSection";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Pencil } from "lucide-react";
-import { SubscriptionSection } from "./SubscriptionSection";
 import { useAuth } from "@/hooks/useAuth";
 
 interface TeacherProfileViewProps {
@@ -78,6 +77,15 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           throw error;
         }
 
+        // Get the public URL for the profile picture if it exists
+        if (data && data.profile_picture_url) {
+          const { data: { publicUrl } } = supabase
+            .storage
+            .from('profile-pictures')
+            .getPublicUrl(data.profile_picture_url);
+          data.profile_picture_url = publicUrl;
+        }
+
         return data;
       } catch (error) {
         console.error('Error in fetchTeacherData:', error);
@@ -124,12 +132,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <PersonalSection profile={profile} />
-          {isOwnProfile && (
-            <SubscriptionSection 
-              profile={profile} 
-              isOwnProfile={true}
-            />
-          )}
         </div>
         <BiographySection bio={profile.bio} />
         <SubjectsSection subjects={profile.teacher_subjects} />

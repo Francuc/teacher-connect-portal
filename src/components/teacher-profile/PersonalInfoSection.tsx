@@ -6,6 +6,7 @@ import { User, Upload } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 type PersonalInfoProps = {
   formData: {
@@ -58,6 +59,24 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
     }
   };
 
+  // Get the public URL for the profile picture if it exists
+  const getProfilePictureUrl = () => {
+    if (formData.profilePicture) {
+      return URL.createObjectURL(formData.profilePicture);
+    }
+    if (formData.profilePictureUrl) {
+      if (formData.profilePictureUrl.startsWith('http')) {
+        return formData.profilePictureUrl;
+      }
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from('profile-pictures')
+        .getPublicUrl(formData.profilePictureUrl);
+      return publicUrl;
+    }
+    return '';
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -72,7 +91,7 @@ export const PersonalInfoSection = ({ formData, setFormData }: PersonalInfoProps
             <Avatar className="w-24 h-24">
               {(formData.profilePictureUrl || formData.profilePicture) ? (
                 <AvatarImage 
-                  src={formData.profilePictureUrl || (formData.profilePicture ? URL.createObjectURL(formData.profilePicture) : '')} 
+                  src={getProfilePictureUrl()}
                   alt={`${formData.firstName} ${formData.lastName}`}
                   className="object-cover"
                 />
