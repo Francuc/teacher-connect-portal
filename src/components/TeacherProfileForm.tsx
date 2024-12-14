@@ -34,26 +34,26 @@ const TeacherProfileForm = () => {
                 name_lb
               )
             ),
-            teacher_subjects(
-              subject:subjects(
+            teacher_subjects!inner(
+              subject:subjects!inner(
                 id,
                 name_en,
                 name_fr,
                 name_lb
               )
             ),
-            teacher_school_levels(
+            teacher_school_levels!inner(
               school_level
             ),
-            teacher_locations(
+            teacher_locations!inner(
               location_type,
               price_per_hour
             ),
-            teacher_student_regions(
+            teacher_student_regions!inner(
               region_name
             ),
-            teacher_student_cities(
-              cities(
+            teacher_student_cities!inner(
+              cities!inner(
                 id,
                 name_en,
                 name_fr,
