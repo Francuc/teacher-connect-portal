@@ -134,7 +134,10 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
     }
   };
 
-  const hasValidSubscription = profile?.subscription_end_date && new Date(profile.subscription_end_date) > new Date();
+  // Only hide payment options for paid subscriptions (not promo)
+  const hasValidPaidSubscription = profile?.subscription_end_date && 
+    new Date(profile.subscription_end_date) > new Date() && 
+    profile.subscription_type !== 'promo';
 
   if (!isOwnProfile) return null;
 
@@ -156,7 +159,7 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
           isLoading={isLoading}
         />
 
-        {!hasValidSubscription && (
+        {!hasValidPaidSubscription && (
           <SubscriptionPlans 
             isLoading={isLoading}
             promoCode={promoCode}
