@@ -122,26 +122,32 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
     <div className="container max-w-4xl mx-auto py-8 px-4">
       {isOwnProfile && (
         <div className="flex justify-end mb-6">
-          <Button onClick={handleEditClick} className="flex items-center gap-2">
+          <Button onClick={handleEditClick} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
             <Pencil className="w-4 h-4" />
             Edit Profile
           </Button>
         </div>
       )}
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <PersonalSection profile={profile} />
+      <div className="space-y-6 bg-purple-soft rounded-xl p-6 shadow-lg">
+        <PersonalSection profile={profile} />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <BiographySection bio={profile.bio} />
+            <SubjectsSection subjects={profile.teacher_subjects} />
+          </div>
+          
+          <div className="space-y-6">
+            <SchoolLevelsSection schoolLevels={profile.teacher_school_levels?.map((level: any) => level.school_level) || []} />
+            <LocationsSection
+              locations={profile.teacher_locations}
+              city={profile.city}
+              studentRegions={profile.teacher_student_regions?.map((r: any) => r.region_name) || []}
+              studentCities={profile.teacher_student_cities?.map((c: any) => getLocalizedName(c.cities)) || []}
+            />
+          </div>
         </div>
-        <BiographySection bio={profile.bio} />
-        <SubjectsSection subjects={profile.teacher_subjects} />
-        <SchoolLevelsSection schoolLevels={profile.teacher_school_levels?.map((level: any) => level.school_level) || []} />
-        <LocationsSection
-          locations={profile.teacher_locations}
-          city={profile.city}
-          studentRegions={profile.teacher_student_regions?.map((r: any) => r.region_name) || []}
-          studentCities={profile.teacher_student_cities?.map((c: any) => getLocalizedName(c.cities)) || []}
-        />
       </div>
     </div>
   );

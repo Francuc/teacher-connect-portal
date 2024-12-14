@@ -27,19 +27,19 @@ export const SubjectsSection = ({ subjects }: SubjectsSectionProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="px-6 py-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <BookOpen className="w-5 h-5" />
+    <Card className="bg-white shadow-sm">
+      <CardHeader className="border-b border-primary/10">
+        <CardTitle className="flex items-center gap-2 text-lg text-purple-dark">
+          <BookOpen className="w-5 h-5 text-primary" />
           {t("subjects")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-6 py-4">
+      <CardContent className="p-6">
         <div className="flex flex-wrap gap-2">
           {subjects.map((subjectData, index) => (
             <span 
               key={index} 
-              className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium"
+              className="px-4 py-2 rounded-full text-sm font-medium bg-primary/10 text-primary"
             >
               {getLocalizedName(subjectData.subject)}
             </span>

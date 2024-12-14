@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin } from "lucide-react";
+import { MapPin, Euro } from "lucide-react";
 import { TeachingLocation } from "@/lib/constants";
 
 type LocationsSectionProps = {
@@ -52,28 +52,33 @@ export const LocationsSection = ({
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="px-6 py-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <MapPin className="w-5 h-5" />
+    <Card className="bg-white shadow-sm">
+      <CardHeader className="border-b border-primary/10">
+        <CardTitle className="flex items-center gap-2 text-lg text-purple-dark">
+          <MapPin className="w-5 h-5 text-primary" />
           {t("teachingLocations")}
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-6 py-4">
-        <div className="grid gap-6">
+      <CardContent className="p-6">
+        <div className="space-y-6">
           {locations.map((location, index) => (
             <div key={index} className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-lg">{location.location_type}</span>
-                <span className="font-semibold bg-primary/10 px-4 py-2 rounded-full min-w-[100px] text-center">
-                  {formatPrice(location.price_per_hour)}/h
+                <span className="font-medium text-purple-dark">
+                  {t(location.location_type)}
+                </span>
+                <span className="font-semibold px-4 py-2 rounded-full bg-accent/10 text-accent flex items-center gap-1">
+                  <Euro className="w-4 h-4" />
+                  {formatPrice(location.price_per_hour)}
                 </span>
               </div>
+              
               {location.location_type === "Teacher's Place" && city && (
                 <div className="text-muted-foreground pl-1">
                   {`${getLocalizedName(city)}, ${getLocalizedName(city.region)}`}
                 </div>
               )}
+              
               {location.location_type === "Student's Place" && (
                 <div className="space-y-2 pl-1">
                   {studentRegions.length > 0 && (

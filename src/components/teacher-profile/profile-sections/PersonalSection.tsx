@@ -21,7 +21,6 @@ type PersonalSectionProps = {
 export const PersonalSection = ({ profile }: PersonalSectionProps) => {
   const { t } = useLanguage();
 
-  // Get the public URL for the profile picture if it exists
   const getProfilePictureUrl = () => {
     if (profile.profile_picture_url) {
       if (profile.profile_picture_url.startsWith('http')) {
@@ -37,75 +36,64 @@ export const PersonalSection = ({ profile }: PersonalSectionProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("personalInformation")}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex justify-center">
-            <Avatar className="w-32 h-32">
-              {profile.profile_picture_url ? (
-                <AvatarImage 
-                  src={getProfilePictureUrl()}
-                  alt={`${profile.first_name} ${profile.last_name}`}
-                  className="object-cover"
-                />
-              ) : (
-                <AvatarFallback>
-                  <User className="w-16 h-16" />
-                </AvatarFallback>
-              )}
-            </Avatar>
-          </div>
-          <div className="flex-1 space-y-4">
-            <div>
-              <h3 className="font-semibold text-lg">{t("name")}</h3>
-              <p className="text-lg">{`${profile.first_name} ${profile.last_name}`}</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">{t("contactInformation")}</h3>
-              <div className="space-y-2 mt-2">
-                {profile.show_email && profile.email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    <a 
-                      href={`mailto:${profile.email}`}
-                      className="text-primary hover:text-primary/90"
-                    >
-                      {profile.email}
-                    </a>
-                  </div>
-                )}
-                {profile.show_phone && profile.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    <a 
-                      href={`tel:${profile.phone}`}
-                      className="text-primary hover:text-primary/90"
-                    >
-                      {profile.phone}
-                    </a>
-                  </div>
-                )}
-                {profile.show_facebook && profile.facebook_profile && (
-                  <div className="flex items-center gap-2">
-                    <Facebook className="w-4 h-4" />
-                    <a 
-                      href={profile.facebook_profile}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:text-primary/90"
-                    >
-                      {t("facebookProfile")}
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col md:flex-row gap-6 items-start bg-white rounded-lg p-6 shadow-sm">
+      <div className="flex justify-center">
+        <Avatar className="w-32 h-32 rounded-xl border-4 border-primary/20">
+          {profile.profile_picture_url ? (
+            <AvatarImage 
+              src={getProfilePictureUrl()}
+              alt={`${profile.first_name} ${profile.last_name}`}
+              className="object-cover"
+            />
+          ) : (
+            <AvatarFallback className="bg-primary/5">
+              <User className="w-16 h-16 text-primary/50" />
+            </AvatarFallback>
+          )}
+        </Avatar>
+      </div>
+      
+      <div className="flex-1 space-y-4">
+        <div>
+          <h2 className="text-2xl font-semibold text-purple-dark">
+            {`${profile.first_name} ${profile.last_name}`}
+          </h2>
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="space-y-2">
+          {profile.show_email && profile.email && (
+            <a 
+              href={`mailto:${profile.email}`}
+              className="flex items-center gap-2 text-primary hover:text-primary/90 transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              <span>{profile.email}</span>
+            </a>
+          )}
+          
+          {profile.show_phone && profile.phone && (
+            <a 
+              href={`tel:${profile.phone}`}
+              className="flex items-center gap-2 text-primary hover:text-primary/90 transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              <span>{profile.phone}</span>
+            </a>
+          )}
+          
+          {profile.show_facebook && profile.facebook_profile && (
+            <a 
+              href={profile.facebook_profile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-primary hover:text-primary/90 transition-colors"
+            >
+              <Facebook className="w-4 h-4" />
+              <span>{t("facebookProfile")}</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
