@@ -5,14 +5,14 @@ export const lb = {
   filterBySubject: "No Fach filteren",
   selectSubject: "Eng Fach auswielen",
   allSubjects: "All Fächer",
-  filterByCity: "No Stad filteren",
-  selectCity: "Eng Stad auswielen",
-  allCities: "All Stied",
+  filterByCity: "No Gemeng filteren",
+  selectCity: "Eng Gemeng auswielen",
+  allCities: "All Gemengen",
   loading: "Lueden...",
-  errorLoadingCities: "Fehler beim Lueden vun den Stied.",
-  noCitiesAvailable: "Keng Stied verfügbar.",
+  errorLoadingCities: "Fehler beim Lueden vun de Gemengen.",
+  noCitiesAvailable: "Keng Gemengen verfügbar.",
   noResults: "Keng Resultater fonnt.",
   onlineOnly: "Nëmmen Online Coursen",
   createAd: "Annonce erstellen",
-  availableIn: "Verfügbar an"
+  availableIn: "Verfügbar an dëse Gemengen"
 } as const;
