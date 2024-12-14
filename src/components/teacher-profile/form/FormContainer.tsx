@@ -9,10 +9,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 type FormContainerProps = {
   userId?: string;
+  initialData?: any;
 };
 
-export const FormContainer = ({ userId }: FormContainerProps) => {
-  const { formData, setFormData, isLoading, setIsLoading } = useFormData(userId);
+export const FormContainer = ({ userId, initialData }: FormContainerProps) => {
+  const { formData, setFormData, isLoading, setIsLoading } = useFormData(userId, initialData);
   const { handleSubmit } = useFormSubmit(
     formData as FormData,
     isLoading,
