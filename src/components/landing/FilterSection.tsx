@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect, useRef } from "react";
 
 interface FilterSectionProps {
   selectedSubject: string;
@@ -33,6 +34,7 @@ export const FilterSection = ({
 }: FilterSectionProps) => {
   const { t, language } = useLanguage();
   const isMobile = useIsMobile();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const getLocalizedName = (item: any) => {
     if (!item) return '';
@@ -46,21 +48,37 @@ export const FilterSection = ({
     }
   };
 
+  const handleOpenChange = (open: boolean, triggerElement: HTMLButtonElement | null) => {
+    if (open && triggerElement && isMobile) {
+      // Wait for the next frame to ensure the dropdown is rendered
+      requestAnimationFrame(() => {
+        const yOffset = -20; // Adjust this value to control how far from the top
+        const y = triggerElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        
+        window.scrollTo({
+          top: y,
+          behavior: 'smooth'
+        });
+      });
+    }
+  };
+
   const mobileSelectStyles = isMobile ? 
-    "fixed inset-0 h-[100dvh] w-screen border-0 bg-white p-0 shadow-none" : "";
+    "fixed inset-0 h-[100dvh] w-screen border-0 bg-white p-0 shadow-none animate-in fade-in-0 zoom-in-95 duration-200" : "";
 
   const mobileContentStyles = isMobile ?
     "grid grid-cols-2 gap-3 p-4 pb-8 overflow-y-auto max-h-[calc(100vh-60px)]" : 
     "grid grid-cols-2 md:grid-cols-3 gap-3";
 
   return (
-    <div className="container mx-auto px-4 mb-12">
+    <div className="container mx-auto px-4 mb-12" ref={containerRef}>
       <div className="flex flex-col gap-6 max-w-2xl mx-auto">
         {/* Subject Filter */}
         <div className="relative">
           <Select
             value={selectedSubject}
             onValueChange={setSelectedSubject}
+            onOpenChange={(open) => handleOpenChange(open, containerRef.current?.querySelector('[aria-expanded]') as HTMLButtonElement)}
           >
             <SelectTrigger 
               className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
@@ -106,6 +124,7 @@ export const FilterSection = ({
           <Select
             value={selectedCity}
             onValueChange={setSelectedCity}
+            onOpenChange={(open) => handleOpenChange(open, containerRef.current?.querySelectorAll('[aria-expanded]')[1] as HTMLButtonElement)}
           >
             <SelectTrigger 
               className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
