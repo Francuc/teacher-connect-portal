@@ -22,6 +22,7 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
 
   const handleSubscribe = async (priceId: string) => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId }
       });
@@ -37,6 +38,8 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
         description: t("error"),
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -153,7 +156,7 @@ export const SubscriptionSection = ({ profile: initialProfile, isOwnProfile }: S
           isLoading={isLoading}
         />
 
-        {profile.subscription_status !== 'active' && !hasValidSubscription && (
+        {!hasValidSubscription && (
           <SubscriptionPlans 
             isLoading={isLoading}
             promoCode={promoCode}
