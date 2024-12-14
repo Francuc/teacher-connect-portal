@@ -51,6 +51,19 @@ export const LocationsSection = ({
     }).format(price);
   };
 
+  const getLocationTypeKey = (locationType: TeachingLocation) => {
+    switch (locationType) {
+      case "Teacher's Place":
+        return "teacherPlace";
+      case "Student's Place":
+        return "studentPlace";
+      case "Online":
+        return "online";
+      default:
+        return locationType;
+    }
+  };
+
   return (
     <Card className="bg-white shadow-sm">
       <CardHeader className="border-b border-primary/10">
@@ -65,7 +78,7 @@ export const LocationsSection = ({
             <div key={index} className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-purple-dark">
-                  {t(location.location_type)}
+                  {t(getLocationTypeKey(location.location_type))}
                 </span>
                 <span className="font-semibold px-4 py-2 rounded-full bg-accent/10 text-accent flex items-center gap-1">
                   <Euro className="w-4 h-4" />
