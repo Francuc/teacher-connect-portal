@@ -108,14 +108,14 @@ export const LandingPage = () => {
                     className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
                     align="center"
                   >
-                    <div className="p-4">
+                    <div className="p-2">
                       <SelectItem 
                         value="all"
-                        className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                        className="mb-2 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
                       >
                         {t("allSubjects")}
                       </SelectItem>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="grid grid-cols-3 gap-2">
                         {subjects
                           .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
                           .map((subject) => (
@@ -133,56 +133,68 @@ export const LandingPage = () => {
                 </Select>
               </div>
 
-              {/* City Filter with Online Switch */}
-              <div className="relative flex gap-2 items-center">
-                <div className="flex-1">
-                  <Select
-                    value={selectedCity}
-                    onValueChange={setSelectedCity}
+              {/* City Filter */}
+              <div className="relative">
+                <Select
+                  value={selectedCity}
+                  onValueChange={setSelectedCity}
+                >
+                  <SelectTrigger 
+                    className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
                   >
-                    <SelectTrigger 
-                      className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
-                    >
-                      <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
-                      <SelectValue placeholder={t("selectCity")} />
-                    </SelectTrigger>
-                    <SelectContent 
-                      className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
-                      align="center"
-                    >
-                      <div className="p-4">
-                        <SelectItem 
-                          value="all"
-                          className="mb-4 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
-                        >
-                          {t("allCities")}
-                        </SelectItem>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          {cities
-                            .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
-                            .map((city) => (
-                            <SelectItem 
-                              key={city.id} 
-                              value={city.id}
-                              className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
-                            >
-                              {getLocalizedName(city)}
-                            </SelectItem>
-                          ))}
-                        </div>
+                    <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
+                    <SelectValue placeholder={t("selectCity")} />
+                  </SelectTrigger>
+                  <SelectContent 
+                    className="bg-white max-h-[400px] w-[80vw] md:w-[600px]"
+                    align="center"
+                  >
+                    <div className="p-2">
+                      <SelectItem 
+                        value="all"
+                        className="mb-2 h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 text-lg"
+                      >
+                        {t("allCities")}
+                      </SelectItem>
+                      <div className="grid grid-cols-3 gap-2">
+                        {cities
+                          .sort((a, b) => getLocalizedName(a).localeCompare(getLocalizedName(b)))
+                          .map((city) => (
+                          <SelectItem 
+                            key={city.id} 
+                            value={city.id}
+                            className="h-12 hover:bg-primary/10 rounded-lg data-[state=checked]:bg-primary/20 flex items-center justify-center text-center px-2"
+                          >
+                            {getLocalizedName(city)}
+                          </SelectItem>
+                        ))}
                       </div>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center justify-center h-14 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
-                  <Switch
-                    id="online-mode"
-                    checked={showOnlineOnly}
-                    onCheckedChange={setShowOnlineOnly}
-                    className="data-[state=checked]:bg-primary"
-                  />
-                  <Computer className="w-5 h-5 ml-2 text-primary/70" />
-                </div>
+                    </div>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Online Toggle - Now full width on mobile */}
+              <div className="md:hidden col-span-1 flex items-center justify-center h-14 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
+                <span className="text-primary/70 mr-2">{t("onlineOnly")}</span>
+                <Switch
+                  id="online-mode-mobile"
+                  checked={showOnlineOnly}
+                  onCheckedChange={setShowOnlineOnly}
+                  className="data-[state=checked]:bg-primary"
+                />
+                <Computer className="w-5 h-5 ml-2 text-primary/70" />
+              </div>
+
+              {/* Online Toggle - Desktop version */}
+              <div className="hidden md:flex md:absolute md:right-0 md:top-0 items-center justify-center h-14 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
+                <Switch
+                  id="online-mode"
+                  checked={showOnlineOnly}
+                  onCheckedChange={setShowOnlineOnly}
+                  className="data-[state=checked]:bg-primary"
+                />
+                <Computer className="w-5 h-5 ml-2 text-primary/70" />
               </div>
             </div>
           </div>
