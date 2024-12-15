@@ -19,11 +19,11 @@ export const TeachersGrid2 = ({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 px-2 md:px-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-4">
         {[...Array(6)].map((_, index) => (
           <Card
             key={index}
-            className="h-[472px] md:h-[708px] animate-pulse bg-muted"
+            className="h-[472px] animate-pulse bg-muted"
           />
         ))}
       </div>
@@ -39,7 +39,7 @@ export const TeachersGrid2 = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 px-2 md:px-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-2 md:px-4">
       {teachers.map((teacher) => {
         const isDisabled = selectedSubject !== "all" && 
           !teacher.teacher_subjects?.some((s: any) => s.subject?.id === selectedSubject);
