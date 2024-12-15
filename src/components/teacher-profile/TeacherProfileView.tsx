@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { SubscriptionSection } from "./SubscriptionSection";
 
 interface TeacherProfileViewProps {
   userId: string;
@@ -130,6 +131,13 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       )}
 
       <div className="space-y-4 bg-purple.soft/5 rounded-xl p-4 shadow-lg border border-purple.soft/20">
+        {isOwnProfile && (
+          <SubscriptionSection 
+            profile={profile} 
+            isOwnProfile={isOwnProfile} 
+          />
+        )}
+        
         <PersonalSection profile={profile} />
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
