@@ -41,7 +41,7 @@ export const SearchFilters = ({
         <div className="relative">
           <Select value={selectedSubject} onValueChange={setSelectedSubject}>
             <SelectTrigger 
-              className="w-full h-8 md:h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
+              className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
             >
               <BookOpen className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
               <SelectValue placeholder={t("selectSubject")} />
@@ -79,7 +79,7 @@ export const SearchFilters = ({
         <div className="relative">
           <Select value={selectedCity} onValueChange={setSelectedCity}>
             <SelectTrigger 
-              className="w-full h-8 md:h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
+              className="w-full h-14 text-lg bg-white shadow-lg hover:bg-gray-50 transition-colors border-2 border-purple.soft/30 focus:ring-2 focus:ring-primary/30 focus:border-primary rounded-xl pl-12"
             >
               <MapPin className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-primary/70" />
               <SelectValue placeholder={t("selectCity")} />
@@ -125,7 +125,7 @@ export const SearchFilters = ({
         </div>
 
         {/* Online Toggle - Mobile version */}
-        <div className="md:hidden col-span-1 flex items-center justify-center h-8 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
+        <div className="md:hidden col-span-1 flex items-center justify-center h-14 px-4 bg-white shadow-lg rounded-xl border-2 border-purple.soft/30">
           <span className="text-primary/70 mr-2">{t("onlineOnly")}</span>
           <Switch
             id="online-mode-mobile"
