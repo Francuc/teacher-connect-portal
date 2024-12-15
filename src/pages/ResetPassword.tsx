@@ -52,7 +52,7 @@ export default function ResetPassword() {
           />
         </div>
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? t("sending") : t("sendResetLink")}
+          {loading ? t("loading") : t("resetPassword")}
         </Button>
       </form>
     </div>

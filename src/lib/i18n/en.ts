@@ -1,4 +1,6 @@
 export const en = {
+  sending: "Sending...",
+  sendResetLink: "Send Reset Link",
   welcome: "Welcome",
   onlineOnly: "Online courses only",
   findTeacher: "Find Your Perfect Teacher",
