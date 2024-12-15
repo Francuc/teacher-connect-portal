@@ -1,11 +1,13 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
 import { FormContainer } from "./teacher-profile/form/FormContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { useEffect } from "react";
 
 const TeacherProfileForm = () => {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const path = window.location.pathname;
   const isViewMode = path.includes('/profile/') && !path.includes('/new') && !path.includes('/edit');
   
@@ -65,6 +67,21 @@ const TeacherProfileForm = () => {
     },
     enabled: !!userId,
   });
+
+  useEffect(() => {
+    if (profile && isViewMode) {
+      // Check if the profile was created within the last 20 seconds
+      const createdAt = new Date(profile.created_at);
+      const now = new Date();
+      const timeDifference = now.getTime() - createdAt.getTime();
+      const secondsDifference = timeDifference / 1000;
+
+      if (secondsDifference <= 20) {
+        console.log('New profile detected, redirecting to edit page');
+        navigate(`/profile/edit/${userId}`);
+      }
+    }
+  }, [profile, isViewMode, userId, navigate]);
   
   if (isViewMode) {
     return <TeacherProfileView userId={userId || ''} />;
