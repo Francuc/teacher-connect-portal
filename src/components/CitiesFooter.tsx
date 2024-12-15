@@ -32,6 +32,7 @@ export const CitiesFooter = () => {
   };
 
   const handleCityClick = (cityId: string) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/?city=${cityId}`);
   };
 
