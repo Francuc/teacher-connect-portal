@@ -13,4 +13,11 @@ export const lb = {
   noCitiesAvailable: "Keng Stied verfügbar.",
   noResults: "Keng Resultater fonnt.",
   onlineOnly: "Nëmmen Online Coursen",
+  createAd: "Annonce erstellen",
+  teacherPlace: "Beim Léierer",
+  studentPlace: "Beim Schüler",
+  biography: "Biographie",
+  subjects: "Fächer",
+  schoolLevels: "Schoulniveauen",
+  teachingLocations: "Léierplazen",
 } as const;

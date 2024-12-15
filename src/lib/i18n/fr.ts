@@ -70,5 +70,12 @@ export const fr = {
   deleteWarning: "Cette action est irréversible",
   yes: "Oui",
   no: "Non",
-  onlineOnly: "Cours en ligne uniquement"
+  onlineOnly: "Cours en ligne uniquement",
+  createAd: "Créer une annonce",
+  teacherPlace: "Chez le professeur",
+  studentPlace: "Chez l'élève",
+  biography: "Biographie",
+  subjects: "Matières",
+  schoolLevels: "Niveaux scolaires",
+  teachingLocations: "Lieux d'enseignement",
 } as const;
