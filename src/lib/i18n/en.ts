@@ -30,6 +30,8 @@ export const en = {
   confirmPassword: "Confirm Password",
   forgotPassword: "Forgot Password",
   resetPassword: "Reset Password",
+  resetPasswordEmailSent: "If an account exists with this email, you will receive password reset instructions.",
+  errorResettingPassword: "Error resetting password. Please try again.",
   noAccount: "No Account",
   hasAccount: "Has Account",
   or: "Or",

@@ -73,5 +73,8 @@ export const fr = {
   onlineOnly: "Cours en ligne uniquement",
   createAd: "Créer une annonce",
   teacherPlace: "Chez le professeur",
-  studentPlace: "Chez l'élève"
+  studentPlace: "Chez l'élève",
+  resetPassword: "Réinitialiser le mot de passe",
+  resetPasswordEmailSent: "Si un compte existe avec cet e-mail, vous recevrez les instructions de réinitialisation du mot de passe.",
+  errorResettingPassword: "Erreur lors de la réinitialisation du mot de passe. Veuillez réessayer.",
 } as const;

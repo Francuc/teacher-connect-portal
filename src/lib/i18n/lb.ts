@@ -20,4 +20,7 @@ export const lb = {
   subjects: "Fächer",
   schoolLevels: "Schoulniveauen",
   teachingLocations: "Léierplazen",
+  resetPassword: "Passwuert zerécksetzen",
+  resetPasswordEmailSent: "Wann e Konto mat dëser E-Mail existéiert, kritt Dir Instruktioune fir d'Passwuert zeréckzesetzen.",
+  errorResettingPassword: "Fehler beim Zerécksetze vum Passwuert. Probéiert w.e.g. nach eng Kéier.",
 } as const;
