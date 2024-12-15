@@ -7,7 +7,7 @@ export const lb = {
   allSubjects: "All Fächer",
   filterByCity: "No Stad filteren",
   selectCity: "Eng Stad auswielen",
-  allCities: "All Stied",
+  allCities: "All Gemengen",
   loading: "Lueden...",
   errorLoadingCities: "Fehler beim Lueden vun den Stied.",
   noCitiesAvailable: "Keng Stied verfügbar.",

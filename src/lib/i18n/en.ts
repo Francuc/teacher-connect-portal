@@ -20,7 +20,7 @@ export const en = {
   noCityFound: "No city found",
   filterBySubject: "Filter by Subject",
   filterByCity: "Filter by City",
-  allCities: "All Cities",
+  allCities: "All Communes",
   required: "Required",
   signIn: "Sign In",
   signUp: "Sign Up",

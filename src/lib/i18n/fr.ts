@@ -6,7 +6,7 @@ export const fr = {
   allSubjects: "Toutes les matières",
   filterByCity: "Filtrer par ville",
   selectCity: "Sélectionner une ville",
-  allCities: "Toutes les villes",
+  allCities: "Toutes les communes",
   subjects: "Matières",
   schoolLevels: "Niveaux scolaires",
   allLevels: "Tous les niveaux",
