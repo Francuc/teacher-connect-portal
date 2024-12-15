@@ -131,14 +131,17 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
       )}
 
       <div className="space-y-4 bg-purple.soft/5 rounded-xl p-4 shadow-lg border border-purple.soft/20">
-        {isOwnProfile && (
-          <SubscriptionSection 
-            profile={profile} 
-            isOwnProfile={isOwnProfile} 
-          />
+        {isOwnProfile ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <PersonalSection profile={profile} />
+            <SubscriptionSection 
+              profile={profile} 
+              isOwnProfile={isOwnProfile} 
+            />
+          </div>
+        ) : (
+          <PersonalSection profile={profile} />
         )}
-        
-        <PersonalSection profile={profile} />
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-4">
