@@ -73,9 +73,5 @@ export const fr = {
   onlineOnly: "Cours en ligne uniquement",
   createAd: "Créer une annonce",
   teacherPlace: "Chez le professeur",
-  studentPlace: "Chez l'élève",
-  biography: "Biographie",
-  subjects: "Matières",
-  schoolLevels: "Niveaux scolaires",
-  teachingLocations: "Lieux d'enseignement",
+  studentPlace: "Chez l'élève"
 } as const;
