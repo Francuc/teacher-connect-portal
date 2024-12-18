@@ -33,8 +33,11 @@ export default function Auth() {
         // Get the prefix based on the language
         const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
         
-        // Check if this is a recovery flow by looking at the URL hash
-        if (location.hash.includes('type=recovery')) {
+        // Check if this is a recovery flow
+        const isRecovery = location.hash.includes('type=recovery');
+        const isSignIn = location.hash.includes('access_token');
+        
+        if (isRecovery || isSignIn) {
           // After password reset login, redirect to edit page
           const { data: teacherProfile, error: profileError } = await supabase
             .from('teachers')
@@ -76,7 +79,10 @@ export default function Auth() {
         
         try {
           // Check if this is a recovery flow
-          if (location.hash.includes('type=recovery')) {
+          const isRecovery = location.hash.includes('type=recovery');
+          const isSignIn = location.hash.includes('access_token');
+          
+          if (isRecovery || isSignIn) {
             // After password reset login, redirect to edit page
             const { data: teacherProfile, error: profileError } = await supabase
               .from('teachers')
