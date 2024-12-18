@@ -33,12 +33,7 @@ export default function Auth() {
         // Get the prefix based on the language
         const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
         
-        // Check if this is a recovery flow
-        const isRecovery = location.hash.includes('type=recovery');
-        const isSignIn = location.hash.includes('access_token');
-        
-        if (isRecovery || isSignIn) {
-          // After password reset login, redirect to edit page
+        try {
           const { data: teacherProfile, error: profileError } = await supabase
             .from('teachers')
             .select('user_id')
@@ -60,8 +55,13 @@ export default function Auth() {
           } else {
             navigate('/', { replace: true });
           }
-        } else {
-          navigate('/', { replace: true });
+        } catch (error: any) {
+          console.error('Auth state change error:', error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message || "An error occurred during authentication"
+          });
         }
       }
     };
@@ -74,29 +74,19 @@ export default function Auth() {
       setSession(session);
       
       if (session) {
-        // Get the prefix based on the language
         const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
         
         try {
-          // Check if this is a recovery flow
-          const isRecovery = location.hash.includes('type=recovery');
-          const isSignIn = location.hash.includes('access_token');
-          
-          if (isRecovery || isSignIn) {
-            // After password reset login, redirect to edit page
-            const { data: teacherProfile, error: profileError } = await supabase
-              .from('teachers')
-              .select('user_id')
-              .eq('user_id', session.user.id)
-              .single();
+          const { data: teacherProfile, error: profileError } = await supabase
+            .from('teachers')
+            .select('user_id')
+            .eq('user_id', session.user.id)
+            .single();
 
-            if (profileError) throw profileError;
+          if (profileError) throw profileError;
 
-            if (teacherProfile) {
-              navigate(`/${prefix}/edit/${session.user.id}`, { replace: true });
-            } else {
-              navigate('/', { replace: true });
-            }
+          if (teacherProfile) {
+            navigate(`/${prefix}/edit/${session.user.id}`, { replace: true });
           } else {
             navigate('/', { replace: true });
           }
@@ -114,9 +104,6 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate, location.hash, language, toast]);
 
-  // Get the current site URL dynamically
-  const siteUrl = window.location.origin;
-
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
       <SupabaseAuth
@@ -133,27 +120,7 @@ export default function Auth() {
           },
         }}
         providers={[]}
-        redirectTo={`${siteUrl}/auth`}
-        localization={{
-          variables: {
-            sign_in: {
-              email_label: 'Email',
-              password_label: 'Password',
-              email_input_placeholder: 'Your email',
-              password_input_placeholder: 'Your password',
-              button_label: 'Sign in',
-              loading_button_label: 'Signing in ...',
-            },
-            sign_up: {
-              email_label: 'Email',
-              password_label: 'Password',
-              email_input_placeholder: 'Your email',
-              password_input_placeholder: 'Your password',
-              button_label: 'Sign up',
-              loading_button_label: 'Signing up ...',
-            },
-          },
-        }}
+        redirectTo={window.location.origin + '/auth'}
       />
     </div>
   );

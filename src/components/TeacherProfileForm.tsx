@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { PasswordResetBox } from "./auth/PasswordResetBox";
 
 const TeacherProfileForm = () => {
   const { teacherName, subject, teacherId } = useParams();
@@ -130,6 +131,7 @@ const TeacherProfileForm = () => {
           navigate(`/${prefix}/teacher/${teacherNameSlug}`);
         }}
       />
+      {isProfileEdit && <PasswordResetBox />}
     </div>
   );
 };
