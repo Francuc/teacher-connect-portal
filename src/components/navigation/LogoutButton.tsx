@@ -29,8 +29,8 @@ export const LogoutButton = () => {
       
       if (error) {
         console.error('Error during logout:', error);
+        // If session not found, just redirect to auth page
         if (error.status === 403 && error.message.includes('session_not_found')) {
-          // If session not found, just redirect to auth page
           navigate('/auth');
           return;
         }
