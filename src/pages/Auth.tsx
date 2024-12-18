@@ -12,28 +12,13 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    toast({
-      title: "Auth Component Mounted",
-      description: `Current location: ${location.pathname}${location.search}${location.hash}`,
-    });
-    
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      toast({
-        title: "Initial Session Check",
-        description: session ? "Session exists" : "No session",
-      });
       setSession(session);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      toast({
-        title: "Auth State Changed",
-        description: `Event: ${_event}, Session: ${session ? "exists" : "none"}`,
-      });
       setSession(session);
     });
 
@@ -41,55 +26,31 @@ export default function Auth() {
   }, []);
 
   useEffect(() => {
-    const handleAuthRedirect = async () => {
-      toast({
-        title: "Handling Auth Redirect",
-        description: `Hash: ${location.hash}`,
-      });
+    if (location.hash) {
+      const hashParams = new URLSearchParams(location.hash.substring(1));
+      const type = hashParams.get('type');
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
 
-      // Handle hash fragment for recovery tokens
-      if (location.hash) {
-        const hashParams = new URLSearchParams(location.hash.substring(1));
-        const hashType = hashParams.get('type');
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        
-        toast({
-          title: "Hash Parameters Found",
-          description: `Type: ${hashType}, Has Access Token: ${!!accessToken}`,
+      if (type === 'recovery' && accessToken) {
+        navigate('/reset-password', {
+          state: {
+            accessToken,
+            refreshToken
+          },
+          replace: true
         });
-        
-        if (hashType === 'recovery' && accessToken) {
-          toast({
-            title: "Recovery from Hash",
-            description: "Redirecting to reset password page",
-          });
-          
-          navigate('/reset-password', { 
-            state: {
-              accessToken,
-              refreshToken
-            },
-            replace: true
-          });
-          return;
-        }
+        return;
       }
+    }
 
-      // Only redirect if there's an active session and we're on the auth page
-      if (session?.user?.id && location.pathname === '/auth') {
-        toast({
-          title: "Active Session Detected",
-          description: "Redirecting to home page",
-        });
-        navigate('/', { replace: true });
-      }
-    };
+    // Only redirect if there's an active session and we're on the auth page
+    if (session?.user?.id && location.pathname === '/auth') {
+      navigate('/', { replace: true });
+    }
+  }, [session, location.hash, navigate]);
 
-    handleAuthRedirect();
-  }, [session, navigate, location]);
-
-  // If we're handling a recovery flow, show a loading state
+  // Show loading state during recovery process
   if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
     return (
       <div className="max-w-md mx-auto p-6 mt-12">

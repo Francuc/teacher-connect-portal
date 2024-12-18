@@ -19,13 +19,13 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const state = location.state as any;
+      const state = location.state as { accessToken: string; refreshToken: string };
       
       if (!state?.accessToken) {
         throw new Error("No access token found");
       }
 
-      // Set the session with both access and refresh tokens
+      // Set the session with the recovery tokens
       const { error: sessionError } = await supabase.auth.setSession({
         access_token: state.accessToken,
         refresh_token: state.refreshToken || ''
@@ -41,17 +41,16 @@ export default function ResetPassword() {
       if (error) throw error;
 
       toast({
-        title: t("success"),
-        description: t("passwordUpdated"),
+        title: "Success",
+        description: "Your password has been updated successfully.",
       });
 
       // After successful password update, redirect to auth page
       navigate("/auth", { replace: true });
     } catch (error: any) {
-      console.error("Error updating password:", error);
       toast({
-        title: t("error"),
-        description: error.message || t("errorResettingPassword"),
+        title: "Error",
+        description: error.message || "An error occurred while resetting your password.",
         variant: "destructive",
       });
     } finally {
@@ -62,13 +61,13 @@ export default function ResetPassword() {
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
       <h1 className="text-2xl font-bold mb-6">
-        {t("updatePassword")}
+        Reset Password
       </h1>
       <form onSubmit={handleResetPassword} className="space-y-4">
         <div>
           <Input
             type="password"
-            placeholder={t("newPassword")}
+            placeholder="Enter your new password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -80,7 +79,7 @@ export default function ResetPassword() {
           disabled={loading} 
           className="w-full"
         >
-          {loading ? t("loading") : t("updatePassword")}
+          {loading ? "Updating..." : "Update Password"}
         </Button>
       </form>
     </div>
