@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
 
 export const deleteUser = async (email: string) => {
   try {
@@ -7,7 +8,7 @@ export const deleteUser = async (email: string) => {
     
     if (fetchError) throw fetchError;
     
-    const user = users.find(u => u.email === email);
+    const user = (users as User[]).find(u => u.email === email);
     if (!user) throw new Error('User not found');
 
     // Call our delete-profile edge function

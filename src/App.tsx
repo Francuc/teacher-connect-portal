@@ -8,6 +8,7 @@ import Auth from "@/pages/Auth";
 import ResetPassword from "@/pages/ResetPassword";
 import TeacherProfileForm from "@/components/TeacherProfileForm";
 import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
 
@@ -19,11 +20,20 @@ const AuthRedirectHandler = () => {
   useEffect(() => {
     const hash = location.hash;
     if (hash && hash.includes("type=recovery")) {
-      // Extract the access token
-      const accessToken = new URLSearchParams(hash.substring(1)).get("access_token");
-      if (accessToken) {
-        // Redirect to update password page with the token
-        navigate("/update-password", { state: { accessToken } });
+      // Extract the access token and refresh token
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+
+      if (accessToken && refreshToken) {
+        // Set the session in Supabase
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        }).then(() => {
+          // Redirect to update password page with the token
+          navigate("/update-password", { state: { accessToken } });
+        });
       }
     }
   }, [location, navigate]);
@@ -41,8 +51,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/update-password" element={<ResetPassword mode="update" />} />
+              <Route path="/update-password" element={<ResetPassword />} />
               <Route path="/profile/:userId" element={<TeacherProfileForm />} />
               <Route path="/profile/edit/:userId" element={<TeacherProfileForm />} />
               <Route path="/profile/new/:userId" element={<TeacherProfileForm />} />
