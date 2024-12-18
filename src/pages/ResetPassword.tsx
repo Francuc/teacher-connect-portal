@@ -14,28 +14,46 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cooldownTime, setCooldownTime] = useState(0);
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we have a token in the location state
     const state = location.state as any;
     if (state?.token || state?.accessToken) {
       mode = "update";
     }
   }, [location]);
 
+  useEffect(() => {
+    if (cooldownTime > 0) {
+      const timer = setTimeout(() => {
+        setCooldownTime(time => Math.max(0, time - 1));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownTime]);
+
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (cooldownTime > 0) {
+      toast({
+        title: t("error"),
+        description: t("pleaseWait").replace("{seconds}", cooldownTime.toString()),
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (mode === "update") {
         const state = location.state as any;
         
-        // If we have an access token from the hash fragment
         if (state?.accessToken) {
           const { error } = await supabase.auth.updateUser({
             password: password
@@ -43,7 +61,6 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
 
           if (error) throw error;
         } 
-        // If we have a recovery token from query params
         else if (state?.token) {
           const { error } = await supabase.auth.updateUser({
             password: password
@@ -57,14 +74,21 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
           description: t("passwordUpdated"),
         });
 
-        // Redirect to login page
         navigate("/auth");
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth`,
         });
 
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("rate_limit")) {
+            // Extract the number of seconds from the error message
+            const seconds = parseInt(error.message.match(/\d+/)?.[0] || "33");
+            setCooldownTime(seconds);
+            throw new Error(t("pleaseWait").replace("{seconds}", seconds.toString()));
+          }
+          throw error;
+        }
 
         toast({
           title: t("success"),
@@ -111,8 +135,18 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
             />
           </div>
         )}
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? t("loading") : mode === "update" ? t("updatePassword") : t("resetPassword")}
+        <Button 
+          type="submit" 
+          disabled={loading || cooldownTime > 0} 
+          className="w-full"
+        >
+          {loading 
+            ? t("loading") 
+            : cooldownTime > 0 
+              ? `${t("wait")} ${cooldownTime}s` 
+              : mode === "update" 
+                ? t("updatePassword") 
+                : t("resetPassword")}
         </Button>
       </form>
     </div>
