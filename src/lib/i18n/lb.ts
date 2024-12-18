@@ -23,4 +23,7 @@ export const lb = {
   resetPassword: "Passwuert zerécksetzen",
   resetPasswordEmailSent: "Wann e Konto mat dëser E-Mail existéiert, kritt Dir Instruktioune fir d'Passwuert zeréckzesetzen.",
   errorResettingPassword: "Fehler beim Zerécksetze vum Passwuert. Probéiert w.e.g. nach eng Kéier.",
+  updatePassword: "Passwuert aktualiséieren",
+  newPassword: "Neit Passwuert",
+  passwordUpdated: "Passwuert erfollegräich aktualiséiert",
 } as const;

@@ -77,4 +77,7 @@ export const fr = {
   resetPassword: "Réinitialiser le mot de passe",
   resetPasswordEmailSent: "Si un compte existe avec cet e-mail, vous recevrez les instructions de réinitialisation du mot de passe.",
   errorResettingPassword: "Erreur lors de la réinitialisation du mot de passe. Veuillez réessayer.",
+  updatePassword: "Mettre à jour le mot de passe",
+  newPassword: "Nouveau mot de passe",
+  passwordUpdated: "Mot de passe mis à jour avec succès",
 } as const;
