@@ -36,6 +36,7 @@ export default function Auth() {
     const handleAuthRedirect = async () => {
       console.log('Handling auth redirect:', {
         hash: location.hash,
+        pathname: location.pathname,
         hasSession: !!session?.user?.id
       });
 
@@ -46,13 +47,16 @@ export default function Auth() {
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         
+        console.log('Hash params:', { type, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+        
         if (type === 'recovery' && accessToken) {
           console.log('Recovery token found, redirecting to reset password');
           navigate('/reset-password', { 
             state: { 
               accessToken,
               refreshToken
-            }
+            },
+            replace: true
           });
           return;
         }
@@ -70,6 +74,7 @@ export default function Auth() {
 
   // If we're handling a recovery flow, don't show the auth UI
   if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
+    console.log('Recovery flow detected, not showing auth UI');
     return null;
   }
 
