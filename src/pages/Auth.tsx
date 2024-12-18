@@ -66,8 +66,8 @@ export default function Auth() {
 
       if (token && type === 'recovery') {
         console.log('Recovery token found in query params, redirecting to reset password');
-        // Exchange the recovery token for an access token
-        const { data, error } = await supabase.auth.verifyOtp({
+        // Use verifyRecoveryToken instead of verifyOtp
+        const { data, error } = await supabase.auth.verifyRecoveryToken({
           token,
           type: 'recovery'
         });
