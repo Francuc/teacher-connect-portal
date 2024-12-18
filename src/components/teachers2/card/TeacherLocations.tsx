@@ -5,7 +5,7 @@ import { TeachingLocation } from "@/lib/constants";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 
-export interface TeacherLocationsProps {
+interface TeacherLocationsProps {
   locations: Array<{
     location_type: TeachingLocation;
     price_per_hour: number;

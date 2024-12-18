@@ -41,10 +41,8 @@ export const ProfileButton = () => {
     );
   }
 
-  // If not logged in or no teacher profile, show create ad button with new URL structure
-  const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
   return (
-    <Link to={`/${prefix}/new`}>
+    <Link to="/auth">
       <Button variant="outline" className="h-12 px-6 text-base">
         <UserPlus className="w-5 h-5 mr-2" />
         {t("createAd")}
