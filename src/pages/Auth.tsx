@@ -36,13 +36,13 @@ export default function Auth() {
     const handleAuthRedirect = async () => {
       console.log('Handling auth redirect:', {
         pathname: location.pathname,
-        hash: window.location.hash,
+        hash: location.hash,
         hasSession: !!session?.user?.id
       });
 
       // Handle hash fragment for recovery tokens
-      if (window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      if (location.hash) {
+        const hashParams = new URLSearchParams(location.hash.substring(1));
         const type = hashParams.get('type');
         const accessToken = hashParams.get('access_token');
         
@@ -59,20 +59,30 @@ export default function Auth() {
         }
       }
 
-      // Handle recovery token from query params (old method)
+      // Handle recovery token from query params
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
       const type = params.get('type');
 
       if (token && type === 'recovery') {
         console.log('Recovery token found in query params, redirecting to reset password');
-        navigate('/reset-password', { 
-          state: { 
-            mode: 'update',
-            token 
-          },
-          replace: true 
+        // Exchange the recovery token for an access token
+        const { data, error } = await supabase.auth.verifyOtp({
+          token,
+          type: 'recovery'
         });
+
+        if (!error && data?.session?.access_token) {
+          navigate('/reset-password', { 
+            state: { 
+              mode: 'update',
+              accessToken: data.session.access_token 
+            },
+            replace: true 
+          });
+        } else {
+          console.error('Error verifying recovery token:', error);
+        }
         return;
       }
 
@@ -80,11 +90,6 @@ export default function Auth() {
       if (session?.user?.id && location.pathname === '/auth') {
         console.log('Active session found on auth page, redirecting to home');
         navigate('/', { replace: true });
-      } else {
-        console.log('No redirect needed:', {
-          hasSession: !!session?.user?.id,
-          pathname: location.pathname
-        });
       }
     };
 

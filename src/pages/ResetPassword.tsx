@@ -51,32 +51,32 @@ export default function ResetPassword() {
       if (mode === "update") {
         const state = location.state as any;
         
-        // Try to update password using the access token if available
         if (state?.accessToken) {
+          // Set the session with the access token
+          const { data: { session }, error: sessionError } = await supabase.auth.setSession({
+            access_token: state.accessToken,
+            refresh_token: ''
+          });
+
+          if (sessionError) throw sessionError;
+
+          // Update the password
           const { error } = await supabase.auth.updateUser({
             password: password
           });
 
           if (error) throw error;
-        }
-        // Fallback to using the recovery token if available
-        else if (state?.token) {
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/auth`,
+
+          toast({
+            title: t("success"),
+            description: t("passwordUpdated"),
           });
 
-          if (error) throw error;
+          // After successful password update, redirect to auth page
+          navigate("/auth", { replace: true });
         } else {
-          throw new Error("No valid token found");
+          throw new Error("No access token found");
         }
-
-        toast({
-          title: t("success"),
-          description: t("passwordUpdated"),
-        });
-
-        // After successful password update, redirect to auth page
-        navigate("/auth", { replace: true });
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth`,
