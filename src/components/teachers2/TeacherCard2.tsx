@@ -7,15 +7,19 @@ import { TeacherAvailableCities } from "./card/TeacherAvailableCities";
 import { TeacherContactInfo } from "./card/TeacherContactInfo";
 import { Section } from "./card/Section";
 
-export const TeacherCard2 = ({ teacher }: { teacher: any }) => {
+interface TeacherCardProps {
+  teacher: any;
+  isDisabled?: boolean;
+}
+
+export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCardProps) => {
   const { language } = useLanguage();
   const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
   const teacherName = `${teacher.first_name}-${teacher.last_name}`.toLowerCase().replace(/\s+/g, '-');
-  // Default to 'general' if no subjects are selected yet
   const url = `/${prefix}/general/${teacherName}`;
 
   return (
-    <Link to={url} className="block">
+    <Link to={url} className={`block ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`}>
       <Card className="h-full hover:shadow-lg transition-shadow duration-200">
         <div className="p-6 space-y-6">
           <div className="flex items-center space-x-4">
@@ -28,9 +32,16 @@ export const TeacherCard2 = ({ teacher }: { teacher: any }) => {
             </div>
           </div>
 
-          <TeacherLocations teacher={teacher} />
-          <TeacherAvailableCities teacher={teacher} />
-          <TeacherContactInfo teacher={teacher} />
+          <TeacherLocations locations={teacher.teacher_locations || []} />
+          <TeacherAvailableCities cities={teacher.teacher_student_cities || []} />
+          <TeacherContactInfo 
+            email={teacher.email}
+            phone={teacher.phone}
+            showEmail={teacher.show_email}
+            showPhone={teacher.show_phone}
+            showFacebook={teacher.show_facebook}
+            facebookProfile={teacher.facebook_profile}
+          />
         </div>
       </Card>
     </Link>

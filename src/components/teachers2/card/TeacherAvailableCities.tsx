@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 
-interface TeacherAvailableCitiesProps {
+export interface TeacherAvailableCitiesProps {
   cities: Array<{
     cities: {
       id: string;
@@ -13,14 +13,21 @@ interface TeacherAvailableCitiesProps {
       name_lb: string;
     };
   }>;
-  getLocalizedName: (item: any) => string;
 }
 
-export const TeacherAvailableCities = ({ 
-  cities,
-  getLocalizedName 
-}: TeacherAvailableCitiesProps) => {
-  const { t } = useLanguage();
+export const TeacherAvailableCities = ({ cities }: TeacherAvailableCitiesProps) => {
+  const { t, language } = useLanguage();
+
+  const getLocalizedName = (city: { name_en: string; name_fr: string; name_lb: string }) => {
+    switch(language) {
+      case 'fr':
+        return city.name_fr;
+      case 'lb':
+        return city.name_lb;
+      default:
+        return city.name_en;
+    }
+  };
 
   if (!cities?.length) return null;
 
