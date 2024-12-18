@@ -12,9 +12,12 @@ export default function Auth() {
 
   useEffect(() => {
     // Handle recovery token
-    const hash = location.hash;
-    if (hash && hash.includes("type=recovery")) {
-      navigate("/update-password");
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const type = params.get('type');
+
+    if (token && type === 'recovery') {
+      navigate('/update-password', { state: { token } });
       return;
     }
 

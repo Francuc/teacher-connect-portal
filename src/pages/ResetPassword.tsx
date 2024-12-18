@@ -20,17 +20,15 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we have a recovery token in the URL
-    const hash = location.hash;
-    if (hash && hash.includes("access_token")) {
-      // Extract the token
-      const accessToken = new URLSearchParams(hash.substring(1)).get("access_token");
-      if (accessToken) {
-        // Redirect to update password page with the token
-        navigate("/update-password", { state: { accessToken } });
-      }
+    // Check if we have a recovery token in the URL or state
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token') || (location.state as any)?.token;
+    
+    if (token) {
+      // If we have a token, switch to update mode
+      mode = "update";
     }
-  }, [location, navigate]);
+  }, [location]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,11 +36,6 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
 
     try {
       if (mode === "update") {
-        const { state } = location as { state: { accessToken?: string } };
-        if (!state?.accessToken) {
-          throw new Error("No access token found");
-        }
-
         const { error } = await supabase.auth.updateUser({
           password: password
         });
