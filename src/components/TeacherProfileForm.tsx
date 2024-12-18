@@ -121,7 +121,14 @@ const TeacherProfileForm = () => {
 
   return (
     <div className="space-y-8">
-      <FormContainer userId={profile?.user_id} initialData={profile} />
+      <FormContainer 
+        userId={profile?.user_id} 
+        initialData={profile} 
+        onSuccess={(updatedProfile) => {
+          const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+          navigate(`/${prefix}/teacher/${updatedProfile.user_id}`);
+        }}
+      />
     </div>
   );
 };
