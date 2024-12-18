@@ -59,7 +59,7 @@ export const fr = {
   showInProfile: "Afficher sur le profil",
   profilePictureSizeError: "La photo de profil doit faire moins de 5 Mo",
   profilePictureTypeError: "Le fichier doit être une image",
-  teachingLocations: "Lieux d'enseignement",
   pricePerHour: "Prix par heure",
   selectedLocation: "Lieu sélectionné",
+  errorLoadingProfile: "Erreur lors du chargement du profil"
 } as const;
