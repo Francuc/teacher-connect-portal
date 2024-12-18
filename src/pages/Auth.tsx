@@ -10,8 +10,11 @@ export default function Auth() {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
+    console.log('Auth component mounted');
+    
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session ? 'Session exists' : 'No session');
       setSession(session);
     });
 
@@ -19,14 +22,24 @@ export default function Auth() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
       setSession(session);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('Auth component unmounting, cleaning up subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
     const handleAuthRedirect = async () => {
+      console.log('Handling auth redirect:', {
+        pathname: location.pathname,
+        hash: window.location.hash,
+        hasSession: !!session?.user?.id
+      });
+
       // Handle hash fragment for recovery tokens
       if (window.location.hash) {
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -35,6 +48,7 @@ export default function Auth() {
         if (type === 'recovery') {
           const accessToken = hashParams.get('access_token');
           if (accessToken) {
+            console.log('Recovery token found, redirecting to update password');
             navigate('/update-password', { state: { accessToken } });
             return;
           }
@@ -47,13 +61,20 @@ export default function Auth() {
       const type = params.get('type');
 
       if (token && type === 'recovery') {
+        console.log('Recovery token found in query params, redirecting to update password');
         navigate('/update-password', { state: { token } });
         return;
       }
 
       // Only redirect if there's an active session and we're on the auth page
       if (session?.user?.id && location.pathname === '/auth') {
-        navigate('/');
+        console.log('Active session found on auth page, redirecting to home');
+        navigate('/', { replace: true });
+      } else {
+        console.log('No redirect needed:', {
+          hasSession: !!session?.user?.id,
+          pathname: location.pathname
+        });
       }
     };
 
