@@ -56,7 +56,6 @@ function AppRoutes() {
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/update-password" element={<ResetPassword />} />
         
         {/* Localized routes */}
         <Route path={`/${getLocalizedPathPrefix(language)}/*`} element={<Landing />} />

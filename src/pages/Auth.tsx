@@ -21,12 +21,12 @@ export default function Auth() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       
-      // If we have a session and we're on the auth page, redirect to reset password
+      // If we have a session and we're on the auth page with recovery token, redirect to reset password
       if (session && location.pathname === '/auth' && location.hash.includes('type=recovery')) {
         navigate('/reset-password', {
           state: {
-            accessToken: session.access_token,
-            refreshToken: session.refresh_token
+            access_token: session.access_token,
+            refresh_token: session.refresh_token
           },
           replace: true
         });
@@ -41,16 +41,6 @@ export default function Auth() {
 
     return () => subscription.unsubscribe();
   }, [session, location.hash, navigate]);
-
-  // Show loading state during recovery process
-  if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
-    return (
-      <div className="max-w-md mx-auto p-6 mt-12">
-        <h2 className="text-2xl font-bold mb-4">Processing Recovery Request</h2>
-        <p className="text-gray-600">Please wait while we process your password recovery request...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-md mx-auto p-6 mt-12">

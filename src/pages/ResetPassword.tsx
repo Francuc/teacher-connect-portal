@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,23 @@ export default function ResetPassword() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Check if we have a valid session
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "Invalid or expired session. Please try resetting your password again.",
+          variant: "destructive",
+        });
+        navigate('/auth', { replace: true });
+      }
+    };
+    
+    checkSession();
+  }, [navigate, toast]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
