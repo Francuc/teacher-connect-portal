@@ -77,6 +77,9 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate, location.hash, language]);
 
+  // Get the current site URL dynamically
+  const siteUrl = window.location.origin;
+
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
       <SupabaseAuth
@@ -93,7 +96,7 @@ export default function Auth() {
           },
         }}
         providers={[]}
-        redirectTo={`${window.location.origin}/auth`}
+        redirectTo={`${siteUrl}/auth`}
       />
     </div>
   );
