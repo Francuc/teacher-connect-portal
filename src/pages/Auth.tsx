@@ -48,7 +48,7 @@ export default function Auth() {
         const refreshToken = hashParams.get('refresh_token');
         
         if (type === 'recovery' && accessToken) {
-          console.log('Recovery token found in hash, redirecting to update password');
+          console.log('Recovery token found in hash, redirecting to reset password');
           navigate('/reset-password', { 
             state: { 
               mode: 'update',
@@ -72,7 +72,7 @@ export default function Auth() {
   }, [session, navigate, location]);
 
   // If we're handling a recovery flow, don't show the auth UI
-  if (location.pathname === '/reset-password') {
+  if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
     return null;
   }
 
