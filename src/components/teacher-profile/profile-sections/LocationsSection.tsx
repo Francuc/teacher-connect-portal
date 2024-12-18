@@ -7,7 +7,7 @@ type LocationsSectionProps = {
   locations: {
     location_type: TeachingLocation;
     price_per_hour: number;
-  }[];
+  }[] | undefined;
   city: {
     name_en: string;
     name_fr: string;
@@ -23,10 +23,10 @@ type LocationsSectionProps = {
 };
 
 export const LocationsSection = ({ 
-  locations, 
+  locations = [], // Provide default empty array
   city, 
-  studentRegions,
-  studentCities 
+  studentRegions = [], // Provide default empty array
+  studentCities = [] // Provide default empty array
 }: LocationsSectionProps) => {
   const { t, language } = useLanguage();
 
