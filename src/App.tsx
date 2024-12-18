@@ -1,82 +1,33 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
-import { Toaster } from "@/components/ui/toaster";
-import { Layout } from "@/components/Layout";
-import Landing from "@/pages/Landing";
-import Auth from "@/pages/Auth";
-import ResetPassword from "@/pages/ResetPassword";
-import TeacherProfileForm from "@/components/TeacherProfileForm";
-import { useEffect } from "react";
-
-const queryClient = new QueryClient();
-
-// Helper function to get localized path prefix
-const getLocalizedPathPrefix = (language: string) => {
-  switch (language) {
-    case 'fr':
-      return 'cours-de-rattrapage';
-    case 'lb':
-      return 'nohellef';
-    default:
-      return 'tutoring';
-  }
-};
-
-// Helper to check if a route should be localized
-const shouldLocalizeRoute = (pathname: string) => {
-  const nonLocalizedRoutes = ['/auth', '/reset-password'];
-  return !nonLocalizedRoutes.some(route => pathname.startsWith(route));
-};
-
-function AppRoutes() {
-  const { language } = useLanguage();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    // Only update URL for routes that should be localized
-    if (shouldLocalizeRoute(location.pathname)) {
-      const pathSegments = location.pathname.split('/').filter(Boolean);
-      if (pathSegments.length > 0) {
-        const currentPrefix = pathSegments[0];
-        const newPrefix = getLocalizedPathPrefix(language);
-        if (currentPrefix !== newPrefix) {
-          const newPath = location.pathname.replace(currentPrefix, newPrefix);
-          navigate(newPath, { replace: true });
-        }
-      }
-    }
-  }, [language, location.pathname]);
-
-  return (
-    <Layout>
-      <Routes>
-        {/* Non-localized routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        
-        {/* Localized routes */}
-        <Route path={`/${getLocalizedPathPrefix(language)}/*`} element={<Landing />} />
-        <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName`} element={<TeacherProfileForm />} />
-        <Route path={`/${getLocalizedPathPrefix(language)}/edit`} element={<TeacherProfileForm />} />
-        <Route path={`/${getLocalizedPathPrefix(language)}/new`} element={<TeacherProfileForm />} />
-      </Routes>
-    </Layout>
-  );
-}
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Layout } from "./components/Layout";
+import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
+import Teachers2 from "./pages/Teachers2";
+import TeacherProfileForm from "./components/TeacherProfileForm";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <Router>
-          <AppRoutes />
-          <Toaster />
-        </Router>
-      </LanguageProvider>
-    </QueryClientProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Landing />} />
+          <Route path="auth" element={<Auth />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="tutoring" element={<Teachers2 />} />
+          <Route path="cours-de-rattrapage" element={<Teachers2 />} />
+          <Route path="nohellef" element={<Teachers2 />} />
+          <Route path="tutoring/:subject/:teacherName" element={<TeacherProfileForm />} />
+          <Route path="cours-de-rattrapage/:subject/:teacherName" element={<TeacherProfileForm />} />
+          <Route path="nohellef/:subject/:teacherName" element={<TeacherProfileForm />} />
+          <Route path="tutoring/edit/:teacherId?" element={<TeacherProfileForm />} />
+          <Route path="cours-de-rattrapage/edit/:teacherId?" element={<TeacherProfileForm />} />
+          <Route path="nohellef/edit/:teacherId?" element={<TeacherProfileForm />} />
+          <Route path="profile/edit/:teacherId" element={<TeacherProfileForm />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
