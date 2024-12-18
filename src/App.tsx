@@ -44,12 +44,14 @@ function AppRoutes() {
   return (
     <Layout>
       <Routes>
+        {/* Auth routes must come before localized routes to ensure they're accessible */}
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword mode="request" />} />
         <Route path="/update-password" element={<ResetPassword mode="update" />} />
         
-        {/* Routes for SEO-friendly URLs */}
+        {/* SEO-friendly routes */}
+        <Route path={`/${getLocalizedPathPrefix(language)}/*`} element={<Landing />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName`} element={<TeacherProfileForm />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/edit`} element={<TeacherProfileForm />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/new`} element={<TeacherProfileForm />} />

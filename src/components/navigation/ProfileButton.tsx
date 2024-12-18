@@ -41,6 +41,7 @@ export const ProfileButton = () => {
     );
   }
 
+  // When not logged in, always direct to /auth
   return (
     <Link to="/auth">
       <Button variant="outline" className="h-12 px-6 text-base">
