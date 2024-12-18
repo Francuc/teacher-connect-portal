@@ -21,11 +21,29 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
   const location = useLocation();
 
   useEffect(() => {
-    const state = location.state as any;
-    if (state?.token || state?.accessToken) {
-      mode = "update";
+    // Check URL hash for access_token
+    const hash = window.location.hash;
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get("access_token");
+      if (accessToken) {
+        mode = "update";
+        location.state = { ...location.state, accessToken };
+      }
     }
-  }, [location]);
+    
+    // Check URL params for error
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get("error");
+    if (error) {
+      toast({
+        title: t("error"),
+        description: t("errorResettingPassword"),
+        variant: "destructive",
+      });
+      navigate("/auth", { replace: true });
+    }
+  }, [location, navigate, toast, t]);
 
   useEffect(() => {
     if (cooldownTime > 0) {
@@ -54,35 +72,25 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
       if (mode === "update") {
         const state = location.state as any;
         
-        if (state?.accessToken) {
-          const { error } = await supabase.auth.updateUser({
-            password: password
-          });
+        const { error } = await supabase.auth.updateUser({
+          password: password
+        });
 
-          if (error) throw error;
-        } 
-        else if (state?.token) {
-          const { error } = await supabase.auth.updateUser({
-            password: password
-          });
-
-          if (error) throw error;
-        }
+        if (error) throw error;
 
         toast({
           title: t("success"),
           description: t("passwordUpdated"),
         });
 
-        navigate("/auth");
+        navigate("/auth", { replace: true });
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth`,
+          redirectTo: window.location.origin + "/reset-password",
         });
 
         if (error) {
           if (error.message.includes("rate_limit")) {
-            // Extract the number of seconds from the error message
             const seconds = parseInt(error.message.match(/\d+/)?.[0] || "33");
             setCooldownTime(seconds);
             throw new Error(t("pleaseWait").replace("{seconds}", seconds.toString()));
