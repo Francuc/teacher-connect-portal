@@ -11,6 +11,11 @@ export default function Auth() {
 
   useEffect(() => {
     console.log('Auth component mounted');
+    console.log('Current location:', {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash
+    });
     
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,22 +40,60 @@ export default function Auth() {
   useEffect(() => {
     const handleAuthRedirect = async () => {
       console.log('Handling auth redirect:', {
+        search: location.search,
         hash: location.hash,
-        pathname: location.pathname,
-        hasSession: !!session?.user?.id
+        pathname: location.pathname
       });
 
-      // Handle hash fragment for recovery tokens
+      // Handle URL parameters for recovery
+      const searchParams = new URLSearchParams(location.search);
+      const token = searchParams.get('token');
+      const type = searchParams.get('type');
+
+      if (type === 'recovery' && token) {
+        console.log('Recovery token found in URL params:', { token, type });
+        try {
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: token,
+            type: 'recovery'
+          });
+
+          console.log('OTP verification result:', { data, error });
+
+          if (error) throw error;
+
+          // If successful, redirect to reset password with the new session
+          if (data.session) {
+            console.log('Redirecting to reset password with session');
+            navigate('/reset-password', {
+              state: {
+                accessToken: data.session.access_token,
+                refreshToken: data.session.refresh_token
+              },
+              replace: true
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error verifying recovery token:', error);
+        }
+      }
+
+      // Handle hash fragment for recovery tokens (existing flow)
       if (location.hash) {
         const hashParams = new URLSearchParams(location.hash.substring(1));
-        const type = hashParams.get('type');
+        const hashType = hashParams.get('type');
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         
-        console.log('Hash params:', { type, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+        console.log('Hash params:', { 
+          type: hashType, 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken 
+        });
         
-        if (type === 'recovery' && accessToken) {
-          console.log('Recovery token found, redirecting to reset password');
+        if (hashType === 'recovery' && accessToken) {
+          console.log('Recovery token found in hash, redirecting to reset password');
           navigate('/reset-password', { 
             state: { 
               accessToken,
@@ -73,7 +116,8 @@ export default function Auth() {
   }, [session, navigate, location]);
 
   // If we're handling a recovery flow, don't show the auth UI
-  if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
+  if ((location.search && new URLSearchParams(location.search).get('type') === 'recovery') ||
+      (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery')) {
     console.log('Recovery flow detected, not showing auth UI');
     return null;
   }
