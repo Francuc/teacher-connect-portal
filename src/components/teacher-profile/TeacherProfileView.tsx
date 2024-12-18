@@ -25,6 +25,11 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['teacherProfile', userId],
     queryFn: async () => {
+      if (!userId) {
+        console.log('No userId provided, skipping fetch');
+        return null;
+      }
+
       console.log('Fetching teacher data for userId:', userId);
       try {
         const { data, error } = await supabase
@@ -93,6 +98,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         throw error;
       }
     },
+    enabled: !!userId, // Only run the query if userId is provided
   });
 
   const getLocalizedName = (item: any) => {
@@ -108,11 +114,18 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center min-h-[200px]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>;
   }
 
   if (!profile) {
-    return <div>Profile not found</div>;
+    return <div className="container mx-auto px-4 py-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-2xl font-bold text-gray-900">Profile not found</h1>
+        <p className="text-gray-600">The teacher profile you're looking for doesn't exist or has been removed.</p>
+      </div>
+    </div>;
   }
 
   const handleEditClick = () => {
