@@ -20,6 +20,7 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/update-password" element={<ResetPassword mode="update" />} />
               <Route path="/profile/:userId" element={<TeacherProfileForm />} />
               <Route path="/profile/edit/:userId" element={<TeacherProfileForm />} />
               <Route path="/profile/new/:userId" element={<TeacherProfileForm />} />

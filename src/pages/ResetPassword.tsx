@@ -1,33 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export default function ResetPassword() {
+interface ResetPasswordProps {
+  mode?: "request" | "update";
+}
+
+export default function ResetPassword({ mode = "request" }: ResetPasswordProps) {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we have a recovery token in the URL
+    const hash = location.hash;
+    if (hash && hash.includes("access_token")) {
+      // Extract the token
+      const accessToken = new URLSearchParams(hash.substring(1)).get("access_token");
+      if (accessToken) {
+        // Redirect to update password page with the token
+        navigate("/update-password", { state: { accessToken } });
+      }
+    }
+  }, [location, navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth`,
-      });
+      if (mode === "update") {
+        const { state } = location as { state: { accessToken?: string } };
+        if (!state?.accessToken) {
+          throw new Error("No access token found");
+        }
 
-      if (error) throw error;
+        const { error } = await supabase.auth.updateUser({
+          password: password
+        });
 
-      toast({
-        title: t("success"),
-        description: t("resetPasswordEmailSent"),
-      });
+        if (error) throw error;
+
+        toast({
+          title: t("success"),
+          description: t("passwordUpdated"),
+        });
+
+        // Redirect to login page
+        navigate("/auth");
+      } else {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth`,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: t("success"),
+          description: t("resetPasswordEmailSent"),
+        });
+      }
     } catch (error: any) {
-      console.error("Error resetting password:", error);
+      console.error("Error with password reset:", error);
       toast({
         title: t("error"),
         description: error.message || t("errorResettingPassword"),
@@ -40,19 +82,34 @@ export default function ResetPassword() {
 
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
-      <h1 className="text-2xl font-bold mb-6">{t("resetPassword")}</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {mode === "update" ? t("updatePassword") : t("resetPassword")}
+      </h1>
       <form onSubmit={handleResetPassword} className="space-y-4">
-        <div>
-          <Input
-            type="email"
-            placeholder={t("email")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+        {mode === "request" ? (
+          <div>
+            <Input
+              type="email"
+              placeholder={t("email")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+        ) : (
+          <div>
+            <Input
+              type="password"
+              placeholder={t("newPassword")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+        )}
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? t("loading") : t("resetPassword")}
+          {loading ? t("loading") : mode === "update" ? t("updatePassword") : t("resetPassword")}
         </Button>
       </form>
     </div>
