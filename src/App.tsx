@@ -49,7 +49,7 @@ function AppRoutes() {
         <Route path="/reset-password" element={<ResetPassword mode="request" />} />
         <Route path="/update-password" element={<ResetPassword mode="update" />} />
         
-        {/* Updated routes without user ID in the URL */}
+        {/* Updated routes for SEO-friendly URLs */}
         <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName`} element={<TeacherProfileForm />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/edit`} element={<TeacherProfileForm />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/new`} element={<TeacherProfileForm />} />

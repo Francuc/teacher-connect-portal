@@ -3,14 +3,37 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 export const ProfileButton = () => {
   const { session } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
-  if (session) {
+  const { data: teacherProfile } = useQuery({
+    queryKey: ['teacherProfile', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  if (session && teacherProfile) {
+    const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+    const teacherName = `${teacherProfile.first_name}-${teacherProfile.last_name}`.toLowerCase().replace(/\s+/g, '-');
+    // Default to 'general' if no subjects are selected yet
+    const url = `/${prefix}/general/${teacherName}`;
+
     return (
-      <Link to={`/profile/${session.user.id}`}>
+      <Link to={url}>
         <Button variant="outline" className="h-12 px-6 text-base">
           {t("myProfile")}
         </Button>
