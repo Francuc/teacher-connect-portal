@@ -37,7 +37,6 @@ export const en = {
   profileUpdated: "Profile updated successfully",
   errorSavingProfile: "Error saving profile",
   createAd: "Create Ad",
-  // Add all missing translation keys
   passwordsDoNotMatch: "Passwords do not match",
   passwordTooShort: "Password must be at least 6 characters",
   passwordUpdated: "Password updated successfully",
@@ -89,5 +88,8 @@ export const en = {
   availableIn: "Available In",
   viewProfile: "View Profile",
   allLevels: "All Levels",
-  noResults: "No results found"
+  noResults: "No results found",
+  profileNotFound: "Profile not found",
+  profileNotFoundDescription: "The teacher profile you're looking for doesn't exist or has been removed.",
+  editProfile: "Edit Profile",
 } as const;

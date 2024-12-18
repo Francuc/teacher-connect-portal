@@ -18,7 +18,7 @@ interface TeacherProfileViewProps {
 
 export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
   const { session } = useAuth();
   const isOwnProfile = session?.user?.id === userId;
 
@@ -83,7 +83,6 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
           throw error;
         }
 
-        // Get the public URL for the profile picture if it exists
         if (data && data.profile_picture_url) {
           const { data: { publicUrl } } = supabase
             .storage
@@ -98,7 +97,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         throw error;
       }
     },
-    enabled: !!userId, // Only run the query if userId is provided
+    enabled: !!userId,
   });
 
   const getLocalizedName = (item: any) => {
@@ -122,8 +121,8 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
   if (!profile) {
     return <div className="container mx-auto px-4 py-8">
       <div className="text-center space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900">Profile not found</h1>
-        <p className="text-gray-600">The teacher profile you're looking for doesn't exist or has been removed.</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t("profileNotFound")}</h1>
+        <p className="text-gray-600">{t("profileNotFoundDescription")}</p>
       </div>
     </div>;
   }
@@ -138,7 +137,7 @@ export const TeacherProfileView = ({ userId }: TeacherProfileViewProps) => {
         <div className="flex justify-end mb-4">
           <Button onClick={handleEditClick} className="flex items-center gap-2 bg-primary hover:bg-primary/90">
             <Pencil className="w-4 h-4" />
-            Edit Profile
+            {t("editProfile")}
           </Button>
         </div>
       )}

@@ -2,7 +2,6 @@ export const fr = {
   profileCreated: "Profil créé avec succès",
   profileUpdated: "Profil mis à jour avec succès",
   errorSavingProfile: "Erreur lors de la sauvegarde du profil",
-  // Add all missing translation keys in French
   passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
   passwordTooShort: "Le mot de passe doit contenir au moins 6 caractères",
   passwordUpdated: "Mot de passe mis à jour avec succès",
@@ -54,5 +53,15 @@ export const fr = {
   availableIn: "Disponible à",
   viewProfile: "Voir le profil",
   allLevels: "Tous les niveaux",
-  noResults: "Aucun résultat trouvé"
+  noResults: "Aucun résultat trouvé",
+  profileNotFound: "Profil non trouvé",
+  profileNotFoundDescription: "Le profil de l'enseignant que vous recherchez n'existe pas ou a été supprimé.",
+  editProfile: "Modifier le profil",
+  teacherPlace: "Chez l'enseignant",
+  studentPlace: "Chez l'étudiant",
+  online: "En ligne",
+  facebookProfile: "Profil Facebook",
+  subjects: "Matières",
+  schoolLevels: "Niveaux scolaires",
+  teachingLocations: "Lieux d'enseignement",
 } as const;

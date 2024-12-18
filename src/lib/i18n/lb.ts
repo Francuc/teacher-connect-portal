@@ -15,7 +15,6 @@ export const lb = {
   profileCreated: "Profil erfollegräich erstallt",
   profileUpdated: "Profil erfollegräich aktualiséiert",
   errorSavingProfile: "Fehler beim Späicheren vum Profil",
-  // Add all missing translation keys in Luxembourgish
   passwordsDoNotMatch: "D'Passwierder stëmmen net iwwerteneen",
   passwordTooShort: "D'Passwuert muss mindestens 6 Zeechen hunn",
   passwordUpdated: "Passwuert erfollegräich aktualiséiert",
@@ -67,5 +66,15 @@ export const lb = {
   availableIn: "Verfügbar an",
   viewProfile: "Profil ukucken",
   allLevels: "All Niveauen",
-  noResults: "Keng Resultater fonnt"
+  noResults: "Keng Resultater fonnt",
+  profileNotFound: "Profil net fonnt",
+  profileNotFoundDescription: "De Profil vum Enseignant deen Dir sicht existéiert net oder gouf geläscht.",
+  editProfile: "Profil änneren",
+  teacherPlace: "Beim Enseignant",
+  studentPlace: "Beim Student",
+  online: "Online",
+  facebookProfile: "Facebook Profil",
+  subjects: "Fächer",
+  schoolLevels: "Schoulniveauen",
+  teachingLocations: "Plazen wou ënnerriicht gëtt",
 } as const;
