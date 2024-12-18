@@ -126,7 +126,8 @@ const TeacherProfileForm = () => {
         initialData={profile} 
         onSuccess={(updatedProfile) => {
           const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
-          navigate(`/${prefix}/teacher/${updatedProfile.user_id}`);
+          const teacherNameSlug = `${updatedProfile.first_name.replace(/\s+/g, '-')}-${updatedProfile.last_name.replace(/\s+/g, '-')}`;
+          navigate(`/${prefix}/teacher/${teacherNameSlug}`);
         }}
       />
     </div>
