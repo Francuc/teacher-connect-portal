@@ -1,28 +1,24 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
-import { Lock } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const PasswordResetBox = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage();
 
-  const handlePasswordReset = async (e: React.FormEvent) => {
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (newPassword !== confirmPassword) {
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("passwordsDoNotMatch"),
+        title: "Error",
+        description: "Passwords do not match"
       });
       return;
     }
@@ -30,13 +26,14 @@ export const PasswordResetBox = () => {
     if (newPassword.length < 6) {
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("passwordTooShort"),
+        title: "Error",
+        description: "Password must be at least 6 characters long"
       });
       return;
     }
 
     setIsLoading(true);
+
     try {
       const { error } = await supabase.auth.updateUser({
         password: newPassword
@@ -45,19 +42,18 @@ export const PasswordResetBox = () => {
       if (error) throw error;
 
       toast({
-        title: t("success"),
-        description: t("passwordUpdated"),
+        title: "Success",
+        description: "Password updated successfully"
       });
 
-      // Clear the form
-      setNewPassword("");
-      setConfirmPassword("");
+      setNewPassword('');
+      setConfirmPassword('');
     } catch (error: any) {
-      console.error('Error updating password:', error);
+      console.error('Password update error:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: error.message || t("errorUpdatingPassword"),
+        title: "Error",
+        description: error.message || "Failed to update password"
       });
     } finally {
       setIsLoading(false);
@@ -67,43 +63,30 @@ export const PasswordResetBox = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Lock className="w-5 h-5" />
-          {t("changePassword")}
-        </CardTitle>
+        <CardTitle>Change Password</CardTitle>
+        <CardDescription>Enter your new password below</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handlePasswordReset} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="new-password">{t("newPassword")}</Label>
+        <form onSubmit={handlePasswordUpdate} className="space-y-4">
+          <div>
             <Input
-              id="new-password"
               type="password"
+              placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="••••••••"
-              required
+              className="mb-2"
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">{t("confirmPassword")}</Label>
+          <div>
             <Input
-              id="confirm-password"
               type="password"
+              placeholder="Confirm New Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              required
             />
           </div>
-
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? t("updating") : t("updatePassword")}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Updating...' : 'Update Password'}
           </Button>
         </form>
       </CardContent>
