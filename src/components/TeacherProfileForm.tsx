@@ -13,7 +13,7 @@ const TeacherProfileForm = () => {
   const { language } = useLanguage();
   const { session } = useAuth();
   const path = window.location.pathname;
-  const isViewMode = !path.includes('/new') && !path.includes('/edit');
+  const isViewMode = !path.includes('/edit');
   
   console.log('TeacherProfileForm - Current path:', path);
   console.log('TeacherProfileForm - Teacher Name:', teacherName);
@@ -29,14 +29,8 @@ const TeacherProfileForm = () => {
 
       console.log('Fetching teacher data for teacher:', teacherName);
       try {
-        // Find the last occurrence of hyphen to separate first and last name
-        const lastHyphenIndex = teacherName.lastIndexOf('-');
-        const firstName = teacherName.substring(0, lastHyphenIndex).replace(/-/g, ' ');
-        const lastName = teacherName.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
-
-        console.log('Parsed names - First:', firstName, 'Last:', lastName);
-
-        const { data, error } = await supabase
+        // For edit routes, teacherName might be the user_id
+        let query = supabase
           .from('teachers')
           .select(`
             *,
@@ -65,10 +59,20 @@ const TeacherProfileForm = () => {
                 name_lb
               )
             )
-          `)
-          .ilike('first_name', firstName)
-          .ilike('last_name', lastName)
-          .maybeSingle();
+          `);
+
+        // If we're on the edit page, search by user_id
+        if (path.includes('/edit')) {
+          query = query.eq('user_id', teacherName);
+        } else {
+          // Find the last occurrence of hyphen to separate first and last name
+          const lastHyphenIndex = teacherName.lastIndexOf('-');
+          const firstName = teacherName.substring(0, lastHyphenIndex).replace(/-/g, ' ');
+          const lastName = teacherName.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
+          query = query.ilike('first_name', firstName).ilike('last_name', lastName);
+        }
+
+        const { data, error } = await query.maybeSingle();
 
         if (error) {
           console.error('Error fetching teacher profile:', error);
