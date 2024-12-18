@@ -7,16 +7,18 @@ import { useAuth } from "@/hooks/useAuth";
 type FormContainerProps = {
   userId?: string;
   initialData?: any;
+  onSuccess?: (updatedProfile: any) => void;
 };
 
-export const FormContainer = ({ userId, initialData }: FormContainerProps) => {
+export const FormContainer = ({ userId, initialData, onSuccess }: FormContainerProps) => {
   const { formData, setFormData, isLoading, setIsLoading } = useFormData(userId, initialData);
   const { handleSubmit } = useFormSubmit(
     formData as FormData,
     isLoading,
     setIsLoading,
     userId || crypto.randomUUID(),
-    !userId
+    !userId,
+    onSuccess
   );
   const { session } = useAuth();
 

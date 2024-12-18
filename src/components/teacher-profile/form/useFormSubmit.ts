@@ -1,68 +1,66 @@
 import { FormData } from "./types";
+import { handleProfileCreation, handleProfileUpdate } from "./handlers/profileHandler";
+import { handleRelationsCreation, handleRelationsUpdate } from "./handlers/relationsHandler";
+import { uploadProfilePicture } from "./profilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
-import { handleProfileUpdate } from "./handlers/profileHandler";
-import { handleRelationsUpdate } from "./handlers/relationsHandler";
 
 export const useFormSubmit = (
   formData: FormData,
   isLoading: boolean,
   setIsLoading: (loading: boolean) => void,
-  userId: string | null,
-  isNewProfile: boolean = false
+  userId: string,
+  isNewProfile: boolean,
+  onSuccess?: (updatedProfile: any) => void
 ) => {
-  const { t } = useLanguage();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (isLoading) return;
-    
+
     try {
       setIsLoading(true);
-      
-      // Generate a random UUID for new profiles
-      const profileId = userId || crypto.randomUUID();
-      
-      console.log('Starting form submission for profile:', profileId);
 
-      // Step 1: Create/Update teacher profile
-      const { data: profile, error: profileError } = await handleProfileUpdate(formData, profileId, isNewProfile);
-      
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        toast({
-          title: t("error"),
-          description: t("error"),
-          variant: "destructive",
-        });
-        return;
+      // Handle profile picture upload if there's a new file
+      let profilePictureUrl = formData.profilePictureUrl;
+      if (formData.profilePicture) {
+        profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
       }
 
-      if (!profile?.id) {
-        throw new Error('No profile ID returned from creation');
+      // Create or update the profile
+      const profileData = {
+        ...formData,
+        profile_picture_url: profilePictureUrl
+      };
+
+      const profile = isNewProfile
+        ? await handleProfileCreation(profileData, userId)
+        : await handleProfileUpdate(profileData, userId);
+
+      // Handle relations (subjects, school levels, locations)
+      if (isNewProfile) {
+        await handleRelationsCreation(formData, userId);
+      } else {
+        await handleRelationsUpdate(formData, userId);
       }
 
-      // Step 2: Update relations using the profile's ID
-      const { error: relationsError } = await handleRelationsUpdate(formData, profileId);
-      if (relationsError) throw relationsError;
-
-      // Success notification and redirect
       toast({
         title: t("success"),
-        description: t("success"),
+        description: t(isNewProfile ? "profileCreated" : "profileUpdated"),
       });
 
-      // Redirect to profile view
-      navigate(`/profile/${profileId}`);
+      // Call the onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess(profile);
+      }
+
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Error submitting form:', error);
       toast({
         title: t("error"),
-        description: t("error"),
+        description: t("errorSavingProfile"),
         variant: "destructive",
       });
     } finally {
