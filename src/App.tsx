@@ -23,20 +23,28 @@ const getLocalizedPathPrefix = (language: string) => {
   }
 };
 
+// Helper to check if a route should be localized
+const shouldLocalizeRoute = (pathname: string) => {
+  const nonLocalizedRoutes = ['/auth', '/reset-password', '/update-password'];
+  return !nonLocalizedRoutes.some(route => pathname.startsWith(route));
+};
+
 function AppRoutes() {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Update URL when language changes
-    const pathSegments = location.pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 0) {
-      const currentPrefix = pathSegments[0];
-      const newPrefix = getLocalizedPathPrefix(language);
-      if (currentPrefix !== newPrefix) {
-        const newPath = location.pathname.replace(currentPrefix, newPrefix);
-        navigate(newPath, { replace: true });
+    // Only update URL for routes that should be localized
+    if (shouldLocalizeRoute(location.pathname)) {
+      const pathSegments = location.pathname.split('/').filter(Boolean);
+      if (pathSegments.length > 0) {
+        const currentPrefix = pathSegments[0];
+        const newPrefix = getLocalizedPathPrefix(language);
+        if (currentPrefix !== newPrefix) {
+          const newPath = location.pathname.replace(currentPrefix, newPrefix);
+          navigate(newPath, { replace: true });
+        }
       }
     }
   }, [language, location.pathname]);
@@ -44,13 +52,13 @@ function AppRoutes() {
   return (
     <Layout>
       <Routes>
-        {/* Auth routes must come before localized routes to ensure they're accessible */}
+        {/* Non-localized routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/reset-password" element={<ResetPassword mode="request" />} />
         <Route path="/update-password" element={<ResetPassword mode="update" />} />
         
-        {/* SEO-friendly routes */}
+        {/* Localized routes */}
         <Route path={`/${getLocalizedPathPrefix(language)}/*`} element={<Landing />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName`} element={<TeacherProfileForm />} />
         <Route path={`/${getLocalizedPathPrefix(language)}/edit`} element={<TeacherProfileForm />} />
