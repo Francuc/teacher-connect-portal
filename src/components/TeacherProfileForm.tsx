@@ -4,12 +4,14 @@ import { FormContainer } from "./teacher-profile/form/FormContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const TeacherProfileForm = () => {
-  const { userId } = useParams();
+  const { userId, subject, teacherName } = useParams();
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const path = window.location.pathname;
-  const isViewMode = path.includes('/profile/') && !path.includes('/new') && !path.includes('/edit');
+  const isViewMode = !path.includes('/new') && !path.includes('/edit');
   
   console.log('TeacherProfileForm - Current path:', path);
   console.log('TeacherProfileForm - UserId:', userId);
@@ -78,10 +80,11 @@ const TeacherProfileForm = () => {
 
       if (secondsDifference <= 20) {
         console.log('New profile detected, redirecting to edit page');
-        navigate(`/profile/edit/${userId}`);
+        const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+        navigate(`/${prefix}/edit/${userId}`);
       }
     }
-  }, [profile, isViewMode, userId, navigate]);
+  }, [profile, isViewMode, userId, navigate, language]);
   
   if (isViewMode) {
     return <TeacherProfileView userId={userId || ''} />;

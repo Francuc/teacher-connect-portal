@@ -72,7 +72,12 @@ export const TeacherCard2 = ({ teacher, isDisabled = false }: TeacherCard2Props)
   };
 
   const handleCardClick = () => {
-    navigate(`/profile/${teacher.user_id}`);
+    const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+    const mainSubject = teacher.teacher_subjects?.[0]?.subject;
+    const subjectName = mainSubject ? getLocalizedName(mainSubject).toLowerCase().replace(/\s+/g, '-') : 'general';
+    const teacherName = `${teacher.first_name}-${teacher.last_name}`.toLowerCase().replace(/\s+/g, '-');
+    const url = `/${prefix}/${subjectName}/${teacherName}/${teacher.user_id}`;
+    navigate(url);
     window.scrollTo(0, 0);
   };
 
