@@ -62,10 +62,9 @@ export const lb = {
   pricePerHour: "Präis pro Stonn",
   selectedLocation: "Ausgewielte Plaz",
   errorLoadingProfile: "Feeler beim Lueden vum Profil",
-  changePassword: "Passwuert änneren",
-  confirmPassword: "Passwuert bestätegen",
-  updating: "Gëtt aktualiséiert...",
-  passwordTooShort: "D'Passwuert muss mindestens 6 Zeechen hunn",
   passwordsDoNotMatch: "D'Passwierder stëmmen net iwwerteneen",
-  errorUpdatingPassword: "Fehler beim Aktualiséiere vum Passwuert"
+  passwordTooShort: "D'Passwuert muss mindestens 6 Zeechen hunn",
+  errorUpdatingPassword: "Fehler beim Aktualiséiere vum Passwuert",
+  changePassword: "Passwuert änneren",
+  updating: "Gëtt aktualiséiert..."
 } as const;

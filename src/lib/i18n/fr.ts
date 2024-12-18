@@ -61,5 +61,10 @@ export const fr = {
   profilePictureTypeError: "Le fichier doit être une image",
   pricePerHour: "Prix par heure",
   selectedLocation: "Lieu sélectionné",
-  errorLoadingProfile: "Erreur lors du chargement du profil"
+  errorLoadingProfile: "Erreur lors du chargement du profil",
+  passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
+  passwordTooShort: "Le mot de passe doit contenir au moins 6 caractères",
+  errorUpdatingPassword: "Erreur lors de la mise à jour du mot de passe",
+  changePassword: "Changer le mot de passe",
+  updating: "Mise à jour...",
 } as const;
