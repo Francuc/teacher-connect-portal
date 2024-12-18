@@ -12,38 +12,34 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if we're on a recovery flow
-    const isRecoveryFlow = location.hash.includes('type=recovery');
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkSessionAndRedirect = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
-      
-      // If we have a session and we're in recovery flow, redirect to reset password
-      if (session && isRecoveryFlow) {
-        navigate('/reset-password', { replace: true });
-        return;
+
+      if (session) {
+        // Check if this is a recovery flow by looking at the URL hash
+        if (location.hash.includes('type=recovery')) {
+          navigate('/reset-password', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
       }
-      
-      // For normal login (non-recovery), redirect to home if logged in
-      if (session && !isRecoveryFlow) {
-        navigate('/', { replace: true });
-      }
-    });
+    };
+
+    checkSessionAndRedirect();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       
-      // If we have a session and we're in recovery flow, redirect to reset password
-      if (session && isRecoveryFlow) {
-        navigate('/reset-password', { replace: true });
-        return;
-      }
-      
-      // For normal login (non-recovery), redirect to home if logged in
-      if (session && !isRecoveryFlow) {
-        navigate('/', { replace: true });
+      if (session) {
+        // Check if this is a recovery flow by looking at the URL hash
+        if (location.hash.includes('type=recovery')) {
+          navigate('/reset-password', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
       }
     });
 

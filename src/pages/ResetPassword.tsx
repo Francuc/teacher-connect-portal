@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -12,16 +12,14 @@ export default function ResetPassword() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Check if we have a valid session
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast({
           title: "Error",
-          description: "Invalid or expired session. Please try resetting your password again.",
+          description: "Please request a new password reset link.",
           variant: "destructive",
         });
         navigate('/auth', { replace: true });
