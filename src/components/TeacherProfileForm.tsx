@@ -66,8 +66,8 @@ const TeacherProfileForm = () => {
               )
             )
           `)
-          .eq('first_name', firstName)
-          .eq('last_name', lastName)
+          .ilike('first_name', firstName)
+          .ilike('last_name', lastName)
           .maybeSingle();
 
         if (error) {
