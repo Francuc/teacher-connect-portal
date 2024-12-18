@@ -37,84 +37,15 @@ export default function Auth() {
       setSession(session);
     });
 
-    return () => {
-      toast({
-        title: "Auth Component Unmounting",
-        description: "Cleaning up subscription",
-      });
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
     const handleAuthRedirect = async () => {
       toast({
         title: "Handling Auth Redirect",
-        description: `Search: ${location.search}, Hash: ${location.hash}`,
+        description: `Hash: ${location.hash}`,
       });
-
-      // Handle URL parameters for recovery
-      const searchParams = new URLSearchParams(location.search);
-      const token = searchParams.get('token');
-      const type = searchParams.get('type');
-
-      if (type === 'recovery' && token) {
-        toast({
-          title: "Recovery Token Found",
-          description: `Token: ${token.substring(0, 10)}...`,
-        });
-        
-        try {
-          toast({
-            title: "Verifying OTP",
-            description: `Attempting verification with token: ${token.substring(0, 10)}...`,
-          });
-          
-          const { data, error } = await supabase.auth.verifyOtp({
-            token_hash: token,
-            type: 'recovery'
-          });
-
-          if (error) {
-            toast({
-              title: "OTP Verification Error",
-              description: error.message,
-              variant: "destructive",
-            });
-            throw error;
-          }
-
-          if (data.session) {
-            toast({
-              title: "OTP Verification Success",
-              description: "Redirecting to reset password page",
-            });
-            
-            const redirectState = {
-              accessToken: data.session.access_token,
-              refreshToken: data.session.refresh_token
-            };
-            
-            navigate('/reset-password', {
-              state: redirectState,
-              replace: true
-            });
-            return;
-          } else {
-            toast({
-              title: "No Session Data",
-              description: "Verification successful but no session received",
-              variant: "destructive",
-            });
-          }
-        } catch (error) {
-          toast({
-            title: "Recovery Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        }
-      }
 
       // Handle hash fragment for recovery tokens
       if (location.hash) {
@@ -134,13 +65,11 @@ export default function Auth() {
             description: "Redirecting to reset password page",
           });
           
-          const redirectState = {
-            accessToken,
-            refreshToken
-          };
-          
           navigate('/reset-password', { 
-            state: redirectState,
+            state: {
+              accessToken,
+              refreshToken
+            },
             replace: true
           });
           return;
@@ -160,9 +89,8 @@ export default function Auth() {
     handleAuthRedirect();
   }, [session, navigate, location]);
 
-  // If we're handling a recovery flow, don't show the auth UI
-  if ((location.search && new URLSearchParams(location.search).get('type') === 'recovery') ||
-      (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery')) {
+  // If we're handling a recovery flow, show a loading state
+  if (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery') {
     return (
       <div className="max-w-md mx-auto p-6 mt-12">
         <h2 className="text-2xl font-bold mb-4">Processing Recovery Request</h2>
