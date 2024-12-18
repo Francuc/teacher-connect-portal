@@ -44,7 +44,7 @@ export const LogoutButton = () => {
       console.error('Logout error:', error);
       toast({
         title: t("error"),
-        description: t("errorLoggingOut"),
+        description: t("logoutError"),
         variant: "destructive",
       });
     } finally {

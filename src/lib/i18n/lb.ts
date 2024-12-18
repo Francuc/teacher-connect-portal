@@ -66,5 +66,6 @@ export const lb = {
   save_profile: "Profil späicheren",
   viewProfile: "Profil ukucken",
   availableIn: "Verfügbar an",
-  online: "Online"
+  online: "Online",
+  errorLoggingOut: "Fehler beim Ausloggen. Probéiert w.e.g. nach eng Kéier."
 } as const;

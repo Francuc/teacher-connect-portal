@@ -92,6 +92,7 @@ export const fr = {
   logout: "Déconnexion",
   logoutSuccess: "Déconnexion réussie",
   logoutError: "Erreur lors de la déconnexion",
+  errorLoggingOut: "Erreur lors de la déconnexion. Veuillez réessayer.",
   promoCodeApplied: "Code promo appliqué",
   invalidPromoCode: "Code promo invalide",
   confirmDeleteProfile: "Confirmer la suppression du profil",
