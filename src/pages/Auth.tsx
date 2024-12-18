@@ -35,7 +35,6 @@ export default function Auth() {
   useEffect(() => {
     const handleAuthRedirect = async () => {
       console.log('Handling auth redirect:', {
-        pathname: location.pathname,
         hash: location.hash,
         hasSession: !!session?.user?.id
       });
@@ -48,14 +47,12 @@ export default function Auth() {
         const refreshToken = hashParams.get('refresh_token');
         
         if (type === 'recovery' && accessToken) {
-          console.log('Recovery token found in hash, redirecting to reset password');
+          console.log('Recovery token found, redirecting to reset password');
           navigate('/reset-password', { 
             state: { 
-              mode: 'update',
               accessToken,
               refreshToken
-            },
-            replace: true 
+            }
           });
           return;
         }
