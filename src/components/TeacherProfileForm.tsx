@@ -61,8 +61,8 @@ const TeacherProfileForm = () => {
             )
           `);
 
-        // If we're on the edit page, search by user_id
-        if (path.includes('/edit')) {
+        // If we're on the edit page or viewing own profile, search by user_id
+        if (path.includes('/edit') || teacherName === session?.user?.id) {
           query = query.eq('user_id', teacherName);
         } else {
           // Find the last occurrence of hyphen to separate first and last name
