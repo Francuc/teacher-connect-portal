@@ -25,7 +25,7 @@ const getLocalizedPathPrefix = (language: string) => {
 
 // Helper to check if a route should be localized
 const shouldLocalizeRoute = (pathname: string) => {
-  const nonLocalizedRoutes = ['/auth', '/reset-password', '/update-password'];
+  const nonLocalizedRoutes = ['/auth', '/reset-password'];
   return !nonLocalizedRoutes.some(route => pathname.startsWith(route));
 };
 

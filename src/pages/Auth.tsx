@@ -12,8 +12,22 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check if we're on a recovery flow
+    const isRecoveryFlow = location.hash.includes('type=recovery');
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      
+      // If we have a session and we're in recovery flow, redirect to reset password
+      if (session && isRecoveryFlow) {
+        navigate('/reset-password', { replace: true });
+        return;
+      }
+      
+      // For normal login (non-recovery), redirect to home if logged in
+      if (session && !isRecoveryFlow) {
+        navigate('/', { replace: true });
+      }
     });
 
     const {
@@ -21,26 +35,20 @@ export default function Auth() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       
-      // If we have a session and we're on the auth page with recovery token, redirect to reset password
-      if (session && location.pathname === '/auth' && location.hash.includes('type=recovery')) {
-        navigate('/reset-password', {
-          state: {
-            access_token: session.access_token,
-            refresh_token: session.refresh_token
-          },
-          replace: true
-        });
+      // If we have a session and we're in recovery flow, redirect to reset password
+      if (session && isRecoveryFlow) {
+        navigate('/reset-password', { replace: true });
         return;
       }
       
-      // For normal login (non-recovery), redirect to home
-      if (session && location.pathname === '/auth' && !location.hash.includes('type=recovery')) {
+      // For normal login (non-recovery), redirect to home if logged in
+      if (session && !isRecoveryFlow) {
         navigate('/', { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [session, location.hash, navigate]);
+  }, [navigate, location.hash]);
 
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
