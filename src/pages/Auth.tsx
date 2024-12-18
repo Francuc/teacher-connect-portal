@@ -2,13 +2,28 @@ import { Auth as SupabaseAuth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { session } = useAuth();
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handleAuthRedirect = async () => {
@@ -36,14 +51,19 @@ export default function Auth() {
         return;
       }
 
-      // Only redirect if there's an active session
-      if (session?.user?.id) {
+      // Only redirect if there's an active session and we're on the auth page
+      if (session?.user?.id && location.pathname === '/auth') {
         navigate('/');
       }
     };
 
     handleAuthRedirect();
   }, [session, navigate, location]);
+
+  // If we're handling a recovery flow, don't show the auth UI
+  if (location.pathname === '/update-password') {
+    return null;
+  }
 
   return (
     <div className="max-w-md mx-auto p-6 mt-12">
