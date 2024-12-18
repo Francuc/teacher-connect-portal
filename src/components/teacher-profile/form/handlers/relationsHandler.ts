@@ -60,12 +60,8 @@ export const handleRelationsUpdate = async (
 
     // Insert teaching locations
     if (formData.teachingLocations.length > 0) {
-      console.log('Processing teaching locations:', formData.teachingLocations);
-      
       const locationData = formData.teachingLocations.map(location => {
         let price = 0;
-        
-        // Set price based on location type
         if (location === "Teacher's Place") {
           price = parseFloat(formData.pricePerHour.teacherPlace) || 0;
         } else if (location === "Student's Place") {
@@ -73,8 +69,6 @@ export const handleRelationsUpdate = async (
         } else if (location === "Online") {
           price = parseFloat(formData.pricePerHour.online) || 0;
         }
-
-        console.log(`Creating location data for ${location} with price ${price}`);
         
         return {
           teacher_id: userId,
@@ -83,7 +77,6 @@ export const handleRelationsUpdate = async (
         };
       });
 
-      console.log('All locations to insert:', locationData);
       insertPromises.push(
         supabase
           .from('teacher_locations')
@@ -93,7 +86,6 @@ export const handleRelationsUpdate = async (
 
     // Insert student regions
     if (formData.studentRegions.length > 0) {
-      console.log('Inserting student regions:', formData.studentRegions);
       insertPromises.push(
         supabase
           .from('teacher_student_regions')
@@ -108,7 +100,6 @@ export const handleRelationsUpdate = async (
 
     // Insert student cities
     if (formData.studentCities.length > 0) {
-      console.log('Inserting student cities:', formData.studentCities);
       insertPromises.push(
         supabase
           .from('teacher_student_cities')
@@ -121,7 +112,6 @@ export const handleRelationsUpdate = async (
       );
     }
 
-    console.log('Executing all insert operations...');
     const insertResults = await Promise.all(insertPromises);
     const insertErrors = insertResults.filter(result => result.error);
     if (insertErrors.length > 0) {
@@ -129,10 +119,14 @@ export const handleRelationsUpdate = async (
       throw new Error('Error inserting new relations');
     }
 
-    console.log('Relations update completed successfully');
     return {};
   } catch (error) {
     console.error('Error in handleRelationsUpdate:', error);
     return { error: error as Error };
   }
+};
+
+// Add the missing handleRelationsCreation function
+export const handleRelationsCreation = async (formData: FormData, userId: string) => {
+  return handleRelationsUpdate(formData, userId);
 };

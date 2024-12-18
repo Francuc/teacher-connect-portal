@@ -1,6 +1,5 @@
 import { FormData } from "../types";
 import { supabase } from "@/lib/supabase";
-import { uploadProfilePicture } from "../profilePictureUpload";
 
 export const handleProfileUpdate = async (
   formData: FormData,
@@ -9,31 +8,6 @@ export const handleProfileUpdate = async (
 ): Promise<{ data?: { id: string }, error?: Error }> => {
   try {
     console.log('Starting profile update for user:', userId);
-
-    // Upload profile picture if exists
-    let profilePictureUrl = null;
-    if (formData.profilePicture) {
-      try {
-        profilePictureUrl = await uploadProfilePicture(formData.profilePicture, userId);
-      } catch (error) {
-        console.error('Error uploading profile picture:', error);
-        return { error: new Error('Error uploading profile picture') };
-      }
-    }
-
-    // Verify if the city exists before proceeding
-    if (formData.cityId) {
-      const { data: cityExists, error: cityError } = await supabase
-        .from('cities')
-        .select('id')
-        .eq('id', formData.cityId)
-        .single();
-
-      if (cityError || !cityExists) {
-        console.error('Invalid city_id:', formData.cityId);
-        return { error: new Error('Invalid city selected') };
-      }
-    }
 
     // Prepare profile data
     const profileData = {
@@ -48,8 +22,8 @@ export const handleProfileUpdate = async (
       show_facebook: formData.showFacebook,
       bio: formData.bio,
       city_id: formData.cityId,
+      profile_picture_url: formData.profilePictureUrl,
       updated_at: new Date().toISOString(),
-      profile_picture_url: profilePictureUrl || undefined
     };
 
     if (isNewProfile) {
@@ -57,15 +31,11 @@ export const handleProfileUpdate = async (
       const { data, error } = await supabase
         .from('teachers')
         .insert([profileData])
-        .select('id')
+        .select()
         .single();
         
-      if (error) {
-        console.error('Error creating profile:', error);
-        throw error;
-      }
-      
-      return { data };
+      if (error) throw error;
+      return { data: { id: data.id } };
     } else {
       console.log('Updating existing profile:', profileData);
       const { error } = await supabase
@@ -73,15 +43,16 @@ export const handleProfileUpdate = async (
         .update(profileData)
         .eq('user_id', userId);
         
-      if (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-      }
-      
+      if (error) throw error;
       return { data: { id: userId } };
     }
   } catch (error) {
     console.error('Error in handleProfileUpdate:', error);
     return { error: error as Error };
   }
+};
+
+// Add the missing handleProfileCreation function
+export const handleProfileCreation = async (formData: FormData, userId: string) => {
+  return handleProfileUpdate(formData, userId, true);
 };
