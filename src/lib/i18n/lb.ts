@@ -61,5 +61,11 @@ export const lb = {
   profilePictureTypeError: "De Fichier muss e Bild sinn",
   pricePerHour: "Präis pro Stonn",
   selectedLocation: "Ausgewielte Plaz",
-  errorLoadingProfile: "Feeler beim Lueden vum Profil"
+  errorLoadingProfile: "Feeler beim Lueden vum Profil",
+  changePassword: "Passwuert änneren",
+  confirmPassword: "Passwuert bestätegen",
+  updating: "Gëtt aktualiséiert...",
+  passwordTooShort: "D'Passwuert muss mindestens 6 Zeechen hunn",
+  passwordsDoNotMatch: "D'Passwierder stëmmen net iwwerteneen",
+  errorUpdatingPassword: "Fehler beim Aktualiséiere vum Passwuert"
 } as const;

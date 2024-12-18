@@ -7,6 +7,7 @@ import { BiographySection } from "../BiographySection";
 import { SubjectsSection } from "../SubjectsSection";
 import { SchoolLevelsSection } from "../SchoolLevelsSection";
 import { SubscriptionSection } from "../SubscriptionSection";
+import { PasswordResetBox } from "@/components/auth/PasswordResetBox";
 import { useAuth } from "@/hooks/useAuth";
 import { type FormData } from "./types";
 
@@ -33,16 +34,19 @@ export const FormSections = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PersonalInfoSection formData={formData} setFormData={setFormData} />
         {isUpdate && session?.user && (
-          <SubscriptionSection 
-            profile={{
-              user_id: session.user.id,
-              subscription_status: formData.subscription_status,
-              subscription_type: formData.subscription_type,
-              subscription_end_date: formData.subscription_end_date,
-              promo_code: formData.promo_code
-            }} 
-            isOwnProfile={true}
-          />
+          <div className="space-y-6">
+            <SubscriptionSection 
+              profile={{
+                user_id: session.user.id,
+                subscription_status: formData.subscription_status,
+                subscription_type: formData.subscription_type,
+                subscription_end_date: formData.subscription_end_date,
+                promo_code: formData.promo_code
+              }} 
+              isOwnProfile={true}
+            />
+            <PasswordResetBox />
+          </div>
         )}
       </div>
       <BiographySection formData={formData} setFormData={setFormData} />
