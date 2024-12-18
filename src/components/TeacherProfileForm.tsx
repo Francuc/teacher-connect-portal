@@ -22,9 +22,14 @@ const TeacherProfileForm = () => {
   const { data: profile, isLoading } = useQuery({
     queryKey: ['teacherProfile', teacherName],
     queryFn: async () => {
+      if (!teacherName) {
+        console.log('No teacher name provided, skipping fetch');
+        return null;
+      }
+
       console.log('Fetching teacher data for teacher:', teacherName);
       try {
-        const names = teacherName?.split('-') || [];
+        const names = teacherName.split('-');
         const firstName = names[0];
         const lastName = names.slice(1).join(' ');
 
@@ -94,6 +99,11 @@ const TeacherProfileForm = () => {
   }, [profile, isViewMode, navigate, language]);
   
   if (isViewMode) {
+    if (!profile && !isLoading) {
+      return <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-center">Teacher not found</h1>
+      </div>;
+    }
     return <TeacherProfileView userId={profile?.user_id || ''} />;
   }
 
