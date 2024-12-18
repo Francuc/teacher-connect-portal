@@ -1,231 +1,139 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { TeacherProfileView } from "./teacher-profile/TeacherProfileView";
+import { FormContainer } from "./teacher-profile/form/FormContainer";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 import { PasswordResetBox } from "./auth/PasswordResetBox";
 
-export default function TeacherProfileForm() {
-  const { teacherId } = useParams();
+const TeacherProfileForm = () => {
+  const { teacherName, subject, teacherId } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { language } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const { session } = useAuth();
+  const path = window.location.pathname;
+  const isViewMode = !path.includes('/edit');
+  const isProfileEdit = path.includes('/profile/edit');
+  
+  console.log('TeacherProfileForm - Current path:', path);
+  console.log('TeacherProfileForm - Teacher Name:', teacherName);
+  console.log('TeacherProfileForm - Is view mode:', isViewMode);
 
-  const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    subjects: "",
-    description: "",
-    price_per_hour: "",
-    location: "",
-    online_possible: false,
-    user_id: "",
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['teacherProfile', teacherName || teacherId],
+    queryFn: async () => {
+      if (!teacherName && !teacherId) {
+        console.log('No teacher identifier provided, skipping fetch');
+        return null;
+      }
+
+      console.log('Fetching teacher data for:', teacherName || teacherId);
+      try {
+        let query = supabase
+          .from('teachers')
+          .select(`
+            *,
+            city:cities!left(
+              *,
+              region:regions!left(*)
+            ),
+            teacher_subjects!left(
+              subject:subjects!left(*)
+            ),
+            teacher_school_levels!left(
+              school_level
+            ),
+            teacher_locations!left(
+              location_type,
+              price_per_hour
+            ),
+            teacher_student_regions!left(
+              region_name
+            ),
+            teacher_student_cities!left(
+              cities!left(
+                id,
+                name_en,
+                name_fr,
+                name_lb
+              )
+            )
+          `);
+
+        // If we're on the edit page, profile edit, or viewing own profile, search by user_id
+        if (path.includes('/edit') || teacherId || teacherName === session?.user?.id) {
+          const userId = teacherId || teacherName || session?.user?.id;
+          query = query.eq('user_id', userId);
+        } else {
+          // Find the last occurrence of hyphen to separate first and last name
+          const lastHyphenIndex = teacherName!.lastIndexOf('-');
+          const firstName = teacherName!.substring(0, lastHyphenIndex).replace(/-/g, ' ');
+          const lastName = teacherName!.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
+          query = query.ilike('first_name', firstName).ilike('last_name', lastName);
+        }
+
+        const { data, error } = await query.maybeSingle();
+
+        if (error) {
+          console.error('Error fetching teacher profile:', error);
+          throw error;
+        }
+
+        console.log('Teacher profile fetched:', data);
+        return data;
+      } catch (error) {
+        console.error('Error in fetchTeacherData:', error);
+        throw error;
+      }
+    },
+    enabled: !!(teacherName || teacherId),
   });
 
   useEffect(() => {
-    const fetchTeacherProfile = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (teacherId) {
-          const { data, error } = await supabase
-            .from("teachers")
-            .select("*")
-            .eq("user_id", teacherId)
-            .single();
+    if (profile && isViewMode) {
+      // Check if the profile was created within the last 20 seconds
+      const createdAt = new Date(profile.created_at);
+      const now = new Date();
+      const timeDifference = now.getTime() - createdAt.getTime();
+      const secondsDifference = timeDifference / 1000;
 
-          if (error) throw error;
-
-          if (data) {
-            setFormData(data);
-            setIsOwnProfile(session?.user?.id === data.user_id);
-          }
-        } else if (session) {
-          setFormData(prev => ({ ...prev, user_id: session.user.id }));
-          setIsOwnProfile(true);
-        }
-      } catch (error: any) {
-        console.error("Error fetching profile:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load profile"
-        });
+      if (secondsDifference <= 20) {
+        console.log('New profile detected, redirecting to edit page');
+        const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+        navigate(`/${prefix}/edit`);
       }
-    };
-
-    fetchTeacherProfile();
-  }, [teacherId, toast]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const { error } = teacherId
-        ? await supabase
-            .from("teachers")
-            .update(formData)
-            .eq("user_id", teacherId)
-        : await supabase
-            .from("teachers")
-            .insert([formData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Profile saved successfully"
-      });
-
-      const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
-      navigate(`/${prefix}`);
-    } catch (error: any) {
-      console.error("Error saving profile:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save profile"
-      });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [profile, isViewMode, navigate, language]);
+  
+  if (isViewMode) {
+    if (!profile && !isLoading) {
+      return <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-center">Teacher not found</h1>
+      </div>;
+    }
+    return <TeacherProfileView userId={profile?.user_id || ''} />;
+  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, online_possible: checked }));
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="first_name">First Name</Label>
-              <Input
-                id="first_name"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="last_name">Last Name</Label>
-              <Input
-                id="last_name"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="subjects">Subjects</Label>
-            <Input
-              id="subjects"
-              name="subjects"
-              value={formData.subjects}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="price_per_hour">Price per Hour</Label>
-              <Input
-                id="price_per_hour"
-                name="price_per_hour"
-                type="number"
-                value={formData.price_per_hour}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="online_possible"
-              checked={formData.online_possible}
-              onCheckedChange={handleCheckboxChange}
-            />
-            <Label htmlFor="online_possible">Online lessons possible</Label>
-          </div>
-
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Profile"}
-          </Button>
-        </form>
-
-        {isOwnProfile && (
-          <div className="mt-8">
-            <PasswordResetBox />
-          </div>
-        )}
-      </div>
+    <div className="space-y-8">
+      <FormContainer 
+        userId={profile?.user_id} 
+        initialData={profile} 
+        onSuccess={(updatedProfile) => {
+          const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
+          const teacherNameSlug = `${updatedProfile.first_name.replace(/\s+/g, '-')}-${updatedProfile.last_name.replace(/\s+/g, '-')}`;
+          navigate(`/${prefix}/teacher/${teacherNameSlug}`);
+        }}
+      />
+      {isProfileEdit && <PasswordResetBox />}
     </div>
   );
-}
+};
+
+export default TeacherProfileForm;

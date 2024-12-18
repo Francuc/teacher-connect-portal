@@ -66,17 +66,7 @@ export default function Auth() {
       }
     };
 
-    // Check for hash fragment in URL (for password reset)
-    if (location.hash.includes('type=recovery')) {
-      const params = new URLSearchParams(location.hash.substring(1));
-      const accessToken = params.get('access_token');
-      
-      if (accessToken) {
-        checkSessionAndRedirect();
-      }
-    } else {
-      checkSessionAndRedirect();
-    }
+    checkSessionAndRedirect();
 
     const {
       data: { subscription },
