@@ -47,5 +47,19 @@ export const lb = {
   viewProfile: "Profil ukucken",
   availableIn: "Verfügbar an",
   online: "Online",
-  errorLoggingOut: "Fehler beim Ausloggen. Probéiert w.e.g. nach eng Kéier."
+  error: "Feeler",
+  success: "Erfolleg",
+  selectProfile: "Profil auswielen",
+  bio: "Bio",
+  personalInfo: "Perséinlech Informatiounen",
+  firstName: "Virnumm",
+  lastName: "Familljennumm",
+  phone: "Telefon",
+  facebookProfile: "Facebook Profil",
+  showInProfile: "Am Profil weisen",
+  profilePictureSizeError: "Profilbild muss manner wéi 5MB sinn",
+  profilePictureTypeError: "De Fichier muss e Bild sinn",
+  pricePerHour: "Präis pro Stonn",
+  selectedLocation: "Ausgewielte Plaz",
+  errorLoadingProfile: "Feeler beim Lueden vum Profil"
 } as const;

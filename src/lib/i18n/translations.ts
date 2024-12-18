@@ -9,8 +9,6 @@ export type Translation = {
   [K in keyof typeof en]: string;
 };
 
-export type TranslationKey = keyof Translation;
-
 // Create translations object with English as the base, using type assertion
 export const translations: Record<Language, Translation> = {
   en,
