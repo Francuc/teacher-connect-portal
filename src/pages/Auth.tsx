@@ -36,9 +36,9 @@ export default function Auth() {
         return;
       }
 
-      // Redirect authenticated users
-      if (session) {
-        navigate(`/profile/${session.user.id}`);
+      // Only redirect if there's an active session
+      if (session?.user?.id) {
+        navigate('/');
       }
     };
 
