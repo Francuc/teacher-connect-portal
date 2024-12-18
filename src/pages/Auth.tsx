@@ -45,45 +45,20 @@ export default function Auth() {
         const hashParams = new URLSearchParams(location.hash.substring(1));
         const type = hashParams.get('type');
         const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
         
         if (type === 'recovery' && accessToken) {
           console.log('Recovery token found in hash, redirecting to update password');
           navigate('/reset-password', { 
             state: { 
               mode: 'update',
-              accessToken 
+              accessToken,
+              refreshToken
             },
             replace: true 
           });
           return;
         }
-      }
-
-      // Handle recovery token from query params
-      const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
-      const type = params.get('type');
-
-      if (token && type === 'recovery') {
-        console.log('Recovery token found in query params, redirecting to reset password');
-        // Set the session directly with the recovery token
-        const { data: { session: recoverySession }, error } = await supabase.auth.setSession({
-          access_token: token,
-          refresh_token: ''
-        });
-
-        if (!error && recoverySession?.access_token) {
-          navigate('/reset-password', { 
-            state: { 
-              mode: 'update',
-              accessToken: recoverySession.access_token 
-            },
-            replace: true 
-          });
-        } else {
-          console.error('Error setting recovery session:', error);
-        }
-        return;
       }
 
       // Only redirect if there's an active session and we're on the auth page

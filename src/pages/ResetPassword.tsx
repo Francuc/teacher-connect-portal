@@ -52,10 +52,10 @@ export default function ResetPassword() {
         const state = location.state as any;
         
         if (state?.accessToken) {
-          // Set the session with the access token
+          // Set the session with both access and refresh tokens if available
           const { data: { session }, error: sessionError } = await supabase.auth.setSession({
             access_token: state.accessToken,
-            refresh_token: ''
+            refresh_token: state.refreshToken || ''
           });
 
           if (sessionError) throw sessionError;
