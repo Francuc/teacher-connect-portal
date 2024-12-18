@@ -3,23 +3,26 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const [session, setSession] = useState(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    console.log('Auth component mounted');
-    console.log('Current location:', {
-      pathname: location.pathname,
-      search: location.search,
-      hash: location.hash
+    toast({
+      title: "Auth Component Mounted",
+      description: `Current location: ${location.pathname}${location.search}${location.hash}`,
     });
     
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session ? 'Session exists' : 'No session');
+      toast({
+        title: "Initial Session Check",
+        description: session ? "Session exists" : "No session",
+      });
       setSession(session);
     });
 
@@ -27,22 +30,27 @@ export default function Auth() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
+      toast({
+        title: "Auth State Changed",
+        description: `Event: ${_event}, Session: ${session ? "exists" : "none"}`,
+      });
       setSession(session);
     });
 
     return () => {
-      console.log('Auth component unmounting, cleaning up subscription');
+      toast({
+        title: "Auth Component Unmounting",
+        description: "Cleaning up subscription",
+      });
       subscription.unsubscribe();
     };
   }, []);
 
   useEffect(() => {
     const handleAuthRedirect = async () => {
-      console.log('Handling auth redirect:', {
-        search: location.search,
-        hash: location.hash,
-        pathname: location.pathname
+      toast({
+        title: "Handling Auth Redirect",
+        description: `Search: ${location.search}, Hash: ${location.hash}`,
       });
 
       // Handle URL parameters for recovery
@@ -51,77 +59,100 @@ export default function Auth() {
       const type = searchParams.get('type');
 
       if (type === 'recovery' && token) {
-        console.log('Recovery token found in URL params:', { token, type });
+        toast({
+          title: "Recovery Token Found",
+          description: `Token: ${token.substring(0, 10)}...`,
+        });
+        
         try {
-          console.log('Attempting to verify OTP with token:', token);
+          toast({
+            title: "Verifying OTP",
+            description: `Attempting verification with token: ${token.substring(0, 10)}...`,
+          });
+          
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash: token,
             type: 'recovery'
           });
 
-          console.log('OTP verification result:', { data, error });
-
           if (error) {
-            console.error('Error during OTP verification:', error);
+            toast({
+              title: "OTP Verification Error",
+              description: error.message,
+              variant: "destructive",
+            });
             throw error;
           }
 
-          // If successful, redirect to reset password with the new session
           if (data.session) {
-            console.log('Successfully verified OTP, preparing to redirect to reset-password');
+            toast({
+              title: "OTP Verification Success",
+              description: "Redirecting to reset password page",
+            });
+            
             const redirectState = {
               accessToken: data.session.access_token,
               refreshToken: data.session.refresh_token
             };
-            console.log('Redirect state prepared:', redirectState);
             
             navigate('/reset-password', {
               state: redirectState,
               replace: true
             });
-            console.log('Navigation to reset-password initiated');
             return;
           } else {
-            console.log('No session data received after OTP verification');
+            toast({
+              title: "No Session Data",
+              description: "Verification successful but no session received",
+              variant: "destructive",
+            });
           }
         } catch (error) {
-          console.error('Error verifying recovery token:', error);
+          toast({
+            title: "Recovery Error",
+            description: error.message,
+            variant: "destructive",
+          });
         }
       }
 
-      // Handle hash fragment for recovery tokens (existing flow)
+      // Handle hash fragment for recovery tokens
       if (location.hash) {
         const hashParams = new URLSearchParams(location.hash.substring(1));
         const hashType = hashParams.get('type');
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         
-        console.log('Hash params:', { 
-          type: hashType, 
-          hasAccessToken: !!accessToken, 
-          hasRefreshToken: !!refreshToken 
+        toast({
+          title: "Hash Parameters Found",
+          description: `Type: ${hashType}, Has Access Token: ${!!accessToken}`,
         });
         
         if (hashType === 'recovery' && accessToken) {
-          console.log('Recovery token found in hash, preparing to redirect to reset-password');
+          toast({
+            title: "Recovery from Hash",
+            description: "Redirecting to reset password page",
+          });
+          
           const redirectState = {
             accessToken,
             refreshToken
           };
-          console.log('Redirect state prepared:', redirectState);
           
           navigate('/reset-password', { 
             state: redirectState,
             replace: true
           });
-          console.log('Navigation to reset-password initiated');
           return;
         }
       }
 
       // Only redirect if there's an active session and we're on the auth page
       if (session?.user?.id && location.pathname === '/auth') {
-        console.log('Active session found on auth page, redirecting to home');
+        toast({
+          title: "Active Session Detected",
+          description: "Redirecting to home page",
+        });
         navigate('/', { replace: true });
       }
     };
@@ -132,8 +163,12 @@ export default function Auth() {
   // If we're handling a recovery flow, don't show the auth UI
   if ((location.search && new URLSearchParams(location.search).get('type') === 'recovery') ||
       (location.hash && new URLSearchParams(location.hash.substring(1)).get('type') === 'recovery')) {
-    console.log('Recovery flow detected, not showing auth UI');
-    return null;
+    return (
+      <div className="max-w-md mx-auto p-6 mt-12">
+        <h2 className="text-2xl font-bold mb-4">Processing Recovery Request</h2>
+        <p className="text-gray-600">Please wait while we process your password recovery request...</p>
+      </div>
+    );
   }
 
   return (
