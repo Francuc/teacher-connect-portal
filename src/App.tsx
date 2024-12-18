@@ -8,7 +8,6 @@ import Auth from "@/pages/Auth";
 import ResetPassword from "@/pages/ResetPassword";
 import TeacherProfileForm from "@/components/TeacherProfileForm";
 import { useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 
 const queryClient = new QueryClient();
 
@@ -50,10 +49,10 @@ function AppRoutes() {
         <Route path="/reset-password" element={<ResetPassword mode="request" />} />
         <Route path="/update-password" element={<ResetPassword mode="update" />} />
         
-        {/* Localized routes for teacher profiles */}
-        <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName/:userId`} element={<TeacherProfileForm />} />
-        <Route path={`/${getLocalizedPathPrefix(language)}/edit/:userId`} element={<TeacherProfileForm />} />
-        <Route path={`/${getLocalizedPathPrefix(language)}/new/:userId`} element={<TeacherProfileForm />} />
+        {/* Updated routes without user ID in the URL */}
+        <Route path={`/${getLocalizedPathPrefix(language)}/:subject/:teacherName`} element={<TeacherProfileForm />} />
+        <Route path={`/${getLocalizedPathPrefix(language)}/edit`} element={<TeacherProfileForm />} />
+        <Route path={`/${getLocalizedPathPrefix(language)}/new`} element={<TeacherProfileForm />} />
       </Routes>
     </Layout>
   );

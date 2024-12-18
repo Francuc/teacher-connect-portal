@@ -5,23 +5,29 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const TeacherProfileForm = () => {
-  const { userId, subject, teacherName } = useParams();
+  const { teacherName, subject } = useParams();
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { session } = useAuth();
   const path = window.location.pathname;
   const isViewMode = !path.includes('/new') && !path.includes('/edit');
   
   console.log('TeacherProfileForm - Current path:', path);
-  console.log('TeacherProfileForm - UserId:', userId);
+  console.log('TeacherProfileForm - Teacher Name:', teacherName);
   console.log('TeacherProfileForm - Is view mode:', isViewMode);
 
   const { data: profile, isLoading } = useQuery({
-    queryKey: ['teacherProfile', userId],
+    queryKey: ['teacherProfile', teacherName],
     queryFn: async () => {
-      console.log('Fetching teacher data for userId:', userId);
+      console.log('Fetching teacher data for teacher:', teacherName);
       try {
+        const names = teacherName?.split('-') || [];
+        const firstName = names[0];
+        const lastName = names.slice(1).join(' ');
+
         const { data, error } = await supabase
           .from('teachers')
           .select(`
@@ -52,7 +58,8 @@ const TeacherProfileForm = () => {
               )
             )
           `)
-          .eq('user_id', userId)
+          .eq('first_name', firstName)
+          .eq('last_name', lastName)
           .maybeSingle();
 
         if (error) {
@@ -67,7 +74,7 @@ const TeacherProfileForm = () => {
         throw error;
       }
     },
-    enabled: !!userId,
+    enabled: !!teacherName,
   });
 
   useEffect(() => {
@@ -81,13 +88,13 @@ const TeacherProfileForm = () => {
       if (secondsDifference <= 20) {
         console.log('New profile detected, redirecting to edit page');
         const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
-        navigate(`/${prefix}/edit/${userId}`);
+        navigate(`/${prefix}/edit`);
       }
     }
-  }, [profile, isViewMode, userId, navigate, language]);
+  }, [profile, isViewMode, navigate, language]);
   
   if (isViewMode) {
-    return <TeacherProfileView userId={userId || ''} />;
+    return <TeacherProfileView userId={profile?.user_id || ''} />;
   }
 
   if (isLoading) {
@@ -96,7 +103,7 @@ const TeacherProfileForm = () => {
 
   return (
     <div className="space-y-8">
-      <FormContainer userId={userId} initialData={profile} />
+      <FormContainer userId={profile?.user_id} initialData={profile} />
     </div>
   );
 };
