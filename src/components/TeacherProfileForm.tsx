@@ -8,28 +8,28 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
 const TeacherProfileForm = () => {
-  const { teacherName, subject } = useParams();
+  const { teacherName, subject, teacherId } = useParams();
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { session } = useAuth();
   const path = window.location.pathname;
   const isViewMode = !path.includes('/edit');
+  const isProfileEdit = path.includes('/profile/edit');
   
   console.log('TeacherProfileForm - Current path:', path);
   console.log('TeacherProfileForm - Teacher Name:', teacherName);
   console.log('TeacherProfileForm - Is view mode:', isViewMode);
 
   const { data: profile, isLoading } = useQuery({
-    queryKey: ['teacherProfile', teacherName],
+    queryKey: ['teacherProfile', teacherName || teacherId],
     queryFn: async () => {
-      if (!teacherName) {
-        console.log('No teacher name provided, skipping fetch');
+      if (!teacherName && !teacherId) {
+        console.log('No teacher identifier provided, skipping fetch');
         return null;
       }
 
-      console.log('Fetching teacher data for teacher:', teacherName);
+      console.log('Fetching teacher data for:', teacherName || teacherId);
       try {
-        // For edit routes, teacherName might be the user_id
         let query = supabase
           .from('teachers')
           .select(`
@@ -61,14 +61,15 @@ const TeacherProfileForm = () => {
             )
           `);
 
-        // If we're on the edit page or viewing own profile, search by user_id
-        if (path.includes('/edit') || teacherName === session?.user?.id) {
-          query = query.eq('user_id', teacherName);
+        // If we're on the edit page, profile edit, or viewing own profile, search by user_id
+        if (path.includes('/edit') || teacherId || teacherName === session?.user?.id) {
+          const userId = teacherId || teacherName || session?.user?.id;
+          query = query.eq('user_id', userId);
         } else {
           // Find the last occurrence of hyphen to separate first and last name
-          const lastHyphenIndex = teacherName.lastIndexOf('-');
-          const firstName = teacherName.substring(0, lastHyphenIndex).replace(/-/g, ' ');
-          const lastName = teacherName.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
+          const lastHyphenIndex = teacherName!.lastIndexOf('-');
+          const firstName = teacherName!.substring(0, lastHyphenIndex).replace(/-/g, ' ');
+          const lastName = teacherName!.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
           query = query.ilike('first_name', firstName).ilike('last_name', lastName);
         }
 
@@ -86,7 +87,7 @@ const TeacherProfileForm = () => {
         throw error;
       }
     },
-    enabled: !!teacherName,
+    enabled: !!(teacherName || teacherId),
   });
 
   useEffect(() => {
