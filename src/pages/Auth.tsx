@@ -53,6 +53,7 @@ export default function Auth() {
       if (type === 'recovery' && token) {
         console.log('Recovery token found in URL params:', { token, type });
         try {
+          console.log('Attempting to verify OTP with token:', token);
           const { data, error } = await supabase.auth.verifyOtp({
             token_hash: token,
             type: 'recovery'
@@ -60,19 +61,28 @@ export default function Auth() {
 
           console.log('OTP verification result:', { data, error });
 
-          if (error) throw error;
+          if (error) {
+            console.error('Error during OTP verification:', error);
+            throw error;
+          }
 
           // If successful, redirect to reset password with the new session
           if (data.session) {
-            console.log('Redirecting to reset password with session');
+            console.log('Successfully verified OTP, preparing to redirect to reset-password');
+            const redirectState = {
+              accessToken: data.session.access_token,
+              refreshToken: data.session.refresh_token
+            };
+            console.log('Redirect state prepared:', redirectState);
+            
             navigate('/reset-password', {
-              state: {
-                accessToken: data.session.access_token,
-                refreshToken: data.session.refresh_token
-              },
+              state: redirectState,
               replace: true
             });
+            console.log('Navigation to reset-password initiated');
             return;
+          } else {
+            console.log('No session data received after OTP verification');
           }
         } catch (error) {
           console.error('Error verifying recovery token:', error);
@@ -93,14 +103,18 @@ export default function Auth() {
         });
         
         if (hashType === 'recovery' && accessToken) {
-          console.log('Recovery token found in hash, redirecting to reset password');
+          console.log('Recovery token found in hash, preparing to redirect to reset-password');
+          const redirectState = {
+            accessToken,
+            refreshToken
+          };
+          console.log('Redirect state prepared:', redirectState);
+          
           navigate('/reset-password', { 
-            state: { 
-              accessToken,
-              refreshToken
-            },
+            state: redirectState,
             replace: true
           });
+          console.log('Navigation to reset-password initiated');
           return;
         }
       }
