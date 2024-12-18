@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 export const handleProfileUpdate = async (
   formData: FormData,
   userId: string,
-  isNewProfile: boolean
+  isNewProfile: boolean = false
 ): Promise<{ data?: { id: string }, error?: Error }> => {
   try {
     console.log('Starting profile update for user:', userId);
@@ -52,7 +52,6 @@ export const handleProfileUpdate = async (
   }
 };
 
-// Add the missing handleProfileCreation function
-export const handleProfileCreation = async (formData: FormData, userId: string) => {
-  return handleProfileUpdate(formData, userId, true);
+export const handleProfileCreation = async (formData: FormData, userId: string, isNewProfile: boolean = true) => {
+  return handleProfileUpdate(formData, userId, isNewProfile);
 };

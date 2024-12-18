@@ -36,8 +36,8 @@ export const useFormSubmit = (
       };
 
       const profile = isNewProfile
-        ? await handleProfileCreation(profileData, userId)
-        : await handleProfileUpdate(profileData, userId);
+        ? await handleProfileCreation(profileData, userId, true)
+        : await handleProfileUpdate(profileData, userId, false);
 
       // Handle relations (subjects, school levels, locations)
       if (isNewProfile) {
