@@ -45,10 +45,8 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
         } 
         // If we have a recovery token from query params
         else if (state?.token) {
-          const { error } = await supabase.auth.verifyOtp({
-            token: state.token,
-            type: 'recovery',
-            password: password, // Changed from newPassword to password
+          const { error } = await supabase.auth.updateUser({
+            password: password
           });
 
           if (error) throw error;
