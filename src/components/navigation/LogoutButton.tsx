@@ -1,52 +1,50 @@
-import { LogOut } from "lucide-react";
-import { Button } from "../ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const LogoutButton = () => {
-  const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
     try {
       setIsLoading(true);
       
-      // First, get the current session
+      // Check if we have a session first
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // If there's no session, just redirect to auth page
-        navigate("/auth");
+        console.log('No active session found, redirecting to auth page');
+        navigate('/auth');
         return;
       }
 
-      // Proceed with logout
       const { error } = await supabase.auth.signOut();
       
-      if (error) throw error;
-
-      navigate("/auth");
-      toast({
-        title: t("success"),
-        description: t("logoutSuccess"),
-        variant: "default",
-      });
-    } catch (error) {
-      console.error('Error logging out:', error);
-      // If we get a 403 or session not found error, force redirect to auth
-      if (error.status === 403 || (error.message && error.message.includes('session_not_found'))) {
-        navigate("/auth");
-        return;
+      if (error) {
+        console.error('Error during logout:', error);
+        if (error.status === 403 && error.message.includes('session_not_found')) {
+          // If session not found, just redirect to auth page
+          navigate('/auth');
+          return;
+        }
+        throw error;
       }
+
+      console.log('Logout successful');
+      navigate('/auth');
       
+    } catch (error: any) {
+      console.error('Logout error:', error);
       toast({
         title: t("error"),
-        description: t("logoutError"),
+        description: t("errorLoggingOut"),
         variant: "destructive",
       });
     } finally {
@@ -55,13 +53,14 @@ export const LogoutButton = () => {
   };
 
   return (
-    <Button 
-      onClick={handleLogout} 
-      variant="outline" 
-      className="gap-2 h-12 px-6 text-base"
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={handleLogout}
       disabled={isLoading}
+      className="w-full justify-start"
     >
-      <LogOut className="h-5 w-5" />
+      <LogOut className="mr-2 h-4 w-4" />
       {t("logout")}
     </Button>
   );
