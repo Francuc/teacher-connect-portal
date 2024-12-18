@@ -11,19 +11,38 @@ export default function Auth() {
   const { session } = useAuth();
 
   useEffect(() => {
-    // Handle recovery token
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    const type = params.get('type');
+    const handleAuthRedirect = async () => {
+      // Handle hash fragment for recovery tokens
+      if (window.location.hash) {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const type = hashParams.get('type');
+        
+        if (type === 'recovery') {
+          const accessToken = hashParams.get('access_token');
+          if (accessToken) {
+            navigate('/update-password', { state: { accessToken } });
+            return;
+          }
+        }
+      }
 
-    if (token && type === 'recovery') {
-      navigate('/update-password', { state: { token } });
-      return;
-    }
+      // Handle recovery token from query params (old method)
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      const type = params.get('type');
 
-    if (session) {
-      navigate(`/profile/${session.user.id}`);
-    }
+      if (token && type === 'recovery') {
+        navigate('/update-password', { state: { token } });
+        return;
+      }
+
+      // Redirect authenticated users
+      if (session) {
+        navigate(`/profile/${session.user.id}`);
+      }
+    };
+
+    handleAuthRedirect();
   }, [session, navigate, location]);
 
   return (

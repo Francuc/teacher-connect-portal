@@ -20,12 +20,9 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
   const location = useLocation();
 
   useEffect(() => {
-    // Check if we have a recovery token in the URL or state
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token') || (location.state as any)?.token;
-    
-    if (token) {
-      // If we have a token, switch to update mode
+    // Check if we have a token in the location state
+    const state = location.state as any;
+    if (state?.token || state?.accessToken) {
       mode = "update";
     }
   }, [location]);
@@ -36,11 +33,26 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
 
     try {
       if (mode === "update") {
-        const { error } = await supabase.auth.updateUser({
-          password: password
-        });
+        const state = location.state as any;
+        
+        // If we have an access token from the hash fragment
+        if (state?.accessToken) {
+          const { error } = await supabase.auth.updateUser({
+            password: password
+          });
 
-        if (error) throw error;
+          if (error) throw error;
+        } 
+        // If we have a recovery token from query params
+        else if (state?.token) {
+          const { error } = await supabase.auth.verifyOtp({
+            token: state.token,
+            type: 'recovery',
+            newPassword: password,
+          });
+
+          if (error) throw error;
+        }
 
         toast({
           title: t("success"),
