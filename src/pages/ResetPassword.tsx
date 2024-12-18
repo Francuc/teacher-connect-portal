@@ -48,7 +48,7 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
           const { error } = await supabase.auth.verifyOtp({
             token: state.token,
             type: 'recovery',
-            newPassword: password,
+            password: password, // Changed from newPassword to password
           });
 
           if (error) throw error;
