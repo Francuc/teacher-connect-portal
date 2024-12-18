@@ -13,31 +13,23 @@ export const LogoutButton = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogout = async () => {
+    if (isLoading) return;
+    
     try {
       setIsLoading(true);
       
-      // Check if we have a session first
-      const { data: { session } } = await supabase.auth.getSession();
+      // First clear any existing session data
+      localStorage.removeItem('sb-qhqtflpajutstecqajbl-auth-token');
       
-      if (!session) {
-        console.log('No active session found, redirecting to auth page');
-        navigate('/auth');
-        return;
-      }
-
       const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error('Error during logout:', error);
-        // If session not found, just redirect to auth page
-        if (error.status === 403 && error.message.includes('session_not_found')) {
-          navigate('/auth');
-          return;
-        }
-        throw error;
+        // If session not found or any other error, just redirect to auth
+        navigate('/auth');
+        return;
       }
 
-      console.log('Logout successful');
       navigate('/auth');
       
     } catch (error: any) {
