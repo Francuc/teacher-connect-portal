@@ -66,22 +66,22 @@ export default function Auth() {
 
       if (token && type === 'recovery') {
         console.log('Recovery token found in query params, redirecting to reset password');
-        // Use verifyRecoveryToken instead of verifyOtp
-        const { data, error } = await supabase.auth.verifyRecoveryToken({
-          token,
-          type: 'recovery'
+        // Set the session directly with the recovery token
+        const { data: { session: recoverySession }, error } = await supabase.auth.setSession({
+          access_token: token,
+          refresh_token: ''
         });
 
-        if (!error && data?.session?.access_token) {
+        if (!error && recoverySession?.access_token) {
           navigate('/reset-password', { 
             state: { 
               mode: 'update',
-              accessToken: data.session.access_token 
+              accessToken: recoverySession.access_token 
             },
             replace: true 
           });
         } else {
-          console.error('Error verifying recovery token:', error);
+          console.error('Error setting recovery session:', error);
         }
         return;
       }
