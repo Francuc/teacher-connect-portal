@@ -19,21 +19,6 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const state = location.state as { accessToken: string; refreshToken: string };
-      
-      if (!state?.accessToken) {
-        throw new Error("No access token found");
-      }
-
-      // Set the session with the recovery tokens
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: state.accessToken,
-        refresh_token: state.refreshToken || ''
-      });
-
-      if (sessionError) throw sessionError;
-
-      // Update the password
       const { error } = await supabase.auth.updateUser({
         password: password
       });
@@ -45,8 +30,8 @@ export default function ResetPassword() {
         description: "Your password has been updated successfully.",
       });
 
-      // After successful password update, redirect to auth page
-      navigate("/auth", { replace: true });
+      // After successful password update, redirect to home page
+      navigate("/", { replace: true });
     } catch (error: any) {
       toast({
         title: "Error",

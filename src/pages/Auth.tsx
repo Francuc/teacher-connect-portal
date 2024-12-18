@@ -20,34 +20,26 @@ export default function Auth() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (location.hash) {
-      const hashParams = new URLSearchParams(location.hash.substring(1));
-      const type = hashParams.get('type');
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
-
-      if (type === 'recovery' && accessToken) {
+      
+      // If we have a session and we're on the auth page, redirect to reset password
+      if (session && location.pathname === '/auth' && location.hash.includes('type=recovery')) {
         navigate('/reset-password', {
           state: {
-            accessToken,
-            refreshToken
+            accessToken: session.access_token,
+            refreshToken: session.refresh_token
           },
           replace: true
         });
         return;
       }
-    }
+      
+      // For normal login (non-recovery), redirect to home
+      if (session && location.pathname === '/auth' && !location.hash.includes('type=recovery')) {
+        navigate('/', { replace: true });
+      }
+    });
 
-    // Only redirect if there's an active session and we're on the auth page
-    if (session?.user?.id && location.pathname === '/auth') {
-      navigate('/', { replace: true });
-    }
+    return () => subscription.unsubscribe();
   }, [session, location.hash, navigate]);
 
   // Show loading state during recovery process
