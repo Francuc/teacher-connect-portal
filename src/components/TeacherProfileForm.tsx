@@ -29,9 +29,12 @@ const TeacherProfileForm = () => {
 
       console.log('Fetching teacher data for teacher:', teacherName);
       try {
-        const names = teacherName.split('-');
-        const firstName = names[0];
-        const lastName = names.slice(1).join(' ');
+        // Find the last occurrence of hyphen to separate first and last name
+        const lastHyphenIndex = teacherName.lastIndexOf('-');
+        const firstName = teacherName.substring(0, lastHyphenIndex).replace(/-/g, ' ');
+        const lastName = teacherName.substring(lastHyphenIndex + 1).replace(/-/g, ' ');
+
+        console.log('Parsed names - First:', firstName, 'Last:', lastName);
 
         const { data, error } = await supabase
           .from('teachers')
