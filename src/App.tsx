@@ -11,7 +11,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route element={<Layout />}>
           <Route index element={<Landing />} />
           <Route path="auth" element={<Auth />} />
           <Route path="reset-password" element={<ResetPassword />} />
