@@ -61,10 +61,8 @@ export default function ResetPassword() {
         }
         // Fallback to using the recovery token if available
         else if (state?.token) {
-          const { error } = await supabase.auth.verifyOtp({
-            token: state.token,
-            type: 'recovery',
-            password: password, // Changed from new_password to password
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/auth`,
           });
 
           if (error) throw error;
