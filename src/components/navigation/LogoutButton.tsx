@@ -16,15 +16,10 @@ export const LogoutButton = () => {
     try {
       setIsLoading(true);
       
-      // Check if we have a session first
-      const { data: { session } } = await supabase.auth.getSession();
+      // First, clear any existing session from localStorage
+      localStorage.removeItem('supabase.auth.token');
       
-      if (!session) {
-        console.log('No active session found, redirecting to auth page');
-        navigate('/auth');
-        return;
-      }
-
+      // Then attempt to sign out
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -38,6 +33,7 @@ export const LogoutButton = () => {
       }
 
       console.log('Logout successful');
+      // Always redirect to auth page after logout attempt
       navigate('/auth');
       
     } catch (error: any) {
