@@ -18,15 +18,15 @@ type LocationsSectionProps = {
       name_lb: string;
     };
   } | null;
-  studentRegions: string[];
-  studentCities: string[];
+  studentRegions: string[] | undefined;
+  studentCities: string[] | undefined;
 };
 
 export const LocationsSection = ({ 
-  locations = [], // Provide default empty array
+  locations = [], 
   city, 
-  studentRegions = [], // Provide default empty array
-  studentCities = [] // Provide default empty array
+  studentRegions = [], 
+  studentCities = [] 
 }: LocationsSectionProps) => {
   const { t, language } = useLanguage();
 

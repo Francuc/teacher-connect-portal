@@ -9,10 +9,10 @@ type SubjectsSectionProps = {
       name_fr: string;
       name_lb: string;
     };
-  }[];
+  }[] | undefined;
 };
 
-export const SubjectsSection = ({ subjects }: SubjectsSectionProps) => {
+export const SubjectsSection = ({ subjects = [] }: SubjectsSectionProps) => {
   const { t, language } = useLanguage();
 
   const getLocalizedName = (subject: { name_en: string; name_fr: string; name_lb: string }) => {
