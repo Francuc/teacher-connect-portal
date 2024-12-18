@@ -6,11 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
 
-interface ResetPasswordProps {
-  mode?: "request" | "update";
-}
-
-export default function ResetPassword({ mode = "request" }: ResetPasswordProps) {
+export default function ResetPassword() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,31 +15,14 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const [mode, setMode] = useState<"request" | "update">("request");
 
   useEffect(() => {
-    // Check URL hash for access_token
-    const hash = window.location.hash;
-    if (hash) {
-      const params = new URLSearchParams(hash.substring(1));
-      const accessToken = params.get("access_token");
-      if (accessToken) {
-        mode = "update";
-        location.state = { ...location.state, accessToken };
-      }
+    const state = location.state as any;
+    if (state?.mode === "update") {
+      setMode("update");
     }
-    
-    // Check URL params for error
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get("error");
-    if (error) {
-      toast({
-        title: t("error"),
-        description: t("errorResettingPassword"),
-        variant: "destructive",
-      });
-      navigate("/auth", { replace: true });
-    }
-  }, [location, navigate, toast, t]);
+  }, [location]);
 
   useEffect(() => {
     if (cooldownTime > 0) {
@@ -72,21 +51,37 @@ export default function ResetPassword({ mode = "request" }: ResetPasswordProps) 
       if (mode === "update") {
         const state = location.state as any;
         
-        const { error } = await supabase.auth.updateUser({
-          password: password
-        });
+        // Try to update password using the access token if available
+        if (state?.accessToken) {
+          const { error } = await supabase.auth.updateUser({
+            password: password
+          });
 
-        if (error) throw error;
+          if (error) throw error;
+        }
+        // Fallback to using the recovery token if available
+        else if (state?.token) {
+          const { error } = await supabase.auth.verifyOtp({
+            token: state.token,
+            type: 'recovery',
+            new_password: password,
+          });
+
+          if (error) throw error;
+        } else {
+          throw new Error("No valid token found");
+        }
 
         toast({
           title: t("success"),
           description: t("passwordUpdated"),
         });
 
+        // After successful password update, redirect to auth page
         navigate("/auth", { replace: true });
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + "/reset-password",
+          redirectTo: `${window.location.origin}/auth`,
         });
 
         if (error) {

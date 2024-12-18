@@ -44,14 +44,18 @@ export default function Auth() {
       if (window.location.hash) {
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const type = hashParams.get('type');
+        const accessToken = hashParams.get('access_token');
         
-        if (type === 'recovery') {
-          const accessToken = hashParams.get('access_token');
-          if (accessToken) {
-            console.log('Recovery token found, redirecting to update password');
-            navigate('/update-password', { state: { accessToken } });
-            return;
-          }
+        if (type === 'recovery' && accessToken) {
+          console.log('Recovery token found in hash, redirecting to update password');
+          navigate('/reset-password', { 
+            state: { 
+              mode: 'update',
+              accessToken 
+            },
+            replace: true 
+          });
+          return;
         }
       }
 
@@ -61,8 +65,14 @@ export default function Auth() {
       const type = params.get('type');
 
       if (token && type === 'recovery') {
-        console.log('Recovery token found in query params, redirecting to update password');
-        navigate('/update-password', { state: { token } });
+        console.log('Recovery token found in query params, redirecting to reset password');
+        navigate('/reset-password', { 
+          state: { 
+            mode: 'update',
+            token 
+          },
+          replace: true 
+        });
         return;
       }
 
@@ -82,7 +92,7 @@ export default function Auth() {
   }, [session, navigate, location]);
 
   // If we're handling a recovery flow, don't show the auth UI
-  if (location.pathname === '/update-password') {
+  if (location.pathname === '/reset-password') {
     return null;
   }
 
