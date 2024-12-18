@@ -15,7 +15,18 @@ export default function Auth() {
 
   useEffect(() => {
     const checkSessionAndRedirect = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Auth error:', error);
+        toast({
+          variant: "destructive",
+          title: "Authentication Error",
+          description: error.message
+        });
+        return;
+      }
+
       setSession(session);
 
       if (session) {
@@ -25,11 +36,21 @@ export default function Auth() {
         // Check if this is a recovery flow by looking at the URL hash
         if (location.hash.includes('type=recovery')) {
           // After password reset login, redirect to edit page
-          const { data: teacherProfile } = await supabase
+          const { data: teacherProfile, error: profileError } = await supabase
             .from('teachers')
             .select('user_id')
             .eq('user_id', session.user.id)
             .single();
+
+          if (profileError) {
+            console.error('Profile fetch error:', profileError);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Failed to fetch user profile"
+            });
+            return;
+          }
 
           if (teacherProfile) {
             navigate(`/${prefix}/edit/${session.user.id}`, { replace: true });
@@ -46,36 +67,46 @@ export default function Auth() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       
       if (session) {
         // Get the prefix based on the language
         const prefix = language === 'fr' ? 'cours-de-rattrapage' : language === 'lb' ? 'nohellef' : 'tutoring';
         
-        // Check if this is a recovery flow
-        if (location.hash.includes('type=recovery')) {
-          // After password reset login, redirect to edit page
-          supabase
-            .from('teachers')
-            .select('user_id')
-            .eq('user_id', session.user.id)
-            .single()
-            .then(({ data: teacherProfile }) => {
-              if (teacherProfile) {
-                navigate(`/${prefix}/edit/${session.user.id}`, { replace: true });
-              } else {
-                navigate('/', { replace: true });
-              }
-            });
-        } else {
-          navigate('/', { replace: true });
+        try {
+          // Check if this is a recovery flow
+          if (location.hash.includes('type=recovery')) {
+            // After password reset login, redirect to edit page
+            const { data: teacherProfile, error: profileError } = await supabase
+              .from('teachers')
+              .select('user_id')
+              .eq('user_id', session.user.id)
+              .single();
+
+            if (profileError) throw profileError;
+
+            if (teacherProfile) {
+              navigate(`/${prefix}/edit/${session.user.id}`, { replace: true });
+            } else {
+              navigate('/', { replace: true });
+            }
+          } else {
+            navigate('/', { replace: true });
+          }
+        } catch (error: any) {
+          console.error('Auth state change error:', error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.message || "An error occurred during authentication"
+          });
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, location.hash, language]);
+  }, [navigate, location.hash, language, toast]);
 
   // Get the current site URL dynamically
   const siteUrl = window.location.origin;
@@ -97,6 +128,14 @@ export default function Auth() {
         }}
         providers={[]}
         redirectTo={`${siteUrl}/auth`}
+        onError={(error) => {
+          console.error('Auth error:', error);
+          toast({
+            variant: "destructive",
+            title: "Authentication Error",
+            description: error.message || "An error occurred during authentication"
+          });
+        }}
       />
     </div>
   );
